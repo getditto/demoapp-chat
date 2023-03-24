@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright (c) 2023 DittoLive.
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the “Software”), to deal
+  ~ In the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ This project and source code may use libraries or frameworks that are
+  ~ released under various Open-Source licenses. Use of those libraries and
+  ~ frameworks are governed by their own individual licenses.
+  ~
+  ~ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="350dp"
+    android:height="350dp"
+    android:viewportWidth="350"
+    android:viewportHeight="350">
+  <path
+      android:pathData="m115.69,168.8L51.35,62.07c-1.61,-2.67 0.31,-6.07 3.43,-6.07h60.66c2.81,0 5.4,1.47 6.85,3.87l65.67,108.94c2.3,3.81 2.3,8.58 0,12.39l-65.67,108.93c-1.45,2.4 -4.05,3.87 -6.85,3.87h-60.66c-3.11,0 -5.03,-3.4 -3.43,-6.07l64.34,-106.74c2.3,-3.81 2.3,-8.58 0,-12.39Z"
+      android:fillColor="#fff"/>
+  <path
+      android:pathData="m225.69,168.8l-64.35,-106.74c-1.61,-2.67 0.31,-6.07 3.43,-6.07h60.66c2.81,0 5.4,1.47 6.85,3.87l65.67,108.94c2.3,3.81 2.3,8.58 0,12.39l-65.67,108.93c-1.45,2.4 -4.05,3.87 -6.85,3.87h-60.66c-3.11,0 -5.03,-3.4 -3.43,-6.07l64.35,-106.74c2.3,-3.81 2.3,-8.58 0,-12.39Z"
+      android:fillColor="#fff"/>
+</vector>

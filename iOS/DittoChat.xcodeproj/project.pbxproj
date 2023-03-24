@@ -1,0 +1,949 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		145662BE296E1E0900E1C148 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145662BD296E1E0900E1C148 /* LogManager.swift */; };
+		1493FF6A2978763500397DAB /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF682978763500397DAB /* ScannerView.swift */; };
+		1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF692978763500397DAB /* QRCodeView.swift */; };
+		1493FF6F2978764300397DAB /* PrivateChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF6D2978764300397DAB /* PrivateChatScreen.swift */; };
+		14A2B744298987D300E0FF86 /* DittoDataBrowser in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B743298987D300E0FF86 /* DittoDataBrowser */; };
+		14A2B746298987D300E0FF86 /* DittoDiskUsage in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B745298987D300E0FF86 /* DittoDiskUsage */; };
+		14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B747298987D300E0FF86 /* DittoExportLogs */; };
+		14A2B74A298987D400E0FF86 /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B749298987D400E0FF86 /* DittoPresenceViewer */; };
+		14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */; };
+		14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E25F2978F2350069B69D /* ChatInputView.swift */; };
+		14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2612978F23E0069B69D /* ExpandingTextView.swift */; };
+		14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2642978F25D0069B69D /* AvatarView.swift */; };
+		14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2662978F2740069B69D /* CheckboxButton.swift */; };
+		14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2682978F2A40069B69D /* MessageBubbleView.swift */; };
+		14B4E26D2979EF2C0069B69D /* LocalStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E26C2979EF2C0069B69D /* LocalStoreService.swift */; };
+		14B4E26F297A40380069B69D /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E26E297A40380069B69D /* DataManager.swift */; };
+		14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B5F1AA2985A25D00024BE4 /* RoomView.swift */; };
+		14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAA297C774300509E57 /* SettingsScreenVM.swift */; };
+		14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAC297C774F00509E57 /* SettingsScreen.swift */; };
+		14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */; };
+		14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BB526329A010790072C4AD /* RoomsListRowItem.swift */; };
+		14BF945D29786731001F672D /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 14BF945C29786731001F672D /* CodeScanner */; };
+		14BF945F297868ED001F672D /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BF945E297868ED001F672D /* Room.swift */; };
+		14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB2D293FEBD500BED068 /* DittoChatApp.swift */; };
+		14CADB35293FEBD600BED068 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14CADB34293FEBD600BED068 /* Preview Assets.xcassets */; };
+		14CADB3F293FEBD600BED068 /* DittoChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB3E293FEBD600BED068 /* DittoChatTests.swift */; };
+		14CADB49293FEBD600BED068 /* DittoChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB48293FEBD600BED068 /* DittoChatUITests.swift */; };
+		14CADB4B293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */; };
+		14CADB58293FEC1400BED068 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14CADB57293FEC1400BED068 /* Assets.xcassets */; };
+		14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5A293FEFD700BED068 /* DittoObjC */; };
+		14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5C293FEFD700BED068 /* DittoSwift */; };
+		14CADB60293FF00700BED068 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5F293FF00700BED068 /* Fakery */; };
+		14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902E82954DFC8006B54E3 /* StringKeys.swift */; };
+		14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902EA2954ED1B006B54E3 /* Utils.swift */; };
+		14E834B62953C6E60027D750 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B02953C6E60027D750 /* Message.swift */; };
+		14E834B72953C6E60027D750 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B12953C6E60027D750 /* User.swift */; };
+		14E834B82953C6E60027D750 /* DittoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B22953C6E60027D750 /* DittoService.swift */; };
+		14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B32953C6E60027D750 /* MessageWithUser.swift */; };
+		14E834C32953C7A30027D750 /* ChatScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C12953C7A30027D750 /* ChatScreenVM.swift */; };
+		14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C22953C7A30027D750 /* ChatScreen.swift */; };
+		14E834C72953C7AB0027D750 /* ProfileScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C52953C7AB0027D750 /* ProfileScreenViewModel.swift */; };
+		14E834C82953C7AB0027D750 /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C62953C7AB0027D750 /* ProfileScreen.swift */; };
+		14E834CB2953C7B20027D750 /* RoomEditScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C92953C7B20027D750 /* RoomEditScreen.swift */; };
+		14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */; };
+		14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CD2953C7B90027D750 /* RoomsListScreen.swift */; };
+		14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		14CADB3B293FEBD600BED068 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 14CADB22293FEBD500BED068 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14CADB29293FEBD500BED068;
+			remoteInfo = DittoChat;
+		};
+		14CADB45293FEBD600BED068 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 14CADB22293FEBD500BED068 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14CADB29293FEBD500BED068;
+			remoteInfo = DittoChat;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		145662BD296E1E0900E1C148 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
+		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
+		1493FF692978763500397DAB /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
+		1493FF6D2978764300397DAB /* PrivateChatScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateChatScreen.swift; sourceTree = "<group>"; };
+		14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoToolsUtilities.swift; sourceTree = "<group>"; };
+		14B4E25F2978F2350069B69D /* ChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
+		14B4E2612978F23E0069B69D /* ExpandingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingTextView.swift; sourceTree = "<group>"; };
+		14B4E2642978F25D0069B69D /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		14B4E2662978F2740069B69D /* CheckboxButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxButton.swift; sourceTree = "<group>"; };
+		14B4E2682978F2A40069B69D /* MessageBubbleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleView.swift; sourceTree = "<group>"; };
+		14B4E26C2979EF2C0069B69D /* LocalStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreService.swift; sourceTree = "<group>"; };
+		14B4E26E297A40380069B69D /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		14B5F1AA2985A25D00024BE4 /* RoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
+		14B98AAA297C774300509E57 /* SettingsScreenVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreenVM.swift; sourceTree = "<group>"; };
+		14B98AAC297C774F00509E57 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomDetailsView.swift; sourceTree = "<group>"; };
+		14BB526329A010790072C4AD /* RoomsListRowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsListRowItem.swift; sourceTree = "<group>"; };
+		14BF945E297868ED001F672D /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		14CADB2A293FEBD500BED068 /* DittoChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DittoChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		14CADB2D293FEBD500BED068 /* DittoChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatApp.swift; sourceTree = "<group>"; };
+		14CADB34293FEBD600BED068 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		14CADB3A293FEBD600BED068 /* DittoChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DittoChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		14CADB3E293FEBD600BED068 /* DittoChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatTests.swift; sourceTree = "<group>"; };
+		14CADB44293FEBD600BED068 /* DittoChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DittoChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		14CADB48293FEBD600BED068 /* DittoChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatUITests.swift; sourceTree = "<group>"; };
+		14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		14CADB57293FEC1400BED068 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		14CADC0B2941089A00BED068 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		14D902E82954DFC8006B54E3 /* StringKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringKeys.swift; sourceTree = "<group>"; };
+		14D902EA2954ED1B006B54E3 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		14E834B02953C6E60027D750 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		14E834B12953C6E60027D750 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		14E834B22953C6E60027D750 /* DittoService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoService.swift; sourceTree = "<group>"; };
+		14E834B32953C6E60027D750 /* MessageWithUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageWithUser.swift; sourceTree = "<group>"; };
+		14E834C12953C7A30027D750 /* ChatScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScreenVM.swift; sourceTree = "<group>"; };
+		14E834C22953C7A30027D750 /* ChatScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
+		14E834C52953C7AB0027D750 /* ProfileScreenViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreenViewModel.swift; sourceTree = "<group>"; };
+		14E834C62953C7AB0027D750 /* ProfileScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
+		14E834C92953C7B20027D750 /* RoomEditScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomEditScreen.swift; sourceTree = "<group>"; };
+		14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomEditScreenViewModel.swift; sourceTree = "<group>"; };
+		14E834CD2953C7B90027D750 /* RoomsListScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreen.swift; sourceTree = "<group>"; };
+		14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreenVM.swift; sourceTree = "<group>"; };
+		14E834D22953C7F60027D750 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		14CADB27293FEBD500BED068 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14A2B746298987D300E0FF86 /* DittoDiskUsage in Frameworks */,
+				14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */,
+				14BF945D29786731001F672D /* CodeScanner in Frameworks */,
+				14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */,
+				14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */,
+				14CADB60293FF00700BED068 /* Fakery in Frameworks */,
+				14A2B74A298987D400E0FF86 /* DittoPresenceViewer in Frameworks */,
+				14A2B744298987D300E0FF86 /* DittoDataBrowser in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CADB37293FEBD600BED068 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CADB41293FEBD600BED068 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1493FF672978763500397DAB /* CodeScanner */ = {
+			isa = PBXGroup;
+			children = (
+				1493FF682978763500397DAB /* ScannerView.swift */,
+				1493FF692978763500397DAB /* QRCodeView.swift */,
+			);
+			path = CodeScanner;
+			sourceTree = "<group>";
+		};
+		14A2B742298987D300E0FF86 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		14B4E25B2978F18B0069B69D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				14B4E2632978F2480069B69D /* AvatarView */,
+				14B4E25C2978F1E10069B69D /* ChatInputView */,
+				14B4E2662978F2740069B69D /* CheckboxButton.swift */,
+				14B4E2682978F2A40069B69D /* MessageBubbleView.swift */,
+				14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */,
+				14B5F1AA2985A25D00024BE4 /* RoomView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		14B4E25C2978F1E10069B69D /* ChatInputView */ = {
+			isa = PBXGroup;
+			children = (
+				14B4E25F2978F2350069B69D /* ChatInputView.swift */,
+				14B4E2612978F23E0069B69D /* ExpandingTextView.swift */,
+			);
+			path = ChatInputView;
+			sourceTree = "<group>";
+		};
+		14B4E2632978F2480069B69D /* AvatarView */ = {
+			isa = PBXGroup;
+			children = (
+				14B4E2642978F25D0069B69D /* AvatarView.swift */,
+			);
+			path = AvatarView;
+			sourceTree = "<group>";
+		};
+		14B4E270297AFE5A0069B69D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				14E834B02953C6E60027D750 /* Message.swift */,
+				14E834B32953C6E60027D750 /* MessageWithUser.swift */,
+				14BF945E297868ED001F672D /* Room.swift */,
+				14E834B12953C6E60027D750 /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		14B98AA9297C772000509E57 /* SettingsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				14B98AAC297C774F00509E57 /* SettingsScreen.swift */,
+				14B98AAA297C774300509E57 /* SettingsScreenVM.swift */,
+			);
+			path = SettingsScreen;
+			sourceTree = "<group>";
+		};
+		14CADB21293FEBD500BED068 = {
+			isa = PBXGroup;
+			children = (
+				14E834D22953C7F60027D750 /* README.md */,
+				14CADB2C293FEBD500BED068 /* DittoChat */,
+				14CADB3D293FEBD600BED068 /* DittoChatTests */,
+				14CADB47293FEBD600BED068 /* DittoChatUITests */,
+				14CADB2B293FEBD500BED068 /* Products */,
+				14A2B742298987D300E0FF86 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		14CADB2B293FEBD500BED068 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				14CADB2A293FEBD500BED068 /* DittoChat.app */,
+				14CADB3A293FEBD600BED068 /* DittoChatTests.xctest */,
+				14CADB44293FEBD600BED068 /* DittoChatUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		14CADB2C293FEBD500BED068 /* DittoChat */ = {
+			isa = PBXGroup;
+			children = (
+				14CADB2D293FEBD500BED068 /* DittoChatApp.swift */,
+				14E834AF2953C6C60027D750 /* Data */,
+				14B4E270297AFE5A0069B69D /* Models */,
+				14E834BC2953C6F60027D750 /* Screens */,
+				14B4E25B2978F18B0069B69D /* Views */,
+				14D902E72954DF82006B54E3 /* Utilities */,
+				14CADB33293FEBD600BED068 /* Preview Content */,
+				14CADB57293FEC1400BED068 /* Assets.xcassets */,
+				14CADC0B2941089A00BED068 /* Info.plist */,
+			);
+			path = DittoChat;
+			sourceTree = "<group>";
+		};
+		14CADB33293FEBD600BED068 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				14CADB34293FEBD600BED068 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		14CADB3D293FEBD600BED068 /* DittoChatTests */ = {
+			isa = PBXGroup;
+			children = (
+				14CADB3E293FEBD600BED068 /* DittoChatTests.swift */,
+			);
+			path = DittoChatTests;
+			sourceTree = "<group>";
+		};
+		14CADB47293FEBD600BED068 /* DittoChatUITests */ = {
+			isa = PBXGroup;
+			children = (
+				14CADB48293FEBD600BED068 /* DittoChatUITests.swift */,
+				14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */,
+			);
+			path = DittoChatUITests;
+			sourceTree = "<group>";
+		};
+		14D902E72954DF82006B54E3 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */,
+				145662BD296E1E0900E1C148 /* LogManager.swift */,
+				14D902E82954DFC8006B54E3 /* StringKeys.swift */,
+				14D902EA2954ED1B006B54E3 /* Utils.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		14E834AF2953C6C60027D750 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				14B4E26E297A40380069B69D /* DataManager.swift */,
+				14E834B22953C6E60027D750 /* DittoService.swift */,
+				14B4E26C2979EF2C0069B69D /* LocalStoreService.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		14E834BC2953C6F60027D750 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				14E834BD2953C70B0027D750 /* ChatScreen */,
+				1493FF672978763500397DAB /* CodeScanner */,
+				14E834BE2953C7280027D750 /* ProfileScreen */,
+				14E834C02953C74E0027D750 /* RoomEditScreen */,
+				14E834BF2953C73D0027D750 /* RoomsListScreen */,
+				14B98AA9297C772000509E57 /* SettingsScreen */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		14E834BD2953C70B0027D750 /* ChatScreen */ = {
+			isa = PBXGroup;
+			children = (
+				14E834C22953C7A30027D750 /* ChatScreen.swift */,
+				14E834C12953C7A30027D750 /* ChatScreenVM.swift */,
+				1493FF6D2978764300397DAB /* PrivateChatScreen.swift */,
+			);
+			path = ChatScreen;
+			sourceTree = "<group>";
+		};
+		14E834BE2953C7280027D750 /* ProfileScreen */ = {
+			isa = PBXGroup;
+			children = (
+				14E834C62953C7AB0027D750 /* ProfileScreen.swift */,
+				14E834C52953C7AB0027D750 /* ProfileScreenViewModel.swift */,
+			);
+			path = ProfileScreen;
+			sourceTree = "<group>";
+		};
+		14E834BF2953C73D0027D750 /* RoomsListScreen */ = {
+			isa = PBXGroup;
+			children = (
+				14BB526329A010790072C4AD /* RoomsListRowItem.swift */,
+				14E834CD2953C7B90027D750 /* RoomsListScreen.swift */,
+				14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */,
+			);
+			path = RoomsListScreen;
+			sourceTree = "<group>";
+		};
+		14E834C02953C74E0027D750 /* RoomEditScreen */ = {
+			isa = PBXGroup;
+			children = (
+				14E834C92953C7B20027D750 /* RoomEditScreen.swift */,
+				14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */,
+			);
+			path = RoomEditScreen;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		14CADB29293FEBD500BED068 /* DittoChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14CADB4E293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChat" */;
+			buildPhases = (
+				14CADB26293FEBD500BED068 /* Sources */,
+				14CADB27293FEBD500BED068 /* Frameworks */,
+				14CADB28293FEBD500BED068 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DittoChat;
+			packageProductDependencies = (
+				14CADB5A293FEFD700BED068 /* DittoObjC */,
+				14CADB5C293FEFD700BED068 /* DittoSwift */,
+				14CADB5F293FF00700BED068 /* Fakery */,
+				14BF945C29786731001F672D /* CodeScanner */,
+				14A2B743298987D300E0FF86 /* DittoDataBrowser */,
+				14A2B745298987D300E0FF86 /* DittoDiskUsage */,
+				14A2B747298987D300E0FF86 /* DittoExportLogs */,
+				14A2B749298987D400E0FF86 /* DittoPresenceViewer */,
+			);
+			productName = DittoChat;
+			productReference = 14CADB2A293FEBD500BED068 /* DittoChat.app */;
+			productType = "com.apple.product-type.application";
+		};
+		14CADB39293FEBD600BED068 /* DittoChatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14CADB51293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChatTests" */;
+			buildPhases = (
+				14CADB36293FEBD600BED068 /* Sources */,
+				14CADB37293FEBD600BED068 /* Frameworks */,
+				14CADB38293FEBD600BED068 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				14CADB3C293FEBD600BED068 /* PBXTargetDependency */,
+			);
+			name = DittoChatTests;
+			productName = DittoChatTests;
+			productReference = 14CADB3A293FEBD600BED068 /* DittoChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		14CADB43293FEBD600BED068 /* DittoChatUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14CADB54293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChatUITests" */;
+			buildPhases = (
+				14CADB40293FEBD600BED068 /* Sources */,
+				14CADB41293FEBD600BED068 /* Frameworks */,
+				14CADB42293FEBD600BED068 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				14CADB46293FEBD600BED068 /* PBXTargetDependency */,
+			);
+			name = DittoChatUITests;
+			productName = DittoChatUITests;
+			productReference = 14CADB44293FEBD600BED068 /* DittoChatUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		14CADB22293FEBD500BED068 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1410;
+				LastUpgradeCheck = 1410;
+				ORGANIZATIONNAME = "DittoLive Incorporated";
+				TargetAttributes = {
+					14CADB29293FEBD500BED068 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					14CADB39293FEBD600BED068 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 14CADB29293FEBD500BED068;
+					};
+					14CADB43293FEBD600BED068 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 14CADB29293FEBD500BED068;
+					};
+				};
+			};
+			buildConfigurationList = 14CADB25293FEBD500BED068 /* Build configuration list for PBXProject "DittoChat" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 14CADB21293FEBD500BED068;
+			packageReferences = (
+				14CADB59293FEFD700BED068 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */,
+				14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */,
+				14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */,
+			);
+			productRefGroup = 14CADB2B293FEBD500BED068 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				14CADB29293FEBD500BED068 /* DittoChat */,
+				14CADB39293FEBD600BED068 /* DittoChatTests */,
+				14CADB43293FEBD600BED068 /* DittoChatUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		14CADB28293FEBD500BED068 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14CADB58293FEC1400BED068 /* Assets.xcassets in Resources */,
+				14CADB35293FEBD600BED068 /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CADB38293FEBD600BED068 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CADB42293FEBD600BED068 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		14CADB26293FEBD500BED068 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */,
+				145662BE296E1E0900E1C148 /* LogManager.swift in Sources */,
+				14E834C32953C7A30027D750 /* ChatScreenVM.swift in Sources */,
+				14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */,
+				14BF945F297868ED001F672D /* Room.swift in Sources */,
+				14B4E26D2979EF2C0069B69D /* LocalStoreService.swift in Sources */,
+				14E834C72953C7AB0027D750 /* ProfileScreenViewModel.swift in Sources */,
+				14E834B82953C6E60027D750 /* DittoService.swift in Sources */,
+				14E834C82953C7AB0027D750 /* ProfileScreen.swift in Sources */,
+				14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */,
+				14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */,
+				1493FF6A2978763500397DAB /* ScannerView.swift in Sources */,
+				14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */,
+				14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */,
+				14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */,
+				14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */,
+				14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */,
+				14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */,
+				14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */,
+				14E834B62953C6E60027D750 /* Message.swift in Sources */,
+				14B4E26F297A40380069B69D /* DataManager.swift in Sources */,
+				14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */,
+				14E834CB2953C7B20027D750 /* RoomEditScreen.swift in Sources */,
+				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
+				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
+				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
+				14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */,
+				14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */,
+				1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */,
+				1493FF6F2978764300397DAB /* PrivateChatScreen.swift in Sources */,
+				14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */,
+				14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */,
+				14E834B72953C6E60027D750 /* User.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CADB36293FEBD600BED068 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14CADB3F293FEBD600BED068 /* DittoChatTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CADB40293FEBD600BED068 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14CADB49293FEBD600BED068 /* DittoChatUITests.swift in Sources */,
+				14CADB4B293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		14CADB3C293FEBD600BED068 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14CADB29293FEBD500BED068 /* DittoChat */;
+			targetProxy = 14CADB3B293FEBD600BED068 /* PBXContainerItemProxy */;
+		};
+		14CADB46293FEBD600BED068 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14CADB29293FEBD500BED068 /* DittoChat */;
+			targetProxy = 14CADB45293FEBD600BED068 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		14CADB4C293FEBD600BED068 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		14CADB4D293FEBD600BED068 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		14CADB4F293FEBD600BED068 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
+				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DittoChat/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Use camera to scan invitation to private room";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Uses WiFi to connect and sync with nearby devices";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.Chat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		14CADB50293FEBD600BED068 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
+				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DittoChat/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Use camera to scan invitation to private room";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Uses WiFi to connect and sync with nearby devices";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.Chat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		14CADB52293FEBD600BED068 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.DittoChatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DittoChat.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DittoChat";
+			};
+			name = Debug;
+		};
+		14CADB53293FEBD600BED068 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.DittoChatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DittoChat.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DittoChat";
+			};
+			name = Release;
+		};
+		14CADB55293FEBD600BED068 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.DittoChatUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DittoChat;
+			};
+			name = Debug;
+		};
+		14CADB56293FEBD600BED068 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.DittoChatUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DittoChat;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14CADB25293FEBD500BED068 /* Build configuration list for PBXProject "DittoChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CADB4C293FEBD600BED068 /* Debug */,
+				14CADB4D293FEBD600BED068 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14CADB4E293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CADB4F293FEBD600BED068 /* Debug */,
+				14CADB50293FEBD600BED068 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14CADB51293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CADB52293FEBD600BED068 /* Debug */,
+				14CADB53293FEBD600BED068 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14CADB54293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChatUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CADB55293FEBD600BED068 /* Debug */,
+				14CADB56293FEBD600BED068 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
+			requirement = {
+				branch = v4;
+				kind = branch;
+			};
+		};
+		14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		14CADB59293FEFD700BED068 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vadymmarkov/Fakery";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		14A2B743298987D300E0FF86 /* DittoDataBrowser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoDataBrowser;
+		};
+		14A2B745298987D300E0FF86 /* DittoDiskUsage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoDiskUsage;
+		};
+		14A2B747298987D300E0FF86 /* DittoExportLogs */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoExportLogs;
+		};
+		14A2B749298987D400E0FF86 /* DittoPresenceViewer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoPresenceViewer;
+		};
+		14BF945C29786731001F672D /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+		14CADB5A293FEFD700BED068 /* DittoObjC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14CADB59293FEFD700BED068 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */;
+			productName = DittoObjC;
+		};
+		14CADB5C293FEFD700BED068 /* DittoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14CADB59293FEFD700BED068 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */;
+			productName = DittoSwift;
+		};
+		14CADB5F293FF00700BED068 /* Fakery */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */;
+			productName = Fakery;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 14CADB22293FEBD500BED068 /* Project object */;
+}

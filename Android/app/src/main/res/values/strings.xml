@@ -1,0 +1,73 @@
+<!--
+  ~ Copyright (c) 2023 DittoLive.
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the “Software”), to deal
+  ~ In the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ This project and source code may use libraries or frameworks that are
+  ~ released under various Open-Source licenses. Use of those libraries and
+  ~ frameworks are governed by their own individual licenses.
+  ~
+  ~ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<resources>
+    <string name="app_name">Ditto Chat</string>
+    <string name="app_title">Ditto Chat</string>
+    <string name="presence_viewer">Presence Viewer</string>
+    <string name="menu">"Menu"</string>
+    <string name="all_rooms_button_text">"All"</string>
+    <string name="private_room_button_text">"Private"</string>
+    <string name="public_room_button_text">"Public"</string>
+    <!-- Test Strings Used During Dev -->
+    <string name="first">"first"</string>
+    <string name="second">"second"</string>
+    <string name="third">"third"</string>
+    <string name="menu_title">Ditto Chat Menu</string>
+    <string name="profile_menu_title">Profile</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="jumpBottom">Jump to bottom</string>
+    <string name="send">Send</string>
+    <string name="author_me">me</string>
+    <string name="now">8:30 PM</string>
+    <string name="members">%d members</string>
+    <string name="textfield_hint">Message #public</string>
+    <string name="emojis_label">Emojis</string>
+    <string name="stickers_label">Stickers</string>
+    <string name="display_name">Display name</string>
+    <string name="status">Status</string>
+    <string name="timezone">Timezone</string>
+    <string name="twitter">Twitter</string>
+    <string name="profile_error">There was an error loading the profile</string>
+    <string name="message">Message</string>
+    <string name="edit_profile">Edit Profile</string>
+
+    <!-- Accessibility descriptions -->
+    <string name="emoji_selector_desc">Emoji selector</string>
+    <string name="emoji_selector_bt_desc">Show Emoji selector</string>
+    <string name="dm_desc">Direct Message</string>
+    <string name="attach_photo_desc">Attach Photo</string>
+    <string name="map_selector_desc">Location selector</string>
+    <string name="videochat_desc">Start videochat</string>
+    <string name="textfield_desc">Text input</string>
+    <string name="not_available">Functionality currently not available</string>
+    <string name="not_available_subtitle">Grab a beverage and check back later!</string>
+    <string name="attached_image">Attached image</string>
+    <string name="search">Search</string>
+    <string name="info">Information</string>
+    <string name="more_options">More options</string>
+    <string name="recent_profiles">Recent Profiles</string>
+</resources>

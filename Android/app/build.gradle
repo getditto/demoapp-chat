@@ -1,0 +1,143 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "kotlin-kapt"
+    id "com.google.dagger.hilt.android"
+    id "androidx.navigation.safeargs.kotlin"
+}
+
+android {
+    namespace "live.ditto.chat"
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "live.ditto.chat"
+        minSdk 29
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    buildFeatures {
+        compose true
+        viewBinding true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.4.3"
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    // Support Libraries
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.8.0"
+
+    // Compose
+    implementation ("androidx.compose.material:material:1.4.0")
+    implementation ("androidx.compose.material3:material3:$material3_version")
+    implementation ("androidx.compose.material:material-icons-extended:1.4.0")
+    implementation ("androidx.activity:activity-compose:1.7.0")
+    implementation ("androidx.compose.ui:ui:$compose_ui_version")
+    implementation ("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.4.0")
+    implementation("androidx.compose.ui:ui-viewbinding:$compose_ui_version")
+    implementation("androidx.activity:activity-ktx:$activity_version")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // ViewModel utilities for Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation("androidx.compose.runtime:runtime-livedata:1.4.0")
+
+    // Saved state module for ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
+
+    // Preferences DataStore (SharedPreferences like APIs)
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Annotation processor
+    // alternately - if using Java8, use the following instead of lifecycle-compiler
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
+
+    // optional - helpers for implementing LifecycleOwner in a Service
+    implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
+
+    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+    implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
+
+    // optional - ReactiveStreams support for LiveData
+    implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+
+    // optional - Test helpers for LiveData
+    testImplementation("androidx.arch.core:core-testing:$arch_version")
+
+    // optional - Test helpers for Lifecycle runtime
+    testImplementation("androidx.lifecycle:lifecycle-runtime-testing:$lifecycle_version")
+
+    // Permissions wrapper for Compose - needs to match Compose UI version - see https://github.com/google/accompanist/#compose-versions
+    implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
+
+    // Flow x LiveData
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
+    // Hilt DI
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt "com.google.dagger:hilt-compiler:2.44"
+
+    // Ditto
+    implementation("live.ditto:ditto:3.0.5")
+//    implementation project(":dittoinfomodule")
+
+    // Load Presence Viewer from an .aar library file
+    implementation fileTree(dir: "${rootDir}/android-libs", include: ["*.aar"])
+
+    // Date Time Library - the latest way to handle dates in Kotlin
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+    // legacy Navigation - using to support Presence Viewer
+    implementation ("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    // Testing
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes true
+}
