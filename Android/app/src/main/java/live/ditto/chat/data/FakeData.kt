@@ -59,7 +59,7 @@ private val initialMessages = listOf(
         UUID.randomUUID().toString(),
         Clock.System.now(),
         "public",
-        "@aliconors Take a look at the `Flow.collectAsStateWithLifecycle()` APIs",
+        "@flexronin Take a look at the `Flow.collectAsStateWithLifecycle()` APIs",
         "Eric Turner",
     ),
     Message(
@@ -113,9 +113,9 @@ val meProfile = ProfileScreenState(
     photo = R.drawable.fuad,
     name = "Fuad Kamal",
     status = "Online",
-    displayName = "aliconors",
+    displayName = "flexronin",
     position = "Senior Customer Engineer at Ditto\nAuthor of Android App Distribution",
-    twitter = "twitter.com/aliconors",
+    twitter = "twitter.com/flexronin",
     timeZone = "In your timezone",
     commonChannels = null
 )

@@ -53,10 +53,6 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         val CURRENT_USER_ID = stringPreferencesKey("currentUserId")
     }
 
-//    private val dataStore = context.createDataStore(
-//        name = STORE_NAME,
-//        migrations = listOf(SharedPreferencesMigration(context, PREFS_NAME))
-//    )
 
     /**
      * Get the user preferences flow.
@@ -83,12 +79,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
         // if currentUserID is null, then write a new ID to disk
-//        preferences[PreferencesKeys.CURRENT_USER_ID] = UUID.randomUUID().toString()
-//        updateCurrentUserId(currentUserId)
-        val userId = UUID.randomUUID().toString() // TODO: This should be removed / we should never reach this point
+        val userId = UUID.randomUUID().toString() // we should never reach this point
         updateCurrentUserId(userId = userId)
         return  UserPreferences(userId)
-
     }
 
     override suspend fun updateCurrentUserId(userId: String) {

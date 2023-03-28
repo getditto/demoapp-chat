@@ -62,8 +62,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Jetchat.NoActionBar"
         tools:targetApi="31">
-        <activity
-            android:name=".MainActivity" />
         <activity android:name=".presenceviewer.PresenceViewerActivity" />
         <activity android:name=".NavActivity" />
         <activity android:name=".SplashActivity"
