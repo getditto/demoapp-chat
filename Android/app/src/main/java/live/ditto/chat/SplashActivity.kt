@@ -38,6 +38,7 @@ import live.ditto.DittoIdentity
 import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
 import live.ditto.android.DefaultAndroidDittoDependencies
+import live.ditto.chat.DittoHandler.Companion.ditto
 import live.ditto.chat.data.ACCESS_LICENSE
 import live.ditto.chat.data.APP_NAME
 
@@ -64,7 +65,7 @@ class SplashActivity : AppCompatActivity() {
     DittoHandler.ditto.setOfflineOnlyLicenseToken(ACCESS_LICENSE)
     // TODO : for V4 migration:
     // Disable sync with V3
-//        ditto.disableSyncWithV3()
+        ditto.disableSyncWithV3()
     DittoHandler.ditto.startSync()
   }
 }
