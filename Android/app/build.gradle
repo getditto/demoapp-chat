@@ -115,7 +115,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:2.44"
 
     // Ditto
-    implementation("live.ditto:ditto:3.0.5")
+    implementation("live.ditto:ditto:4.0.0")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file
