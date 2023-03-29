@@ -7,9 +7,12 @@
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import SwiftUI
+import PhotosUI
+import SwiftUI
 
 struct ChatScreen: View {
     @StateObject var viewModel: ChatScreenVM
+    @EnvironmentObject var errorHandler: ErrorHandler
 
     init(room: Room) {
         self._viewModel = StateObject(wrappedValue: ChatScreenVM(room: room))
@@ -21,20 +24,26 @@ struct ChatScreen: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(viewModel.messagesWithUsers) { msg in
-                            MessageBubbleView(messageWithUser: msg)
-                                .id(msg.id)
-                                .transition(.slide)
+                            MessageBubbleView(
+                                messageWithUser: msg,
+                                messagesId: viewModel.room.messagesId
+                            )
+                            .id(msg.id)
+                            .transition(.slide)
                         }
                     }
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .onAppear {
                     DispatchQueue.main.async {
                         scrollToBottom(proxy: proxy)
                     }
                 }
                 .onChange(of: viewModel.messagesWithUsers.count) { value in
-                    withAnimation {
-                        scrollToBottom(proxy: proxy)
+                    DispatchQueue.main.async {
+                        withAnimation {
+                            scrollToBottom(proxy: proxy)
+                        }
                     }
                 }
             }
@@ -43,15 +52,44 @@ struct ChatScreen: View {
                 onSendButtonTappedCallback: viewModel.sendMessage
             )
         }
+        .listStyle(.inset)
+        .navigationTitle(viewModel.roomName)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack {
-                    Text(viewModel.roomName)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                PhotosPicker(selection: $viewModel.selectedItem,
+                             matching: .images,
+                             photoLibrary: .shared()
+                ) {
+                    Image(systemName: shareImageIconKey)
+                        .symbolRenderingMode(.multicolor)
+                        .font(.system(size: 24))
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.borderless)
+                .onChange(of: viewModel.selectedItem) { newValue in
+                    Task {
+                        do {
+                            let imageData = try await newValue?.loadTransferable(type: Data.self)
+                            
+                            if let image = UIImage(data: imageData ?? Data()) {
+                                viewModel.selectedImage = image
+                                
+                                do {
+                                    try await viewModel.sendImageMessage()
+                                } catch {
+                                    self.errorHandler.handle(error: error)
+                                }
+                            }
+                        } catch {
+                            self.errorHandler.handle(error: AttachmentError.iCloudLibraryImageFail)
+                        }
+                    }
                 }
             }
         }
-    }
-    
+    }    
+
     func scrollToBottom(proxy: ScrollViewProxy) {
         proxy.scrollTo(viewModel.messagesWithUsers.last?.id)
     }

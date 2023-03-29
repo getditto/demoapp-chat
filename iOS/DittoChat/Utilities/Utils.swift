@@ -20,6 +20,12 @@ extension DateFormatter {
         let f = ISO8601DateFormatter()
         return f
     }
+    
+    static var isoDateFull: ISO8601DateFormatter {
+        let f = Self.isoDate
+        f.formatOptions = [.withFullDate]
+        return f
+    }
 }
 
 extension String {
@@ -81,3 +87,32 @@ extension Bundle {
         ) as? String ?? notAvailableLabelKey
     }
 }
+
+extension CGFloat {
+    static var screenWidth: CGFloat {
+        UIScreen.main.bounds.width
+    }
+    static var screenHeight: CGFloat {
+        UIScreen.main.bounds.height
+    }
+}
+
+/* View size capture for debugging
+ https://www.fivestars.blog/articles/swiftui-share-layout-information/
+ */
+struct SizePreferenceKey: PreferenceKey {
+  static var defaultValue: CGSize = .zero
+  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+}
+extension View {
+    func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
+    background(
+      GeometryReader { geometryProxy in
+        Color.clear
+          .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
+      }
+    )
+    .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+  }
+}
+

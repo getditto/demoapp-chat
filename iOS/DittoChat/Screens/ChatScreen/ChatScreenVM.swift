@@ -7,15 +7,18 @@
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import Combine
-import Foundation
+import PhotosUI
+import SwiftUI
 
 class ChatScreenVM: ObservableObject {
     @Published var inputText: String = ""
     @Published var roomName: String = ""
     @Published var messagesWithUsers = [MessageWithUser]()
     @Published var presentShareRoomScreen = false
+    @Published var selectedItem: PhotosPickerItem?
+    @Published var selectedImage: UIImage?
     let room: Room
-    
+
     init(room: Room) {
         self.room = room
 
@@ -49,8 +52,31 @@ class ChatScreenVM: ObservableObject {
         inputText = ""
     }
     
+    func sendImageMessage() async throws {
+        guard let image = selectedImage else {
+            throw AttachmentError.libraryImageFail
+        }
+        
+        do {
+            try await DataManager.shared.createImageMessage(for: room, image: image, text: inputText)
+            
+        } catch {
+            print("Caught error: \(error.localizedDescription)")
+            throw error
+        }
+        
+        await MainActor.run {
+            inputText = ""
+            selectedItem = nil
+            selectedImage = nil
+        }
+    }
+    
     // private room
-    func shareQRCode() -> String {
-        return "\(room.id)\n\(room.collectionId!)\n\(room.messagesId)"
+    func shareQRCode() -> String? {
+        if let collectionId = room.collectionId {
+            return "\(room.id)\n\(collectionId)\n\(room.messagesId)"
+        }
+        return nil
     }
 }

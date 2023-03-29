@@ -6,33 +6,45 @@
 //  Credits to: https://prafullkumar77.medium.com/swiftui-creating-a-chat-bubble-like-imessage-using-path-and-shape-67cf23ccbf62
 //
 
+import Combine
+import DittoSwift
 import SwiftUI
 
 struct MessageBubbleView: View {
+    @EnvironmentObject var errorHandler: ErrorHandler
+    @StateObject private var viewModel: MessageBubbleVM
+    @State private var needsImageSync = true
     let messageWithUser: MessageWithUser
     private let user: User
+    private let message: Message
+
+    init(messageWithUser: MessageWithUser, messagesId: String) {
+        self._viewModel = StateObject(
+            wrappedValue: MessageBubbleVM(messageWithUser.message, messagesId: messagesId)
+        )
+        self.messageWithUser = messageWithUser
+        self.user = messageWithUser.user
+        self.message = messageWithUser.message
+        self.needsImageSync = messageWithUser.message.thumbnailImageToken != nil
+    }
     
-    init(messageWithUser: MessageWithUser) {
-        self.messageWithUser = messageWithUser
-        self.user = messageWithUser.user
+    private var hasThumbnail: Bool {
+        message.thumbnailImageToken != nil
     }
 
-    // for previewing
-    private var forPreview = false
-    private var previewUserId = "me"
-    fileprivate init(messageWithUser: MessageWithUser, preview: Bool) {
-        self.messageWithUser = messageWithUser
-        self.user = messageWithUser.user
-        self.forPreview = preview
+    // large images sent by local user are always stored in Ditto db and always available
+    private var largeImageAvailable: Bool {
+        message.userId == DataManager.shared.currentUserId
+        || (DataManager.shared.acceptLargeImages && message.thumbnailImageToken != nil)
     }
 
-    private var direction: MessageBubbleShape.Direction {
+    private var side: MessageBubbleShape.Side {
         if forPreview {
-            if messageWithUser.user.id == previewUserId {
+            if user.id == previewUserId {
                 return .right
             }
         } else {
-            if messageWithUser.user.id == DataManager.shared.currentUserId {
+            if user.id == DataManager.shared.currentUserId {
                 return .right
             }
         }
@@ -47,74 +59,182 @@ struct MessageBubbleView: View {
     }
     
     private var backgroundColor: Color {
-        if direction == .left {
+        if side == .left {
             return Color(.tertiarySystemFill)
         }
-        return Color.blue
+        return .accentColor
     }
 
     private var textColor: Color {
-        if direction == .left {
+        if side == .left {
             return Color(.label)
         }
         return Color.white
     }
 
     private var rowInsets: EdgeInsets {
-        EdgeInsets(
-            top: isSelfUser ? -4 : 8,
-            leading: 20,
+        let leftEdge: CGFloat = hasThumbnail && side == .right ? 80 : 20
+        let rightEdge: CGFloat = hasThumbnail && side == .left ? 80 : 20
+        return EdgeInsets(
+            top: isSelfUser ? -4 : 16,
+            leading: leftEdge,
             bottom: isSelfUser ? 8 : 0,
-            trailing: 20
+            trailing: rightEdge
         )
     }
 
     private var textInsets: EdgeInsets {
-        EdgeInsets(top: 10, leading: 16, bottom: 4, trailing: 16)
+        EdgeInsets(top: 6, leading: 16, bottom: 4, trailing: 16)
     }
 
     var body: some View {
-        VStack (alignment: direction == .right ? .trailing : .leading, spacing: 2) {
+        VStack (alignment: side == .right ? .trailing : .leading, spacing: 2) {
             Text( isSelfUser ? "" : user.fullName )
                 .font(.system(size: UIFont.smallSystemFontSize))
-                .opacity(0.5)
+                .opacity(0.6)
 
             HStack {
-                if direction == .right {
+                if side == .right {
                     Spacer()
                 }
 
-                VStack (alignment: direction == .right ? .trailing : .leading, spacing: 2) {
-                    Text(messageWithUser.message.text)
-                        .padding(.bottom, 6)
+                VStack(alignment: side == .right ? .trailing : .leading, spacing: 2) {
+                    if hasThumbnail {
+                        attachmentContentView()
+//                            .readSize { newSize in //debugging
+//                                print("attachment view size is: \(newSize)")
+//                            }
+                    }
+
+                    textContentView()
+                        .padding(textInsets)
+
                     Text(DateFormatter.shortTime.string(from: messageWithUser.message.createdOn))
                         .font(.system(size: UIFont.smallSystemFontSize))
+                        .padding(textInsets)
                 }
-                .padding(textInsets)
                 .background(backgroundColor)
                 .foregroundColor(textColor)
-                .clipShape(MessageBubbleShape(direction: direction))
-            
-                if direction == .left {
+                .clipShape(MessageBubbleShape(side: side))
+
+                if side == .left {
                     Spacer()
+                }
+            }
+            .fullScreenCover(
+                isPresented: $viewModel.presentLargeImageView,
+            onDismiss: {
+                Task {
+                    try? await viewModel.cleanupStorage()
+                }
+            }) {
+                AttachmentPreview()
+                    .environmentObject(viewModel)
+            }
+            .contextMenu {
+                contextMenuContent()
+            }
+            .task {
+                if needsImageSync {
+                    needsImageSync = false
+                    if let _ = message.thumbnailImageToken {
+//                        print(".task: await fetchThumbnail()")
+                        await viewModel.fetchAttachment(type: .thumbnailImage)
+                    }
                 }
             }
         }
         .padding(rowInsets)
     }
+    
+    @ViewBuilder
+    func contextMenuContent() -> some View {
+        if largeImageAvailable {
+            Button {
+                viewModel.presentLargeImageView = true
+            } label: {
+                Text(viewImageTitleKey)
+            }
+        }
+        if !message.isImageMessage {
+            Button {
+                errorHandler.handle(
+                    error: AppError.featureUnavailable("Edit feature not yet available"),
+                    title: alertTitleKey
+                )
+            } label: {
+                Text(editTitleKey)
+            }
+        }
+        Button {
+            errorHandler.handle(
+                error: AppError.featureUnavailable("Delete feature not yet available"),
+                title: alertTitleKey
+            )
+        } label: {
+            Text(deleteTitleKey)
+        }
+    }
+    
+    @ViewBuilder
+    func attachmentContentView() -> some View {
+        if let image = viewModel.thumbnailImage {
+            VStack(spacing: 0) {
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            }
+            .edgesIgnoringSafeArea(.top)
+            .edgesIgnoringSafeArea(.horizontal)
+        } else {
+            DittoProgressView($viewModel.thumbnailProgress, side: 100)
+                .frame(width: 140, height: 120, alignment: .center)
+        }
+    }
+
+    @ViewBuilder
+    func textContentView() -> some View {
+        if !message.text.isEmpty {
+            Text(message.text)
+        } else {
+            EmptyView()
+        }
+    }
+    
+    // for previewing
+    private var forPreview = false
+    private var previewUserId = "me"
+    fileprivate init(messageWithUser: MessageWithUser, messagesId: String = "xyz", preview: Bool) {
+        self._viewModel = StateObject(
+            wrappedValue: MessageBubbleVM(
+                Message(roomId: "abc", text: "Hello World!"),
+                messagesId: messagesId
+            )
+        )
+//    fileprivate init(messageWithUser: MessageWithUser, messagesId: String = "xyz", preview: Bool) {
+//        self.viewModel = MessageBubbleVM(
+//                Message(roomId: "abc", text: "Hello World!"),
+//                messagesId: messagesId
+//        )
+
+        self.messageWithUser = messageWithUser
+        self.user = messageWithUser.user
+        self.message = messageWithUser.message
+        self.forPreview = preview
+    }
 }
 
 
 struct MessageBubbleShape: Shape {
-    enum Direction {
+    enum Side {
         case left
         case right
     }
 
-    let direction: Direction
+    let side: Side
 
     func path(in rect: CGRect) -> Path {
-        return (direction == .left) ? getLeftBubblePath(in: rect) : getRightBubblePath(in: rect)
+        return (side == .left) ? getLeftBubblePath(in: rect) : getRightBubblePath(in: rect)
     }
 
     private func getLeftBubblePath(in rect: CGRect) -> Path {
@@ -184,9 +304,9 @@ struct MessageBubbleShape: Shape {
     }
 }
 
+
 #if DEBUG
 import Fakery
-
 struct MessageBubbleView_Previews: PreviewProvider {
     static let faker = Faker()
 

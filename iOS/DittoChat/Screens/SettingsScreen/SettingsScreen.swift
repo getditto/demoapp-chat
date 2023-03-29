@@ -10,15 +10,30 @@ import SwiftUI
 
 struct SettingsScreen: View {
     @StateObject var viewModel: SettingsScreenVM
+    @State var acceptLargeImages: Bool
     
     init() {
         self._viewModel = StateObject(wrappedValue: SettingsScreenVM())
+        self.acceptLargeImages = DataManager.shared.acceptLargeImages
     }
     
     var body: some View {
         NavigationView {
 
             List {
+                
+                Section(userSettingsTitleKey) {
+                    VStack(alignment: .leading) {
+                        Toggle("Enable Large Images", isOn: $acceptLargeImages)
+                            .onChange(of: acceptLargeImages) { accept in
+                                viewModel.setLargeImagesPrefs(accept)
+                            }
+
+                        Text("Large image sync should only be enabled if all peers are known to be using WiFi.")
+                            .font(.subheadline)
+                            .padding(.top, 8)
+                    }
+                }
                 
                 // DittoSwiftTools
                 Section {
@@ -55,8 +70,8 @@ struct SettingsScreen: View {
                 }
                 .sheet(isPresented: $viewModel.showExportLogsSheet) {
                     ExportLogsView()
-                }
-
+                }                
+                
                 // Public Rooms
                 if viewModel.archivedPublicRooms.count > 0 {
                     Section(archivedPublicRoomsTitleKey) {
@@ -166,7 +181,7 @@ struct SettingsScreen: View {
                                 Label(privRoom.name, systemImage: messageFillKey)
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                Button(deleteTitleKey) {
+                                Button(settingsDeleteTitleKey) {
                                     viewModel.deleteRoom(privRoom)
                                 }
                             }
