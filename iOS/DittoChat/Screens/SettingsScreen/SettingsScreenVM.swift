@@ -16,6 +16,8 @@ class SettingsScreenVM: ObservableObject {
     @Published var unReplicatedPrivateRooms: [Room] = []
     @Published var showExportLogsSheet = false
     @Published var users: [User] = []
+    @Published var acceptLargeImages = DataManager.shared.acceptLargeImages
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         
@@ -83,5 +85,9 @@ class SettingsScreenVM: ObservableObject {
         let vSDK = DataManager.shared.sdkVersion
         let appInfo = DataManager.shared.appInfo
         return "\(appInfo)\nDitto SDK \(vSDK)"
+    }
+    
+    func setLargeImagesPrefs(_ accept: Bool) {
+        DataManager.shared.acceptLargeImages = accept
     }
 }

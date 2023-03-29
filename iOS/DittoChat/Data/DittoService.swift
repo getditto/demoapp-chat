@@ -8,13 +8,13 @@
 
 import Combine
 import DittoSwift
-import Foundation
+import SwiftUI
 
 
 class DittoInstance {
     static var shared = DittoInstance()
     let ditto: Ditto
-    
+
     init(enableLogging loggingEnabled: Bool = false) {
         ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: APP_ID))
         
@@ -58,6 +58,7 @@ class DittoService: ReplicatingDataInterface {
     private var privateStore: LocalDataInterface
     private let PUBLIC_MESSAGES_ID = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef"
     
+    
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
 
@@ -99,7 +100,6 @@ class DittoService: ReplicatingDataInterface {
             .store(in: &cancellables)
     }
 }
-
 
 ///  General Overview
 ///  Public rooms are "public" by reason of the `findAll()` liveQueryPublisher on the `ditto.store["rooms"]` collection being
@@ -216,9 +216,18 @@ extension DittoService {
     }
 }
 
+//MARK: Messages
 extension DittoService {
-    //MARK: Messages
     
+    func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {        
+        return ditto.store.collection(collectionId)
+            .findByID(msgId)
+            .singleDocumentLiveQueryPublisher()
+            .compactMap { doc, _ in return doc }
+            .map { Message(document: $0) }
+            .eraseToAnyPublisher()
+    }
+
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never> {
         return ditto.store.collection(room.messagesId)
             .findAll()
@@ -227,8 +236,7 @@ extension DittoService {
             .map { docs, _ in
                 docs.map { Message(document: $0) }
             }
-            .eraseToAnyPublisher()
-
+            .eraseToAnyPublisher()        
     }
     
     func createMessage(for room: Room, text: String) {
@@ -247,6 +255,160 @@ extension DittoService {
                 textKey: text,
                 userIdKey: userId
             ] as [String: Any?] )
+    }
+    
+    /* TODO:
+     x refactor for jpeg from pngx
+     x (TemporaryFile) - FileManager protocol functions on LocalDataInterface for tmp image functions
+     x determine image size constraints
+     x NO - scale image instead of hard-coded size attribs?
+     * always save large image for later optional viewing with Settings toggle?
+     * offer user-facing size options? (a la SC)
+     * offer to save to Photos as well as delete, copy?
+     *  - how would copy work? simply copy the attachment token?
+     * Q:
+     x NO - is orientation metadata still needed with jpeg
+     x NO - is manual rotation still needed with jpeg?
+     */
+    // image param expected to be native image size/resolution, from which downsampled thumbnail will be derived
+    func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
+        let userId = privateStore.currentUserId ?? createdByUnknownKey
+        var nowDate = DateFormatter.isoDate.string(from: Date())
+        var fname = attachmentFilename(for: user(for: userId), type: .thumbnailImage, timestamp: nowDate)
+
+        //------------------------------------- Thumbnail ------------------------------------------
+        guard let thumbnailImg = await image.attachmentThumbnail() else {
+            print("DittoService.\(#function): ERROR - expected non-nil thumbnail")
+            throw AttachmentError.thumbnailCreateFail
+        }
+        print("DittoService.\(#function): UIImage.thumbnail.bytes: \(thumbnailImg.sizeInBytes)")
+
+        
+        guard let tmpStorage = try? TemporaryFile(creatingTempDirectoryForFilename: "thumbnail.jpg") else {
+            print("DittoService.\(#function): Error creating TMP storage directory")
+            throw AttachmentError.tmpStorageCreateFail
+        }
+
+        guard let _ = try? thumbnailImg.jpegData(compressionQuality: 1.0)?.write(to: tmpStorage.fileURL) else {
+            print("Error writing JPG attachment data to file at path: \(tmpStorage.fileURL.path) --> Throw")
+            throw AttachmentError.tmpStorageWriteFail
+        }
+        print("DittoService.\(#function): final thumbnail.sizeInBytes: \(thumbnailImg.sizeInBytes)")
+        
+        guard let thumbAttachment = ditto.store[room.messagesId].newAttachment(
+            path: tmpStorage.fileURL.path,
+            metadata: metadata(for: image, fname: fname, timestamp: nowDate)
+        ) else {
+            print("Error creating Ditto image attachment from thumbnail jpg data --> Throw")
+            throw AttachmentError.createFail
+        }
+        
+        // create new message doc with thumbnail attachment
+        let docId = UUID().uuidString
+        do {
+            try ditto.store[room.messagesId].upsert([
+                dbIdKey: docId,
+                createdOnKey: nowDate,
+                roomIdKey: room.id,
+                userIdKey: userId,
+//                largeImageTokenKey: nil,
+                thumbnailImageTokenKey: thumbAttachment
+            ])
+            
+            try await cleanupTmpStorage(tmpStorage.deleteDirectory)
+        } catch {
+            throw error
+        }
+        //------------------------------------------------------------------------------------------
+        
+        //------------------------------------- Large Image  ---------------------------------------
+        nowDate = DateFormatter.isoDate.string(from: Date())
+        fname = attachmentFilename(for: user(for: userId), type: .largeImage, timestamp: nowDate)
+
+        guard let tmpStorage = try? TemporaryFile(creatingTempDirectoryForFilename: "largeImage.jpg") else {
+            print("DittoService.\(#function): Error creating TMP storage directory")
+            throw AttachmentError.tmpStorageCreateFail
+        }
+
+        guard let _ = try? image.jpegData(compressionQuality: 1.0)?.write(to: tmpStorage.fileURL) else {
+            print("Error writing JPG attachment data to file at path: \(tmpStorage.fileURL.path) --> Return")
+            throw AttachmentError.tmpStorageWriteFail
+        }
+        print("DittoService.\(#function): final largeImage.sizeInBytes: \(image.sizeInBytes)")
+        
+        guard let largeAttachment = ditto.store[room.messagesId].newAttachment(
+            path: tmpStorage.fileURL.path,
+            metadata: metadata(for: image, fname: fname, timestamp: nowDate)
+        ) else {
+            print("Error creating Ditto image attachment from large jpg data --> Throw")
+            throw AttachmentError.createFail
+        }
+
+        let result = ditto.store[room.messagesId].findByID(docId).update { mutableDoc in
+            mutableDoc?[largeImageTokenKey].set(largeAttachment)
+        }
+        print("Add largeImage attachment result: \(result) for messages.id: \(docId)")
+        
+        do {
+            try await cleanupTmpStorage(tmpStorage.deleteDirectory)
+        } catch {
+            throw error
+        }
+    }
+
+    private func metadata(for image:UIImage, fname: String, timestamp: String) -> [String: String] {
+        [
+            // note: there is no actual "file" after tmp storage cleanup;
+            // it will then be just a unique identifier
+            filenameKey: fname,
+            userIdKey: privateStore.currentUserId ?? "",
+            usernameKey: user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey,
+            fileformatKey: jpgExtKey,
+            filesizeKey: String(image.sizeInBytes),
+            timestampKey: timestamp
+        ]
+    }
+
+    private func cleanupTmpStorage(_ cleanup: () throws -> Void) async throws {
+        do {
+            try cleanup()
+        } catch {
+            throw AttachmentError.tmpStorageCleanupFail
+        }
+    }
+
+    // filename/user utils
+    // make public somewhere?  ---------------------------------------------------------------------
+    private func attachmentFilename(
+        for user: User?,
+        type: AttachmentType,
+        timestamp: String,
+        ext: String = jpgExtKey
+    ) -> String {
+        var fname = self.user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey
+        let components = fname.components(separatedBy: " ")
+        fname = components.first ?? unknownUserNameKey
+        if components.count > 1 { fname += components.last! }
+        fname += "-\(type.description)" + "-\(timestamp)" + ext
+        
+        return fname
+    }
+    
+    private func user(for userId: String) -> User? {
+        if let doc = ditto.store[usersKey].findByID(userId).exec() {
+            return User(document: doc)
+        }
+        return nil
+    }
+    //  --------------------------------------------------------------------------------------------
+    
+    
+    /* DISUSED BECAUSE PROGRESS PUBLISHER BUG (refactored in BubbleViewVM */
+    func attachmentPublisher(
+        for token: DittoAttachmentToken,
+        in collectionId: String
+    ) -> DittoSwift.DittoCollection.FetchAttachmentPublisher {
+        ditto.store[collectionId].fetchAttachmentPublisher(attachmentToken: token)
     }
 }
 
@@ -484,6 +646,8 @@ extension DittoService {
         // evict the messages collection
         ditto.store[collectionsKey].findByID(room.messagesId).evict()
 
-        // we don't need to evict a public room because it will replicate automatically anyway
+        // We don't need to evict a public room because it will replicate automatically anyway,
+        // but room documents are very light-weight.
     }
 }
+

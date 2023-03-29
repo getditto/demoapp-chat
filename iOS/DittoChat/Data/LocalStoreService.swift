@@ -17,17 +17,27 @@ class LocalStoreService: LocalDataInterface {
     
     init() {
         let tmpDefaults = UserDefaults.standard
-        // prime privateRoomsSubject
+        
+        // prime privateRoomsSubject with decoded Room instances
         var rooms = tmpDefaults.decodeRoomsFromData(Array(tmpDefaults.privateRooms.values))
         self.privateRoomsSubject = CurrentValueSubject<[Room], Never>(rooms)
 
-        // prime archivedPrivateRoomsSubject
+        // prime archivedPrivateRoomsSubject with Room decoded instances
         rooms = tmpDefaults.decodeRoomsFromData(Array(tmpDefaults.archivedPrivateRooms.values))
         self.archivedPrivateRoomsSubject = CurrentValueSubject<[Room], Never>(rooms)
 
-        // prime archivedPublicRoomsSubject
+        // prime archivedPublicRoomsSubject with decoded Room instances
         rooms = tmpDefaults.decodeRoomsFromData(Array(tmpDefaults.archivedPublicRooms.values))
         self.archivedPublicRoomsSubject = CurrentValueSubject<[Room], Never>(rooms)
+    }
+    
+    var acceptLargeImages: Bool {
+        get { defaults.acceptLargeImages }
+        set { defaults.acceptLargeImages = newValue }
+    }
+
+    var acceptLargeImagesPublisher: AnyPublisher<Bool, Never> {
+        defaults.acceptLargeImagesPublisher
     }
 
     //MARK: Current User
@@ -201,10 +211,10 @@ fileprivate extension UserDefaults {
 
 fileprivate extension UserDefaults {
     
-    /* Though used by the LocalStoreService instance, this utility function extend UserDefaults
-     because LocalStoreService invokes them in its init() method to initialize its private Combine
-     currentValueSubjet properties with Room values, which it could not invoke on self before all
-     properties were initialized.
+    /* This utility function extends UserDefaults, rather than LocalStoreService because
+     LocalStoreService invokes this function in its init() method to initialize its private Combine
+     currentValueSubject properties with Room values. If this function were a method of
+     LocalStoreService, it could not be invoked on self before all properties were initialized.
      */
     func decodeRoomsFromData(_ roomsData: [Data]) -> [Room] {
         var rooms = [Room]()
@@ -221,3 +231,21 @@ fileprivate extension UserDefaults {
     }
 }
 
+fileprivate extension UserDefaults {
+    
+    @objc var acceptLargeImages: Bool {
+        get {
+            let accept = bool(forKey: acceptLargeImagesKey) as Bool?
+            return accept ?? false
+        }
+        set(value) {
+            set(value, forKey: acceptLargeImagesKey)
+        }
+    }
+    
+    var acceptLargeImagesPublisher: AnyPublisher<Bool, Never> {
+        UserDefaults.standard
+            .publisher(for: \.acceptLargeImages)
+            .eraseToAnyPublisher()
+    }
+}
