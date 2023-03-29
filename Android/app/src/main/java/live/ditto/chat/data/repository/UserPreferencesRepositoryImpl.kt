@@ -72,7 +72,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     private suspend fun mapUserPreferences(preferences: Preferences): UserPreferences {
         // Get the current User ID from preferences
-        val currentUserId = preferences[PreferencesKeys.CURRENT_USER_ID] // ?: UUID.randomUUID().toString()
+        val currentUserId = preferences[PreferencesKeys.CURRENT_USER_ID]
 
         currentUserId?.let {
             return  UserPreferences(currentUserId)
