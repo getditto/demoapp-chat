@@ -21,11 +21,11 @@ class DittoInstance {
         try! ditto.setOfflineOnlyLicenseToken(OFFLINE_ONLY_TOKEN)
         
         // update to v4 AddWins
-//        do {
-//            try ditto.disableSyncWithV3()
-//        } catch let error {
-//            print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
-//        }
+        do {
+            try ditto.disableSyncWithV3()
+        } catch let error {
+            print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
+        }
         
         if loggingEnabled {
             // make sure log level is set _before_ starting ditto
