@@ -111,8 +111,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
     // Hilt DI
-    implementation("com.google.dagger:hilt-android:2.44.2")
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Ditto
     implementation("live.ditto:ditto:4.0.0")
