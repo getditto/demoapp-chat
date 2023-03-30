@@ -48,7 +48,6 @@ class ConversationUiState(
 ) {
     private val _messages: MutableList<MessageUiModel> = initialMessages.toMutableStateList()
 
-//    private val _messagesWithUsers: MutableList<MessageUiModel>
     val messages: List<MessageUiModel> = _messages
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
 
