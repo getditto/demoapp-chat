@@ -42,15 +42,17 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import live.ditto.chat.FunctionalityNotAvailablePopup
 import live.ditto.chat.R
 import live.ditto.chat.components.DittochatAppBar
 import live.ditto.chat.theme.DittochatTheme
 import live.ditto.chat.viewmodel.MainViewModel
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by activityViewModels()
     private val activityViewModel: MainViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
@@ -107,10 +109,17 @@ class ProfileFragment : Fragment() {
                     if (userData == null) {
                         ProfileError()
                     } else {
-                        ProfileScreen(
-                            userData = userData!!,
-                            nestedScrollInteropConnection = nestedScrollInteropConnection
-                        )
+                        if (profileViewModel.isEditMode) {
+                            EditProfileScreen(
+                                userData = userData!!,
+                                nestedScrollInteropConnection = nestedScrollInteropConnection)
+                        } else {
+                            ProfileScreen(
+                                userData = userData!!,
+                                nestedScrollInteropConnection = nestedScrollInteropConnection
+                            )
+                        }
+
                     }
                 }
             }

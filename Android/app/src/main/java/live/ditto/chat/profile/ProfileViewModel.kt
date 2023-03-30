@@ -30,12 +30,18 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
+import javax.inject.Inject
 
-class ProfileViewModel : ViewModel() {
+@HiltViewModel
+class ProfileViewModel @Inject constructor(): ViewModel() {
 
     private var userId: String = ""
+
+    //whether the profile screen is in edit mode
+    var isEditMode = false
 
     fun setUserId(newUserId: String?) {
         if (newUserId != userId) {
