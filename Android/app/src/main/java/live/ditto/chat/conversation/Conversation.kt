@@ -246,7 +246,7 @@ fun Messages(
                     MessageUi(
                         onAuthorClick = { name -> navigateToProfile(name) },
                         msg = content,
-                        isUserMe = content.message.userId == authorId,
+                        isUserMe = content.user.fullName == authorId,
                         isFirstMessageByAuthor = isFirstMessageByAuthor,
                         isLastMessageByAuthor = isLastMessageByAuthor
                     )
