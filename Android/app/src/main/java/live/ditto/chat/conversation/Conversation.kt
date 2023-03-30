@@ -348,7 +348,7 @@ fun AuthorAndTextMessage(
 ) {
     Column(modifier = modifier) {
         if (isLastMessageByAuthor) {
-            AuthorNameTimestamp(msg)
+            AuthorNameTimestamp(msg, isUserMe)
         }
         ChatItemBubble(msg.message, isUserMe, authorClicked = authorClicked)
         if (isFirstMessageByAuthor) {
@@ -362,11 +362,18 @@ fun AuthorAndTextMessage(
 }
 
 @Composable
-private fun AuthorNameTimestamp(msg: MessageUiModel) {
+private fun AuthorNameTimestamp(msg: MessageUiModel, isUserMe: Boolean = false) {
+
+    var userFullName: String = msg.user.fullName
+        if (isUserMe) {
+           userFullName = "me"
+        }
+
+
     // Combine author and timestamp for author.
     Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
         Text(
-            text = msg.user.fullName ,
+            text = userFullName,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .alignBy(LastBaseline)
