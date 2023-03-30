@@ -26,15 +26,6 @@
 package live.ditto.chat.data
 
 /**
- * from legacy Ditto Chat App
- */
-//const val ACCESS_LICENSE = "o2d1c2VyX2lkZURpdHRvZmV4cGlyeXgYMjAyMy0xMi0wN1QwNzo1OTo1OS45OTlaaXNpZ25hdHVyZXhYRXdvTUFBQkdvQVk5US9rajVtNmtLejJncVErYkRsZHFhaTBOVW90djJWbHdTYWR0ZmZka1gyWkNaZGV5aVRxNkM1c3RmMnE2ZFNXMjFsR1A4V05hZkE9PQ"
-//const val APP_NAME = "live.ditto.Chat"
-//const val DEFAULT_PUBLIC_ROOM = "room" // collection name to connect with legacy Android app //
-
-// ***** END LEGACY ******
-
-/**
  * collection name for default public room
  */
 const val DEFAULT_PUBLIC_ROOM = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef" //"Public Room"

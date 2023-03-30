@@ -33,8 +33,8 @@ import java.util.UUID
 
 data class User(
     val id: String = UUID.randomUUID().toString(),
-    val firstName: String = "He who has",
-    val lastName: String = "no face",
+    val firstName: String = "",
+    val lastName: String = "",
     val fullName: String = firstName + " " + lastName
 ) {
     constructor(document: DittoDocument) :this(

@@ -78,16 +78,7 @@ class ConversationFragment : Fragment() {
                     viewModel = activityViewModel
                 )
 
-                val multiplePermissionsState = rememberMultiplePermissionsState(Permissions().requiredPermissions()
-//                    listOf(
-////                    android.Manifest.permission.ACCESS_FINE_LOCATION, // TODO : Request for API <= 32...
-//                        // TODO : add API level logic
-//                        Manifest.permission.NEARBY_WIFI_DEVICES,
-//                        Manifest.permission.BLUETOOTH_SCAN,
-//                        Manifest.permission.BLUETOOTH_ADVERTISE,
-//                        Manifest.permission.BLUETOOTH_CONNECT,
-//                    )
-                )
+                val multiplePermissionsState = rememberMultiplePermissionsState(Permissions().requiredPermissions())
 
                 if (multiplePermissionsState.allPermissionsGranted) {
                     DittochatTheme {
