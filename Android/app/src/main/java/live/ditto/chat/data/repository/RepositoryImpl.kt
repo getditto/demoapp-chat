@@ -55,11 +55,6 @@ class RepositoryImpl @Inject constructor(
 
     private var numberOfUsers: Flow<Int> = MutableStateFlow(0)
 
-    // TODO : ***double check this - using DittoMessage here but elsewhere using Message - remove one of the two (see [allMessages] above)***
-    private val dittoMessages:  MutableStateFlow<List<DittoMessage>> by lazy {
-        MutableStateFlow(emptyList())
-    }
-
     /**
      * Messages
      */
@@ -218,8 +213,6 @@ class RepositoryImpl @Inject constructor(
             messagesSubscription = messagesCollection.findAll().subscribe()
             messagesLiveQuery = messagesCollection.findAll().observeLocal { docs, _ ->
                 this.messagesDocs = docs
-                // TODO: Can probably remove one of these two mappings - refactor / reduce
-                dittoMessages.value = docs.map { DittoMessage(it)  }
                 allMessages.value = docs.map { Message(it) }
             }
         }

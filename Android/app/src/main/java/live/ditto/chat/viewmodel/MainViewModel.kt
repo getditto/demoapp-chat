@@ -86,7 +86,7 @@ class MainViewModel @Inject constructor(
         }
 
         // temporary user initialziation - replace once UI functionality exists to edit the user name
-        val firstName = "Fuad"
+        val firstName = "My"
         val lastName = android.os.Build.MODEL
         viewModelScope.launch {
             repository.saveCurrentUser(firstName, lastName) //TODO : set by user on app launch

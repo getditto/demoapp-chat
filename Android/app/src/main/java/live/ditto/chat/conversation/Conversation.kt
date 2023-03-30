@@ -91,6 +91,7 @@ fun ConversationContent(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     val scope = rememberCoroutineScope()
     val currentMoment: Instant = Clock.System.now()
+    val authorId = uiState.authorId.collectAsState(initial = "")
 
     Surface(modifier = modifier) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -101,7 +102,7 @@ fun ConversationContent(
             ) {
                 Messages(
                     messages = uiState.messages,
-                    authorId = uiState.authorId.toString(),
+                    authorId = authorId.value,
                     navigateToProfile = navigateToProfile,
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState
@@ -227,6 +228,7 @@ fun Messages(
             for (index in messages.indices) {
                 val prevAuthor = messages.getOrNull(index - 1)?.message?.userId
                 val nextAuthor = messages.getOrNull(index + 1)?.message?.userId
+                val userId = messages.getOrNull(index)?.message?.userId
                 val content = messages[index]
                 val isFirstMessageByAuthor = prevAuthor != content.message.userId
                 val isLastMessageByAuthor = nextAuthor != content.message.userId
@@ -246,7 +248,8 @@ fun Messages(
                     MessageUi(
                         onAuthorClick = { name -> navigateToProfile(name) },
                         msg = content,
-                        isUserMe = content.message.userId == authorId,
+                        authorId = authorId,
+                        userId = userId ?: "",
                         isFirstMessageByAuthor = isFirstMessageByAuthor,
                         isLastMessageByAuthor = isLastMessageByAuthor
                     )
@@ -285,15 +288,20 @@ fun Messages(
 fun MessageUi(
     onAuthorClick: (String) -> Unit,
     msg: MessageUiModel,
-    isUserMe: Boolean,
+    authorId: String,
+    userId: String,
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean
 ) {
+    val isUserMe = authorId == userId
+
     val borderColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.tertiary
     }
+
+    val authorImageId: Int = if (isUserMe) R.drawable.fuad else R.drawable.someone_else
 
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
@@ -308,7 +316,7 @@ fun MessageUi(
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     .clip(CircleShape)
                     .align(Alignment.Top),
-                painter = painterResource(id = msg.message.authorImage),
+                painter = painterResource(id = authorImageId),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
@@ -340,7 +348,7 @@ fun AuthorAndTextMessage(
 ) {
     Column(modifier = modifier) {
         if (isLastMessageByAuthor) {
-            AuthorNameTimestamp(msg)
+            AuthorNameTimestamp(msg, isUserMe)
         }
         ChatItemBubble(msg.message, isUserMe, authorClicked = authorClicked)
         if (isFirstMessageByAuthor) {
@@ -354,11 +362,18 @@ fun AuthorAndTextMessage(
 }
 
 @Composable
-private fun AuthorNameTimestamp(msg: MessageUiModel) {
+private fun AuthorNameTimestamp(msg: MessageUiModel, isUserMe: Boolean = false) {
+
+    var userFullName: String = msg.user.fullName
+        if (isUserMe) {
+           userFullName = "me"
+        }
+
+
     // Combine author and timestamp for author.
     Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
         Text(
-            text = msg.user.fullName ,
+            text = userFullName,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .alignBy(LastBaseline)

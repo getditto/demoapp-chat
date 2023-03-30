@@ -56,7 +56,3 @@ data class MessageUiModel (
         user = user
     )
 }
-
-//fun List<Message>.mapToMessageUiModel(users: List<User>): List<MessageUiModel> {
-//    return map {MessageUiModel(it, users)}
-//}
