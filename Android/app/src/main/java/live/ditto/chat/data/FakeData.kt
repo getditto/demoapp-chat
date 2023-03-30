@@ -29,8 +29,57 @@ import kotlinx.datetime.Clock
 import live.ditto.chat.R
 import live.ditto.chat.conversation.ConversationUiState
 import live.ditto.chat.conversation.Message
+import live.ditto.chat.data.model.MessageUiModel
+import live.ditto.chat.data.model.User
 import live.ditto.chat.profile.ProfileScreenState
 import java.util.*
+
+
+
+
+private val initialUiMessages = listOf(
+    MessageUiModel(
+        Message(
+            UUID.randomUUID().toString(),
+            Clock.System.now(),
+            "public",
+            "Check it out!",
+            "me",
+        ),
+        user = User("me", "Fuad", "Kamal")
+    ),
+    MessageUiModel(
+        Message(
+            UUID.randomUUID().toString(),
+            Clock.System.now(),
+            "public",
+            "Thank you!",
+            "me",
+            R.drawable.sticker,
+        ),
+        user = User("me", "Fuad", "Kamal")
+    ),
+    MessageUiModel(
+        Message(
+            UUID.randomUUID().toString(),
+            Clock.System.now(),
+            "public",
+            "You can use all the same stuff",
+            "Eric Turner",
+        ),
+        user = User("Eric Turner", "Eric", "Turner")
+    ),
+    MessageUiModel(
+        Message(
+            UUID.randomUUID().toString(),
+            Clock.System.now(),
+            "public",
+            "@flexronin Take a look at the `Flow.collectAsStateWithLifecycle()` APIs",
+            "Eric Turner",
+        ),
+        user = User("Eric Turner", "Eric", "Turner")
+    ),
+)
 
 private val initialMessages = listOf(
     Message(
@@ -85,9 +134,10 @@ private val initialMessages = listOf(
 )
 
 //val exampleUiState = ConversationUiState(
-//    initialMessages = initialMessages,
+//    initialMessages = initialUiMessages,
 //    channelName = "#public",
 //    channelMembers = 42,
+//    viewModel = null
 //)
 
 /**
