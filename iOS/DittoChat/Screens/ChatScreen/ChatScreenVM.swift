@@ -1,5 +1,5 @@
 ///
-//  PrivateChatScreenVM.swift
+//  ChatScreenVM.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 2/20/23.
@@ -17,7 +17,10 @@ class ChatScreenVM: ObservableObject {
     @Published var presentShareRoomScreen = false
     @Published var selectedItem: PhotosPickerItem?
     @Published var selectedImage: UIImage?
+    @Published var presentEditingView = false
+    @Published var keyboardStatus: KeyboardChangeEvent = .unchanged
     let room: Room
+    var editMsgId: String?
 
     init(room: Room) {
         self.room = room
@@ -41,8 +44,11 @@ class ChatScreenVM: ObservableObject {
                 return room?.name ?? ""
             }
             .assign(to: &$roomName)
+        
+        Publishers.keyboardStatus
+            .assign(to: &$keyboardStatus)
     }
-
+    
     func sendMessage() {
         // only allow non-empty string messages
         guard !inputText.isEmpty else { return }
@@ -70,6 +76,29 @@ class ChatScreenVM: ObservableObject {
             selectedItem = nil
             selectedImage = nil
         }
+    }
+    
+    func editMessageCallback(_ msgId: String) {
+        print("ChatScreenVM.editMessage called for Message.id: \(msgId)")
+        editMsgId = msgId
+        presentEditingView = true
+    }
+    
+    func editMessagesUsers() throws -> (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>) {
+        guard let msgIdx = messagesWithUsers.firstIndex(where: { $0.id == editMsgId }) else {
+            throw AppError.unknown("could not find message with id: \(editMsgId ?? "nil")")
+        }
+        let usrMsg = messagesWithUsers[msgIdx]
+        let chats = messagesWithUsers.prefix(through: msgIdx)
+        return (editUsrMsg: usrMsg, chats: chats)
+    }
+    
+    func saveEditedMessage(_ msg: Message) {
+        print("ChatScreenVM.saveEditedMessage with text: \(msg.text)")
+        DataManager.shared.saveEditedMessage(msg, in: room)
+        
+        editMsgId = nil
+        presentEditingView = false
     }
     
     // private room
