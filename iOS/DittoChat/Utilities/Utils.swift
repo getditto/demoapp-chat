@@ -5,6 +5,7 @@
 //  Created by Eric Turner on 12/22/22.
 //
 
+import Combine
 import CoreImage.CIFilterBuiltins
 import SwiftUI
 import UIKit
@@ -116,3 +117,27 @@ extension View {
   }
 }
 
+
+enum KeyboardChangeEvent {
+    case willShow, didShow, willHide, didHide, unchanged
+}
+// https://www.vadimbulavin.com/how-to-move-swiftui-view-when-keyboard-covers-text-field/
+extension Publishers {
+    
+    static var keyboardStatus: AnyPublisher<KeyboardChangeEvent, Never> {
+        let willShow = NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification)
+            .map {_ in KeyboardChangeEvent.willShow }
+        
+        let didShow = NotificationCenter.default.publisher(for: UIApplication.keyboardDidShowNotification)
+            .map {_ in KeyboardChangeEvent.didShow }
+        
+        let willHide = NotificationCenter.default.publisher(for: UIApplication.keyboardWillHideNotification)
+            .map {_ in KeyboardChangeEvent.willHide }
+        
+        let didHide = NotificationCenter.default.publisher(for: UIApplication.keyboardDidHideNotification)
+            .map {_ in KeyboardChangeEvent.didHide }
+        
+        return MergeMany(willShow, didShow, willHide, didHide)
+            .eraseToAnyPublisher()
+    }
+}

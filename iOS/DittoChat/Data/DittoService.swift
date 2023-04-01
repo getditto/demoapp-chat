@@ -257,19 +257,12 @@ extension DittoService {
             ] as [String: Any?] )
     }
     
-    /* TODO:
-     x refactor for jpeg from pngx
-     x (TemporaryFile) - FileManager protocol functions on LocalDataInterface for tmp image functions
-     x determine image size constraints
-     x NO - scale image instead of hard-coded size attribs?
-     * always save large image for later optional viewing with Settings toggle?
-     * offer user-facing size options? (a la SC)
-     * offer to save to Photos as well as delete, copy?
-     *  - how would copy work? simply copy the attachment token?
-     * Q:
-     x NO - is orientation metadata still needed with jpeg
-     x NO - is manual rotation still needed with jpeg?
-     */
+    func saveEditedMessage(_ message: Message, in room: Room) {
+        let _ = ditto.store[room.messagesId].findByID(message.id).update { mutableDoc in
+            mutableDoc?[textKey].set(message.text)
+        }
+    }
+    
     // image param expected to be native image size/resolution, from which downsampled thumbnail will be derived
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
         let userId = privateStore.currentUserId ?? createdByUnknownKey
