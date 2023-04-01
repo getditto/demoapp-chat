@@ -49,13 +49,8 @@ struct RoomsListScreen: View {
             }
         }
         .navigationDestination(for: Room.self) { room in
-            if room.isPrivate {
-                PrivateChatScreen(room: room)
-                    .withErrorHandling()
-            } else {
-                ChatScreen(room: room)
-                    .withErrorHandling()
-            }
+            ChatScreen(room: room)
+                .withErrorHandling()
         }
         .sheet(isPresented: $viewModel.presentProfileScreen) {
             ProfileScreen()

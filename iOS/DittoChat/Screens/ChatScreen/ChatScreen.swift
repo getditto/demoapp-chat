@@ -1,5 +1,5 @@
 ///
-//  PrivateChatScreen.swift
+//  ChatScreen.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 02/24/23.
@@ -23,12 +23,13 @@ struct ChatScreen: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(viewModel.messagesWithUsers) { msg in
+                        ForEach(viewModel.messagesWithUsers) { usrMsg in
                             MessageBubbleView(
-                                messageWithUser: msg,
-                                messagesId: viewModel.room.messagesId
+                                messageWithUser: usrMsg,
+                                messagesId: viewModel.room.messagesId,
+                                editCallback: viewModel.editMessageCallback
                             )
-                            .id(msg.id)
+                            .id(usrMsg.message.id)
                             .transition(.slide)
                         }
                     }
@@ -46,6 +47,12 @@ struct ChatScreen: View {
                         }
                     }
                 }
+                .onChange(of: viewModel.keyboardStatus) { status in
+                    if status == .willShow || status == .willHide { return }
+                    withAnimation {
+                        scrollToBottom(proxy: proxy)
+                    }
+                }
             }
             ChatInputView(
                 text: $viewModel.inputText,
@@ -55,8 +62,28 @@ struct ChatScreen: View {
         .listStyle(.inset)
         .navigationTitle(viewModel.roomName)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $viewModel.presentShareRoomScreen) {
+            if let codeStr = viewModel.shareQRCode() {
+                QRCodeView(
+                    roomName: viewModel.roomName,
+                    codeString: codeStr
+                )
+            } else {
+                NavigationView {
+                    GeneralErrorView(message: AppError.qrCodeFail.localizedDescription)
+                }
+            }
+        }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if viewModel.room.isPrivate {
+                    Button {
+                        viewModel.presentShareRoomScreen = true
+                    } label: {
+                        Image(systemName: qrCodeKey)
+                    }
+                }
+
                 PhotosPicker(selection: $viewModel.selectedItem,
                              matching: .images,
                              photoLibrary: .shared()
@@ -86,6 +113,24 @@ struct ChatScreen: View {
                         }
                     }
                 }
+            }
+        }
+        .fullScreenCover(
+            isPresented: $viewModel.presentEditingView,
+            onDismiss: {
+                print("ChatScreen.EditingView.onDismiss() -->")
+            }
+        ) {
+            if let msgsUsers = try? viewModel.editMessagesUsers() {
+                NavigationView {
+                    MessageEditView(
+                        msgsUsers,
+                        roomName: viewModel.roomName,
+                        editFunc: viewModel.saveEditedMessage(_:)
+                    )
+                }
+            } else {
+                EmptyView()
             }
         }
     }    

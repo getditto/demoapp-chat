@@ -10,24 +10,24 @@ import Combine
 import DittoSwift
 import SwiftUI
 
-struct MessageBubbleView: View {    
+struct MessageBubbleView: View {
     @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject private var viewModel: MessageBubbleVM
     @State private var needsImageSync = true
+    let delete: (String) -> Void
     let messageWithUser: MessageWithUser
-    var editCallback: ((String) -> Void)?
     private let user: User
     private let message: Message
 
-    init(messageWithUser: MessageWithUser, messagesId: String, editCallback: ((String) -> Void)? = nil) {
+    init(messageWithUser: MessageWithUser, messagesId: String, deleteFunction: @escaping (String) -> Void) {
         self._viewModel = StateObject(
             wrappedValue: MessageBubbleVM(messageWithUser.message, messagesId: messagesId)
         )
+        self.delete = deleteFunction
         self.messageWithUser = messageWithUser
         self.user = messageWithUser.user
         self.message = messageWithUser.message
         self.needsImageSync = messageWithUser.message.thumbnailImageToken != nil
-        self.editCallback = editCallback
     }
     
     private var hasThumbnail: Bool {
@@ -36,8 +36,12 @@ struct MessageBubbleView: View {
 
     // large images sent by local user are always stored in Ditto db and always available
     private var largeImageAvailable: Bool {
-        message.userId == DataManager.shared.currentUserId
-        || (DataManager.shared.acceptLargeImages && message.thumbnailImageToken != nil)
+        if message.thumbnailImageToken != nil {
+            if message.userId == DataManager.shared.currentUserId || DataManager.shared.acceptLargeImages {
+                return true
+            }
+        }
+        return false
     }
 
     private var side: MessageBubbleShape.Side {
@@ -123,72 +127,61 @@ struct MessageBubbleView: View {
                     Spacer()
                 }
             }
-        }
-        .padding(rowInsets)
-        .fullScreenCover(
-            isPresented: $viewModel.presentLargeImageView,
+            .fullScreenCover(
+                isPresented: $viewModel.presentLargeImageView,
             onDismiss: {
                 Task {
                     try? await viewModel.cleanupStorage()
                 }
+            }) {
+                AttachmentPreview()
+                    .environmentObject(viewModel)
             }
-        ) {
-            AttachmentPreview()
-                .environmentObject(viewModel)
-        }
-        .contextMenu {
-            contextMenuContent()
-        }
-        .task {
-            if needsImageSync {
-                needsImageSync = false
-                if let _ = message.thumbnailImageToken {
+            .contextMenu {
+                contextMenuContent()
+            }
+            .task {
+                if needsImageSync {
+                    needsImageSync = false
+                    if let _ = message.thumbnailImageToken {
 //                        print(".task: await fetchThumbnail()")
-                    await viewModel.fetchAttachment(type: .thumbnailImage)
+                        await viewModel.fetchAttachment(type: .thumbnailImage)
+                    }
                 }
             }
         }
+        .padding(rowInsets)
     }
     
     @ViewBuilder
     func contextMenuContent() -> some View {
-        // Only allow operations on local user messages
-        if user.id == DataManager.shared.currentUserId {
-            
-            if largeImageAvailable {
-                Button {
-                    viewModel.presentLargeImageView = true
-                } label: {
-                    Text(viewImageTitleKey)
-                }
+        if largeImageAvailable {
+            Button {
+                viewModel.presentLargeImageView = true
+            } label: {
+                Text(viewImageTitleKey)
             }
-            
+        }
+        // Only allow edit/delete for local user messages
+        if user.id == (DataManager.shared.currentUserId ?? "") {
             if !message.isImageMessage {
                 Button {
-                    if let editCallback = editCallback {
-                        editCallback(message.id)
-                    } else {
-                        errorHandler.handle(
-                            error: AppError.featureUnavailable("Something went wrong with Edit feature"),
-                            title: alertTitleKey
-                        )
-                    }
+                    errorHandler.handle(
+                        error: AppError.featureUnavailable("Edit feature not yet available"),
+                        title: alertTitleKey
+                    )
                 } label: {
                     Text(editTitleKey)
                 }
             }
             
             Button {
-                errorHandler.handle(
-                    error: AppError.featureUnavailable("Delete feature not yet available"),
-                    title: alertTitleKey
-                )
+                delete(message.id)
             } label: {
                 Text(deleteTitleKey)
             }
-        } else {
-            EmptyView()
         }
+        EmptyView()
     }
     
     @ViewBuilder
@@ -199,8 +192,7 @@ struct MessageBubbleView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             }
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
+            .edgesIgnoringSafeArea([.top, .horizontal])
         } else {
             DittoProgressView($viewModel.thumbnailProgress, side: 100)
                 .frame(width: 140, height: 120, alignment: .center)
@@ -226,7 +218,7 @@ struct MessageBubbleView: View {
                 messagesId: messagesId
             )
         )
-
+        self.delete = {msId in }
         self.messageWithUser = messageWithUser
         self.user = messageWithUser.user
         self.message = messageWithUser.message
