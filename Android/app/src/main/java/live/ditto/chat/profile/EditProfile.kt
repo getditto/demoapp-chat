@@ -172,7 +172,7 @@ private fun EditNameAndPosition(
             modifier = Modifier.baselineHeight(32.dp)
         )
         Position(
-            userData,
+            userData.position,
             modifier = Modifier
                 .padding(bottom = 20.dp)
                 .baselineHeight(24.dp)

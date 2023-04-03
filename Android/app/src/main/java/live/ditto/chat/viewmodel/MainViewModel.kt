@@ -41,8 +41,6 @@ import javax.inject.Inject
  *
  * This view model is used for all screens.
  */
-
-
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: Repository,
@@ -89,11 +87,19 @@ class MainViewModel @Inject constructor(
         val firstName = "My"
         val lastName = android.os.Build.MODEL
         viewModelScope.launch {
-            repository.saveCurrentUser(firstName, lastName) //TODO : set by user on app launch
+            repository.saveCurrentUser(firstName, lastName) //TODO : set by user on app launch <----
         }
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
     }
 
+    fun getUserById(id: String): User? {
+        val user : User? = users.value?.find { user: User -> user.id == id }
+        return user
+    }
+
+    fun getCurrentUser() : User? {
+        return getUserById(currentUserId.value)
+    }
 
 
     fun onCreateNewMessageClick(message: Message) {

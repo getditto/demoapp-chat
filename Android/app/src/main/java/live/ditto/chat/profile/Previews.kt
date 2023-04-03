@@ -35,7 +35,7 @@ import live.ditto.chat.theme.DittochatTheme
 @Composable
 fun ProfilePreview340() {
     DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
     }
 }
 
@@ -43,7 +43,7 @@ fun ProfilePreview340() {
 @Composable
 fun ProfilePreview480Me() {
     DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
     }
 }
 
@@ -51,14 +51,14 @@ fun ProfilePreview480Me() {
 @Composable
 fun ProfilePreview480Other() {
     DittochatTheme {
-        ProfileScreen(colleagueProfile, viewModel = null)
+        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
     }
 }
 @Preview(widthDp = 340, name = "340 width - Me - Dark")
 @Composable
 fun ProfilePreview340MeDark() {
     DittochatTheme(isDarkTheme = true) {
-        ProfileScreen(meProfile, viewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
     }
 }
 
@@ -66,7 +66,7 @@ fun ProfilePreview340MeDark() {
 @Composable
 fun ProfilePreview480MeDark() {
     DittochatTheme(isDarkTheme = true) {
-        ProfileScreen(meProfile, viewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
     }
 }
 
@@ -74,6 +74,6 @@ fun ProfilePreview480MeDark() {
 @Composable
 fun ProfilePreview480OtherDark() {
     DittochatTheme(isDarkTheme = true) {
-        ProfileScreen(colleagueProfile, viewModel = null)
+        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
     }
 }

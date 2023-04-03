@@ -56,12 +56,14 @@ import live.ditto.chat.components.baselineHeight
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
 import live.ditto.chat.theme.DittochatTheme
+import live.ditto.chat.viewmodel.MainViewModel
 
 @Composable
 fun ProfileScreen(
     userData: ProfileScreenState,
     nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
-    viewModel: ProfileViewModel?
+    viewModel: ProfileViewModel?,
+    userViewModel: MainViewModel?
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
@@ -87,7 +89,7 @@ fun ProfileScreen(
                     userData,
                     this@BoxWithConstraints.maxHeight
                 )
-                UserInfoFields(userData, this@BoxWithConstraints.maxHeight)
+                UserInfoFields(userData, this@BoxWithConstraints.maxHeight, userViewModel)
             }
         }
 
@@ -110,20 +112,28 @@ fun ProfileScreen(
 }
 
 @Composable
-fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp) {
+fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewModel: MainViewModel?) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
-        NameAndPosition(userData)
+        userViewModel?.let {
 
-        ProfileProperty(stringResource(R.string.display_name), userData.displayName)
 
-        ProfileProperty(stringResource(R.string.status), userData.status)
 
-        ProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
 
-        userData.timeZone?.let {
-            ProfileProperty(stringResource(R.string.timezone), userData.timeZone)
+        } ?: run {
+            // previews support
+            NameAndPosition(userData.name, userData.position)
+
+            ProfileProperty(stringResource(R.string.display_name), userData.displayName)
+
+            ProfileProperty(stringResource(R.string.status), userData.status)
+
+            ProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
+
+            userData.timeZone?.let {
+                ProfileProperty(stringResource(R.string.timezone), userData.timeZone)
+            }
         }
 
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
@@ -134,15 +144,15 @@ fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp) {
 
 @Composable
 private fun NameAndPosition(
-    userData: ProfileScreenState
+    name: String, position: String
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Name(
-            userData,
+            name,
             modifier = Modifier.baselineHeight(32.dp)
         )
         Position(
-            userData,
+            position,
             modifier = Modifier
                 .padding(bottom = 20.dp)
                 .baselineHeight(24.dp)
@@ -151,18 +161,27 @@ private fun NameAndPosition(
 }
 
 @Composable
-private fun Name(userData: ProfileScreenState, modifier: Modifier = Modifier) {
+private fun Name(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = userData.name,
+        text = name,
         modifier = modifier,
         style = MaterialTheme.typography.headlineSmall
     )
 }
 
 @Composable
-fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier) {
+private fun FullName(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = userData.position,
+        text = name,
+        modifier = modifier,
+        style = MaterialTheme.typography.headlineSmall
+    )
+}
+
+@Composable
+fun Position(position: String, modifier: Modifier = Modifier) {
+    Text(
+        text = position,
         modifier = modifier,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -271,7 +290,7 @@ fun ProfileFab(
 @Composable
 fun ConvPreviewLandscapeMeDefault() {
     DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
     }
 }
 
@@ -279,7 +298,7 @@ fun ConvPreviewLandscapeMeDefault() {
 @Composable
 fun ConvPreviewPortraitMeDefault() {
     DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
     }
 }
 
@@ -287,7 +306,7 @@ fun ConvPreviewPortraitMeDefault() {
 @Composable
 fun ConvPreviewPortraitOtherDefault() {
     DittochatTheme {
-        ProfileScreen(colleagueProfile, viewModel = null)
+        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
     }
 }
 

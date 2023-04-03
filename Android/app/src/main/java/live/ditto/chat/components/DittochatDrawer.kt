@@ -58,16 +58,23 @@ import live.ditto.chat.BuildConfig
 import live.ditto.chat.R
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
+import live.ditto.chat.data.model.User
 import live.ditto.chat.theme.DittochatTheme
+import live.ditto.chat.viewmodel.MainViewModel
 
 @Composable
 fun DittochatDrawerContent(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
-    sdkVersion : String
+    sdkVersion : String,
+    viewModel: MainViewModel?
 ) {
     val versionName = BuildConfig.VERSION_NAME
+    val user = viewModel?.getCurrentUser()
+    val fullName = ("${user?.fullName} (you)")
+    val meUserId = user?.id ?: meProfile.userId
+
     // Use windowInsetsTopHeight() to add a spacer which pushes the drawer content
     // below the status bar (y-axis)
     Column(modifier = Modifier
@@ -81,7 +88,7 @@ fun DittochatDrawerContent(
         ChatItem("private/Eric", false) { onChatClicked("droidcon-nyc") }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
-        ProfileItem("Fuad Kamal (you)", meProfile.photo) { onProfileClicked(meProfile.userId) }
+        ProfileItem( fullName, meProfile.photo) { onProfileClicked(meUserId) }
         ProfileItem("Eric Turner", colleagueProfile.photo) {
             onProfileClicked(colleagueProfile.userId)
         }
@@ -215,7 +222,7 @@ fun DrawerPreview() {
     DittochatTheme {
         Surface {
             Column {
-                DittochatDrawerContent({}, {},{}, "1.90")
+                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
             }
         }
     }
@@ -226,7 +233,7 @@ fun DrawerPreviewDark() {
     DittochatTheme(isDarkTheme = true) {
         Surface {
             Column {
-                DittochatDrawerContent({}, {},{}, "1.90")
+                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
             }
         }
     }

@@ -116,7 +116,8 @@ class ProfileFragment : Fragment() {
                             ProfileScreen(
                                 userData = userData!!,
                                 nestedScrollInteropConnection = nestedScrollInteropConnection,
-                                viewModel = profileViewModel
+                                viewModel = profileViewModel,
+                                userViewModel = activityViewModel
                             )
                         }
 
