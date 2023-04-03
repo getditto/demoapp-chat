@@ -10,6 +10,10 @@ import Combine
 import PhotosUI
 import SwiftUI
 
+enum MessageOperation {
+    case edit, deleteImage, deleteText
+}
+
 class ChatScreenVM: ObservableObject {
     @Published var inputText: String = ""
     @Published var roomName: String = ""
@@ -78,13 +82,29 @@ class ChatScreenVM: ObservableObject {
         }
     }
     
-    func editMessageCallback(_ msgId: String) {
-        print("ChatScreenVM.editMessage called for Message.id: \(msgId)")
-        editMsgId = msgId
+    func messageOperationCallback(_ op: MessageOperation, msg: Message) {
+        switch op {
+        case .edit:
+            editMessageCallback(msg)
+        case .deleteImage:
+            var editedMsg = msg
+            editedMsg.text = deletedImageMessageKey
+            editedMsg.thumbnailImageToken = nil
+            editedMsg.largeImageToken = nil
+            DataManager.shared.saveDeletedImageMessage(editedMsg, in: room)
+        case .deleteText:
+            var editedMsg = msg
+            editedMsg.text = deletedTextMessageKey
+            saveEditedTextMessage(editedMsg)
+        }
+    }
+
+    func editMessageCallback(_ msg: Message) {
+        editMsgId = msg.id
         presentEditingView = true
     }
-    
-    func editMessagesUsers() throws -> (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>) {
+
+    func editMessagesWithUsers() throws -> (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>) {
         guard let msgIdx = messagesWithUsers.firstIndex(where: { $0.id == editMsgId }) else {
             throw AppError.unknown("could not find message with id: \(editMsgId ?? "nil")")
         }
@@ -93,14 +113,13 @@ class ChatScreenVM: ObservableObject {
         return (editUsrMsg: usrMsg, chats: chats)
     }
     
-    func saveEditedMessage(_ msg: Message) {
-        print("ChatScreenVM.saveEditedMessage with text: \(msg.text)")
-        DataManager.shared.saveEditedMessage(msg, in: room)
+    func saveEditedTextMessage(_ msg: Message) {
+        DataManager.shared.saveEditedTextMessage(msg, in: room)
         
         editMsgId = nil
         presentEditingView = false
     }
-    
+
     // private room
     func shareQRCode() -> String? {
         if let collectionId = room.collectionId {

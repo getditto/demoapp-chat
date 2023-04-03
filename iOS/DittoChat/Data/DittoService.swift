@@ -257,12 +257,20 @@ extension DittoService {
             ] as [String: Any?] )
     }
     
-    func saveEditedMessage(_ message: Message, in room: Room) {
+    func saveEditedTextMessage(_ message: Message, in room: Room) {
         let _ = ditto.store[room.messagesId].findByID(message.id).update { mutableDoc in
             mutableDoc?[textKey].set(message.text)
         }
     }
-    
+
+    func saveDeletedImageMessage(_ message: Message, in room: Room) {
+        let _ = ditto.store[room.messagesId].findByID(message.id).update { mutableDoc in
+            mutableDoc?[thumbnailImageTokenKey] = nil
+            mutableDoc?[largeImageTokenKey] = nil
+            mutableDoc?[textKey].set(message.text)
+        }
+    }
+
     // image param expected to be native image size/resolution, from which downsampled thumbnail will be derived
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
         let userId = privateStore.currentUserId ?? createdByUnknownKey

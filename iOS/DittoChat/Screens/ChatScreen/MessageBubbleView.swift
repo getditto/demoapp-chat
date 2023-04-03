@@ -14,30 +14,45 @@ struct MessageBubbleView: View {
     @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject private var viewModel: MessageBubbleVM
     @State private var needsImageSync = true
-    let messageWithUser: MessageWithUser
-    var editCallback: ((String) -> Void)?
-    private let user: User
-    private let message: Message
+    let messageUser: MessageWithUser
+    var messageOpCallback: ((MessageOperation, Message) -> Void)?
 
-    init(messageWithUser: MessageWithUser, messagesId: String, editCallback: ((String) -> Void)? = nil) {
+    init(
+        messageWithUser: MessageWithUser,
+        messagesId: String,
+        messageOpCallback: ((MessageOperation, Message) -> Void)? = nil
+    ) {
         self._viewModel = StateObject(
             wrappedValue: MessageBubbleVM(messageWithUser.message, messagesId: messagesId)
         )
-        self.messageWithUser = messageWithUser
-        self.user = messageWithUser.user
-        self.message = messageWithUser.message
+        self.messageUser = messageWithUser
         self.needsImageSync = messageWithUser.message.thumbnailImageToken != nil
-        self.editCallback = editCallback
+        self.messageOpCallback = messageOpCallback
     }
     
+    private var user: User {
+        messageUser.user
+    }
+    
+    private var message: Message {
+        messageUser.message
+    }
+
     private var hasThumbnail: Bool {
         message.thumbnailImageToken != nil
     }
 
-    // large images sent by local user are always stored in Ditto db and always available
+    // large images sent by local user are always stored in Ditto db
+    // and always available to local user to preview at full rez
     private var largeImageAvailable: Bool {
-        message.userId == DataManager.shared.currentUserId
-        || (DataManager.shared.acceptLargeImages && message.thumbnailImageToken != nil)
+        if message.thumbnailImageToken != nil {
+            if message.userId == DataManager.shared.currentUserId
+                || DataManager.shared.acceptLargeImages
+            {
+                return true
+            }
+        }
+        return false
     }
 
     private var side: MessageBubbleShape.Side {
@@ -103,25 +118,28 @@ struct MessageBubbleView: View {
                 VStack(alignment: side == .right ? .trailing : .leading, spacing: 2) {
                     if hasThumbnail {
                         attachmentContentView()
-//                            .readSize { newSize in //debugging
-//                                print("attachment view size is: \(newSize)")
-//                            }
                     }
 
                     textContentView()
                         .padding(textInsets)
 
-                    Text(DateFormatter.shortTime.string(from: messageWithUser.message.createdOn))
+                    Text(DateFormatter.shortTime.string(from: message.createdOn))
                         .font(.system(size: UIFont.smallSystemFontSize))
                         .padding(textInsets)
                 }
                 .background(backgroundColor)
                 .foregroundColor(textColor)
                 .clipShape(MessageBubbleShape(side: side))
+                .contextMenu {
+                    contextMenuContent()
+                }
 
                 if side == .left {
                     Spacer()
                 }
+            }
+            .alert(deleteMessageTitleKey, isPresented: $viewModel.presentDeleteAlert) {
+                deleteAlertContent()
             }
         }
         .padding(rowInsets)
@@ -136,14 +154,10 @@ struct MessageBubbleView: View {
             AttachmentPreview()
                 .environmentObject(viewModel)
         }
-        .contextMenu {
-            contextMenuContent()
-        }
         .task {
             if needsImageSync {
                 needsImageSync = false
                 if let _ = message.thumbnailImageToken {
-//                        print(".task: await fetchThumbnail()")
                     await viewModel.fetchAttachment(type: .thumbnailImage)
                 }
             }
@@ -165,12 +179,11 @@ struct MessageBubbleView: View {
         else if user.id == DataManager.shared.currentUserId {
             if !message.isImageMessage {
                 Button {
-                    if let editCallback = editCallback {
-                        editCallback(message.id)
+                    if let edit = messageOpCallback {
+                        edit(.edit, message)
                     } else {
                         errorHandler.handle(
-                            error: AppError.featureUnavailable("Something went wrong with Edit feature"),
-                            title: alertTitleKey
+                            error: AppError.unknown(editMessageErrorTextKey)
                         )
                     }
                 } label: {
@@ -179,15 +192,30 @@ struct MessageBubbleView: View {
             }
             
             Button {
-                errorHandler.handle(
-                    error: AppError.featureUnavailable("Delete feature not yet available"),
-                    title: alertTitleKey
-                )
+                if let _ = messageOpCallback {
+                    viewModel.presentDeleteAlert = true
+                } else {
+                    errorHandler.handle(
+                        error: AppError.unknown(deleteMessageErrorTextKey)
+                    )
+                }
             } label: {
                 Text(deleteTitleKey)
             }
-        } else {
-            EmptyView()
+        }
+        EmptyView()
+    }
+    
+    @ViewBuilder
+    func deleteAlertContent() -> some View {
+        VStack {
+            Button(deleteEverywhereTitleKey, role: .destructive) {
+                messageOpCallback?(
+                    hasThumbnail ? .deleteImage : .deleteText,
+                    message
+                )
+            }
+            Button(cancelTitleKey, role: .cancel) { }
         }
     }
     
@@ -199,8 +227,7 @@ struct MessageBubbleView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             }
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
+            .edgesIgnoringSafeArea([.top, .horizontal])
         } else {
             DittoProgressView($viewModel.thumbnailProgress, side: 100)
                 .frame(width: 140, height: 120, alignment: .center)
@@ -226,11 +253,9 @@ struct MessageBubbleView: View {
                 messagesId: messagesId
             )
         )
-
-        self.messageWithUser = messageWithUser
-        self.user = messageWithUser.user
-        self.message = messageWithUser.message
+        self.messageUser = messageWithUser
         self.forPreview = preview
+        self.messageOpCallback = nil
     }
 }
 

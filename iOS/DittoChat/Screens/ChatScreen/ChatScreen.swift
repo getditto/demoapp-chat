@@ -27,7 +27,7 @@ struct ChatScreen: View {
                             MessageBubbleView(
                                 messageWithUser: usrMsg,
                                 messagesId: viewModel.room.messagesId,
-                                editCallback: viewModel.editMessageCallback
+                                messageOpCallback: viewModel.messageOperationCallback
                             )
                             .id(usrMsg.message.id)
                             .transition(.slide)
@@ -48,6 +48,7 @@ struct ChatScreen: View {
                     }
                 }
                 .onChange(of: viewModel.keyboardStatus) { status in
+                    guard !viewModel.presentEditingView else { return }
                     if status == .willShow || status == .willHide { return }
                     withAnimation {
                         scrollToBottom(proxy: proxy)
@@ -115,18 +116,13 @@ struct ChatScreen: View {
                 }
             }
         }
-        .fullScreenCover(
-            isPresented: $viewModel.presentEditingView,
-            onDismiss: {
-                print("ChatScreen.EditingView.onDismiss() -->")
-            }
-        ) {
-            if let msgsUsers = try? viewModel.editMessagesUsers() {
+        .fullScreenCover(isPresented: $viewModel.presentEditingView) {
+            if let msgsUsers = try? viewModel.editMessagesWithUsers() {
                 NavigationView {
                     MessageEditView(
                         msgsUsers,
                         roomName: viewModel.roomName,
-                        editFunc: viewModel.saveEditedMessage(_:)
+                        editFunc: viewModel.saveEditedTextMessage
                     )
                 }
             } else {

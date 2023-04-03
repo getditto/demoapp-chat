@@ -49,7 +49,6 @@ struct MessageEditView: View {
     @StateObject var viewModel: MessageEditVM
     let roomName: String
     
-    
     init(
         _ msgsUsers: (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>),
         roomName: String,
@@ -87,9 +86,10 @@ struct MessageEditView: View {
                     }
                 }
                 .onChange(of: viewModel.keyboardStatus) { status in
-                    if status == .willShow || status == .willHide { return }
-                    withAnimation {
-                        scrollToBottom(proxy: proxy)
+                    if status == .didShow || status == .didHide {
+                        withAnimation {
+                            scrollToBottom(proxy: proxy)
+                        }
                     }
                 }
             }
@@ -110,7 +110,7 @@ struct MessageEditView: View {
                 Button {
                     dismiss()
                 } label: {
-                    Text("Cancel")
+                    Text(cancelTitleKey)
                 }
                 .buttonStyle(.borderless)
             }
@@ -119,7 +119,7 @@ struct MessageEditView: View {
                 Button {
                     viewModel.saveEdit()
                 } label: {
-                    Text("Save")
+                    Text(saveTitleKey)
                 }
                 .buttonStyle(.borderless)
             }
@@ -148,9 +148,3 @@ struct MessageEditView: View {
         proxy.scrollTo(viewModel.messagesWithUsers.last?.id)
     }
 }
-
-//struct MessageEditView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MessageEditView()
-//    }
-//}
