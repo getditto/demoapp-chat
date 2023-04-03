@@ -102,6 +102,7 @@ class ProfileFragment : Fragment() {
                 val nestedScrollInteropConnection = rememberNestedScrollInteropConnection()
                 val isEditMode = profileViewModel.isEditMode.collectAsState(initial = false)
 
+
                 DittochatTheme {
                     if (userData == null) {
                         ProfileError()

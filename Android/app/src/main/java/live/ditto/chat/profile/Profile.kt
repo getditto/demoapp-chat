@@ -63,7 +63,8 @@ fun ProfileScreen(
     userData: ProfileScreenState,
     nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
     viewModel: ProfileViewModel?,
-    userViewModel: MainViewModel?
+    userViewModel: MainViewModel?,
+    isMe : Boolean
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
@@ -96,7 +97,7 @@ fun ProfileScreen(
         val fabExtended by remember { derivedStateOf { scrollState.value == 0 } }
         ProfileFab(
             extended = fabExtended,
-            userIsMe = userData.isMe(),
+            userIsMe = isMe,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 // Offsets the FAB to compensate for CoordinatorLayout collapsing behaviour
@@ -290,7 +291,7 @@ fun ProfileFab(
 @Composable
 fun ConvPreviewLandscapeMeDefault() {
     DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null, isMe = true)
     }
 }
 
@@ -298,7 +299,7 @@ fun ConvPreviewLandscapeMeDefault() {
 @Composable
 fun ConvPreviewPortraitMeDefault() {
     DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+        ProfileScreen(meProfile, viewModel = null, userViewModel = null, isMe = true)
     }
 }
 
@@ -306,7 +307,7 @@ fun ConvPreviewPortraitMeDefault() {
 @Composable
 fun ConvPreviewPortraitOtherDefault() {
     DittochatTheme {
-        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
+        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null, isMe = true)
     }
 }
 

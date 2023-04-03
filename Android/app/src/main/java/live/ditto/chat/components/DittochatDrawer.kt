@@ -29,19 +29,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -58,13 +46,16 @@ import live.ditto.chat.BuildConfig
 import live.ditto.chat.R
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
-import live.ditto.chat.data.model.User
 import live.ditto.chat.theme.DittochatTheme
 import live.ditto.chat.viewmodel.MainViewModel
 
+/**
+ * @param onProfileClicked function defining the action when the profile is clicked. takes userId:String and isMe:Boolean which is to say
+ * whether the profile clicked belongs to the user of the device
+ */
 @Composable
 fun DittochatDrawerContent(
-    onProfileClicked: (String) -> Unit,
+    onProfileClicked: (String, Boolean) -> Unit,
     onChatClicked: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     sdkVersion : String,
@@ -88,9 +79,9 @@ fun DittochatDrawerContent(
         ChatItem("private/Eric", false) { onChatClicked("droidcon-nyc") }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
-        ProfileItem( fullName, meProfile.photo) { onProfileClicked(meUserId) }
+        ProfileItem(fullName, meProfile.photo) { onProfileClicked(meUserId, true) }
         ProfileItem("Eric Turner", colleagueProfile.photo) {
-            onProfileClicked(colleagueProfile.userId)
+            onProfileClicked(colleagueProfile.userId, false)
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         TextButton(onClick = {
@@ -222,7 +213,7 @@ fun DrawerPreview() {
     DittochatTheme {
         Surface {
             Column {
-                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
+                DittochatDrawerContent({ s: String, b: Boolean -> }, {},{}, "1.90", viewModel = null)
             }
         }
     }
@@ -233,7 +224,7 @@ fun DrawerPreviewDark() {
     DittochatTheme(isDarkTheme = true) {
         Surface {
             Column {
-                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
+                DittochatDrawerContent({ s: String, b: Boolean -> }, {},{}, "1.90", viewModel = null)
             }
         }
     }

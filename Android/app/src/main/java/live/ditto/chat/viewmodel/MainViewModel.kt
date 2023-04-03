@@ -51,6 +51,12 @@ class MainViewModel @Inject constructor(
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
 
+    /**
+     * Flag for whether the profile that has been clicked is this user or another user
+     */
+    private val _isUserMe = MutableStateFlow(false)
+    val isUserMe = _isUserMe.asStateFlow()
+
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
     }
@@ -101,7 +107,6 @@ class MainViewModel @Inject constructor(
         return getUserById(currentUserId.value)
     }
 
-
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
             repository.createMessage(message)
@@ -118,6 +123,14 @@ class MainViewModel @Inject constructor(
 
     fun resetOpenDrawerAction() {
         _drawerShouldBeOpened.value = false
+    }
+
+    fun displayMeUser() {
+        _isUserMe.value = true
+    }
+
+    fun displayOtherUser() {
+        _isUserMe.value = false
     }
 
 }
