@@ -160,7 +160,7 @@ private fun Name(userData: ProfileScreenState, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier) {
+fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier) {
     Text(
         text = userData.position,
         modifier = modifier,
