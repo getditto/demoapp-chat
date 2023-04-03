@@ -38,7 +38,6 @@ class MessageEditVM: ObservableObject {
     }
     
     func saveEdit() {
-        if editMessage.text == editText { return } // no edit change
         editUsrMsg.message.text = editText
         saveEditCallback(editUsrMsg.message)
     }
