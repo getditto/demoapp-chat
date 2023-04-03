@@ -152,17 +152,17 @@ struct MessageBubbleView: View {
     
     @ViewBuilder
     func contextMenuContent() -> some View {
-        // Only allow operations on local user messages
-        if user.id == DataManager.shared.currentUserId {
-            
-            if largeImageAvailable {
-                Button {
-                    viewModel.presentLargeImageView = true
-                } label: {
-                    Text(viewImageTitleKey)
-                }
+
+        // display full rez image if EnableLargeImages option is set in Settings, or if local user
+        if hasThumbnail && (largeImageAvailable || user.id == DataManager.shared.currentUserId) {
+            Button {
+                viewModel.presentLargeImageView = true
+            } label: {
+                Text(viewImageTitleKey)
             }
-            
+        }
+        // Only allow edit/delete operations on local user messages
+        else if user.id == DataManager.shared.currentUserId {
             if !message.isImageMessage {
                 Button {
                     if let editCallback = editCallback {
