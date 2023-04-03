@@ -87,15 +87,9 @@ class ChatScreenVM: ObservableObject {
         case .edit:
             editMessageCallback(msg)
         case .deleteImage:
-            var editedMsg = msg
-            editedMsg.text = deletedImageMessageKey
-            editedMsg.thumbnailImageToken = nil
-            editedMsg.largeImageToken = nil
-            DataManager.shared.saveDeletedImageMessage(editedMsg, in: room)
+            deleteImageMessage(msg)
         case .deleteText:
-            var editedMsg = msg
-            editedMsg.text = deletedTextMessageKey
-            saveEditedTextMessage(editedMsg)
+            deleteTextMessage(msg)
         }
     }
 
@@ -114,10 +108,26 @@ class ChatScreenVM: ObservableObject {
     }
     
     func saveEditedTextMessage(_ msg: Message) {
+        if msg.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return deleteTextMessage(msg)
+        }
         DataManager.shared.saveEditedTextMessage(msg, in: room)
-        
         editMsgId = nil
         presentEditingView = false
+    }
+    
+    func deleteTextMessage(_ msg: Message) {
+        var editedMsg = msg
+        editedMsg.text = deletedTextMessageKey
+        saveEditedTextMessage(editedMsg)
+    }
+    
+    func deleteImageMessage(_ msg: Message) {
+        var editedMsg = msg
+        editedMsg.text = deletedImageMessageKey
+        editedMsg.thumbnailImageToken = nil
+        editedMsg.largeImageToken = nil
+        DataManager.shared.saveDeletedImageMessage(editedMsg, in: room)
     }
 
     // private room
