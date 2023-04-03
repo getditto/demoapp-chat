@@ -60,7 +60,8 @@ import live.ditto.chat.theme.DittochatTheme
 @Composable
 fun ProfileScreen(
     userData: ProfileScreenState,
-    nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection()
+    nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
+    viewModel: ProfileViewModel?
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
@@ -98,7 +99,12 @@ fun ProfileScreen(
                 .align(Alignment.BottomEnd)
                 // Offsets the FAB to compensate for CoordinatorLayout collapsing behaviour
                 .offset(y = ((-100).dp)),
-            onFabClicked = { functionalityNotAvailablePopupShown = true }
+            onFabClicked = {
+                viewModel?.let {
+                    viewModel.changeEditMode()
+                }
+
+            }
         )
     }
 }
@@ -258,11 +264,14 @@ fun ProfileFab(
     }
 }
 
+/**
+ * Previews
+ */
 @Preview(widthDp = 640, heightDp = 360)
 @Composable
 fun ConvPreviewLandscapeMeDefault() {
     DittochatTheme {
-        ProfileScreen(meProfile)
+        ProfileScreen(meProfile, viewModel = null)
     }
 }
 
@@ -270,7 +279,7 @@ fun ConvPreviewLandscapeMeDefault() {
 @Composable
 fun ConvPreviewPortraitMeDefault() {
     DittochatTheme {
-        ProfileScreen(meProfile)
+        ProfileScreen(meProfile, viewModel = null)
     }
 }
 
@@ -278,7 +287,7 @@ fun ConvPreviewPortraitMeDefault() {
 @Composable
 fun ConvPreviewPortraitOtherDefault() {
     DittochatTheme {
-        ProfileScreen(colleagueProfile)
+        ProfileScreen(colleagueProfile, viewModel = null)
     }
 }
 

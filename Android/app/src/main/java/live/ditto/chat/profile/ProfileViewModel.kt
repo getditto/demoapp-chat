@@ -31,6 +31,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
 import javax.inject.Inject
@@ -41,7 +44,11 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
     private var userId: String = ""
 
     //whether the profile screen is in edit mode
-    var isEditMode = false
+    private val _isEditMode= MutableStateFlow(false)
+    val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
+
+    private val _userData = MutableLiveData<ProfileScreenState>()
+    val userData: LiveData<ProfileScreenState> = _userData
 
     fun setUserId(newUserId: String?) {
         if (newUserId != userId) {
@@ -55,8 +62,10 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-    private val _userData = MutableLiveData<ProfileScreenState>()
-    val userData: LiveData<ProfileScreenState> = _userData
+    fun changeEditMode() {
+        _isEditMode.value = !(_isEditMode.value)
+    }
+
 }
 
 @Immutable
@@ -69,7 +78,8 @@ data class ProfileScreenState(
     val position: String,
     val twitter: String = "",
     val timeZone: String?, // Null if me
-    val commonChannels: String? // Null if me
+    val commonChannels: String?, // Null if me
+
 ) {
     fun isMe() = userId == meProfile.userId
 }
