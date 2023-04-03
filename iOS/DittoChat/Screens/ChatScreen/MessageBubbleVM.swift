@@ -17,10 +17,9 @@ class MessageBubbleVM: ObservableObject {
     @Published private(set) var fileURL: URL? = nil
     @Published var presentLargeImageView = false
     @Published private(set) var message: Message
-    
+    @Published var presentDeleteAlert = false
     private let messagesId: String
-    private var tmpStorage: TemporaryFile?
-    
+    private var tmpStorage: TemporaryFile?    
     
     init(_ msg: Message, messagesId: String) {
         self.message = msg
@@ -57,7 +56,6 @@ class MessageBubbleVM: ObservableObject {
             with: token,
             from: messagesId,
             onProgress: {[weak self] ratio in
-//                print("ImageAttachmentFetcher.fetch.onProgress SEND .progress(\(ratio))")
                 switch type {
                 case .thumbnailImage:
                     self?.thumbnailProgress = ratio
@@ -71,7 +69,6 @@ class MessageBubbleVM: ObservableObject {
                     
                     switch type {
                     case .thumbnailImage:
-//                        print("ImageAttachmentFetcher.fetch.onComplete.success SET thumbnailImage = (image.size:\(uiImage.size))")
                         self.thumbnailImage = Image(uiImage: uiImage)
                     
                     case .largeImage:
@@ -89,8 +86,6 @@ class MessageBubbleVM: ObservableObject {
                         } else {
                             print("ImageAttachmentFetcher.onComplete.success ERROR creating tmpStorage")
                         }
-//                    default:
-//                        print("fetcherPublisher.onComplete.success: ERROR - unsupported attachment type: \(type.rawValue)")
                     }
                     
                 case .failure:
@@ -128,16 +123,13 @@ struct ImageAttachmentFetcher {
         let _ = ditto.store[collectionId].fetchAttachment(token: token) { event in
             switch event {
             case .progress(let downloadedBytes, let totalBytes):
-//                let percent = Int(Double(downloadedBytes) / Double(totalBytes) * 100)
                 let percent = Double(downloadedBytes) / Double(totalBytes)
-//                print("ImageFetcher.fetch.progress(\(percent)%)")
                 onProgress(percent)
 
             case .completed(let attachment):
                 do {
                     let data = try attachment.getData()
                     if let uiImage = UIImage(data: data) {
-//                        print("ImageFetcher.fetch.completed(uiImage.size:\(uiImage.size))")
                         onComplete(.success( (image: uiImage, metadata: attachment.metadata) ))
                     }
                 } catch {
