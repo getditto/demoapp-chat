@@ -59,10 +59,10 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
             userId = newUserId ?: meProfile.userId
         }
         // Workaround for simplicity
-        _userData.value = if (userId == meProfile.userId || userId == meProfile.displayName) {
-            meProfile
-        } else {
+        _userData.value = if (userId == colleagueProfile.userId) {
             colleagueProfile
+        } else {
+            meProfile
         }
     }
 
