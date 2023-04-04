@@ -56,6 +56,7 @@ class MainViewModel @Inject constructor(
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
 
+
     /**
      * Flag for whether the profile that has been clicked is this user or another user
      */

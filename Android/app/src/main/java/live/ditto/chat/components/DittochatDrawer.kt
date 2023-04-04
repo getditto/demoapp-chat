@@ -33,6 +33,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -59,12 +61,14 @@ fun DittochatDrawerContent(
     onChatClicked: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     sdkVersion : String,
-    viewModel: MainViewModel?
+    viewModel: MainViewModel
 ) {
     val versionName = BuildConfig.VERSION_NAME
-    val user = viewModel?.getCurrentUser()
-    val fullName = ("${user?.fullName} (you)")
-    val meUserId = user?.id ?: meProfile.userId
+    val mainUiState by viewModel.uiState.collectAsState()
+    val userId by viewModel.currentUserId.collectAsState()
+
+    val fullName = ("${mainUiState.currentFirstName + " " + mainUiState.currentLastName} (you)")
+    val meUserId = userId
 
     // Use windowInsetsTopHeight() to add a spacer which pushes the drawer content
     // below the status bar (y-axis)
@@ -209,25 +213,25 @@ fun DividerItem(modifier: Modifier = Modifier) {
     )
 }
 
-@Composable
-@Preview
-fun DrawerPreview() {
-    DittochatTheme {
-        Surface {
-            Column {
-                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
-            }
-        }
-    }
-}
-@Composable
-@Preview
-fun DrawerPreviewDark() {
-    DittochatTheme(isDarkTheme = true) {
-        Surface {
-            Column {
-                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
-            }
-        }
-    }
-}
+//@Composable
+//@Preview
+//fun DrawerPreview() {
+//    DittochatTheme {
+//        Surface {
+//            Column {
+//                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
+//            }
+//        }
+//    }
+//}
+//@Composable
+//@Preview
+//fun DrawerPreviewDark() {
+//    DittochatTheme(isDarkTheme = true) {
+//        Surface {
+//            Column {
+//                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
+//            }
+//        }
+//    }
+//}
