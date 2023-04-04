@@ -63,8 +63,7 @@ fun ProfileScreen(
     userData: ProfileScreenState,
     nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
     viewModel: ProfileViewModel?,
-    userViewModel: MainViewModel?,
-    isMe : Boolean
+    userViewModel: MainViewModel,
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
@@ -72,6 +71,10 @@ fun ProfileScreen(
     }
 
     val scrollState = rememberScrollState()
+
+    val isUserMe : Boolean? by userViewModel
+        .isUserMe
+        .collectAsState(initial = false)
 
     BoxWithConstraints(
         modifier = Modifier
@@ -90,21 +93,26 @@ fun ProfileScreen(
                     userData,
                     this@BoxWithConstraints.maxHeight
                 )
-                UserInfoFields(userData, this@BoxWithConstraints.maxHeight, userViewModel)
+                UserInfoFields(userData, this@BoxWithConstraints.maxHeight, userViewModel, isUserMe ?: false)
             }
         }
 
         val fabExtended by remember { derivedStateOf { scrollState.value == 0 } }
+
         ProfileFab(
             extended = fabExtended,
-            userIsMe = isMe,
+            userIsMe = isUserMe ?: false,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 // Offsets the FAB to compensate for CoordinatorLayout collapsing behaviour
                 .offset(y = ((-100).dp)),
             onFabClicked = {
                 viewModel?.let {
-                    viewModel.changeEditMode()
+                    if (isUserMe == true) {
+                        viewModel.changeEditMode()
+                    } else {
+                        functionalityNotAvailablePopupShown = true
+                    }
                 }
 
             }
@@ -113,30 +121,34 @@ fun ProfileScreen(
 }
 
 @Composable
-fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewModel: MainViewModel?) {
+fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewModel: MainViewModel?, isUserMe: Boolean = false) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
         userViewModel?.let {
-
-
-
+            if (isUserMe) {
+                val user = userViewModel.getCurrentUser()
+                val fullName = user?.fullName ?: userData.name
+                NameAndPosition(name = fullName, position = userData.position)
+            } else {
+                NameAndPosition(userData.name, userData.position)
+            }
 
         } ?: run {
             // previews support
             NameAndPosition(userData.name, userData.position)
 
-            ProfileProperty(stringResource(R.string.display_name), userData.displayName)
 
-            ProfileProperty(stringResource(R.string.status), userData.status)
-
-            ProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
-
-            userData.timeZone?.let {
-                ProfileProperty(stringResource(R.string.timezone), userData.timeZone)
-            }
         }
+        ProfileProperty(stringResource(R.string.display_name), userData.displayName)
 
+        ProfileProperty(stringResource(R.string.status), userData.status)
+
+        ProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
+
+        userData.timeZone?.let {
+            ProfileProperty(stringResource(R.string.timezone), userData.timeZone)
+        }
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
         // in order to always leave some content at the top.
         Spacer(Modifier.height((containerHeight - 320.dp).coerceAtLeast(0.dp)))
@@ -193,7 +205,7 @@ fun Position(position: String, modifier: Modifier = Modifier) {
 fun ProfileHeader(
     scrollState: ScrollState,
     data: ProfileScreenState,
-    containerHeight: Dp
+    containerHeight: Dp,
 ) {
     val offset = (scrollState.value / 2)
     val offsetDp = with(LocalDensity.current) { offset.toDp() }
@@ -287,29 +299,29 @@ fun ProfileFab(
 /**
  * Previews
  */
-@Preview(widthDp = 640, heightDp = 360)
-@Composable
-fun ConvPreviewLandscapeMeDefault() {
-    DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null, userViewModel = null, isMe = true)
-    }
-}
+//@Preview(widthDp = 640, heightDp = 360)
+//@Composable
+//fun ConvPreviewLandscapeMeDefault() {
+//    DittochatTheme {
+//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
 
-@Preview(widthDp = 360, heightDp = 480)
-@Composable
-fun ConvPreviewPortraitMeDefault() {
-    DittochatTheme {
-        ProfileScreen(meProfile, viewModel = null, userViewModel = null, isMe = true)
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 480)
-@Composable
-fun ConvPreviewPortraitOtherDefault() {
-    DittochatTheme {
-        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null, isMe = true)
-    }
-}
+//@Preview(widthDp = 360, heightDp = 480)
+//@Composable
+//fun ConvPreviewPortraitMeDefault() {
+//    DittochatTheme {
+//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
+//
+//@Preview(widthDp = 360, heightDp = 480)
+//@Composable
+//fun ConvPreviewPortraitOtherDefault() {
+//    DittochatTheme {
+//        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
+//    }
+//}
 
 @Preview
 @Composable

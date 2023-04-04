@@ -30,10 +30,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import live.ditto.chat.conversation.Message
+import live.ditto.chat.data.colleagueProfile
+import live.ditto.chat.data.colleagueUser
+import live.ditto.chat.data.meProfile
 import live.ditto.chat.data.model.MessageUiModel
 import live.ditto.chat.data.model.User
 import live.ditto.chat.data.repository.Repository
 import live.ditto.chat.data.repository.UserPreferencesRepository
+import live.ditto.chat.profile.ProfileFragment
+import live.ditto.chat.profile.ProfileScreenState
 import javax.inject.Inject
 
 /**
@@ -78,6 +83,26 @@ class MainViewModel @Inject constructor(
                 message = it,
                 users = users
             )
+        }
+    }
+
+    private val _userData = MutableLiveData<User>()
+    val userData: LiveData<User> = _userData
+    private var userId: String = ""
+    /**
+     * This is used in the `onAttach` of the [ProfileFragment]
+     * @param newUserId the id of the user who's profile was tapped on
+     */
+    fun setUserId(newUserId: String?) {
+        if (newUserId != userId) {
+            userId = newUserId ?: meProfile.userId
+        }
+
+        _isUserMe.value = userId == currentUserId.value
+        _userData.value = if (userId == currentUserId.value) {
+            getCurrentUser()
+        } else {
+            colleagueUser
         }
     }
 

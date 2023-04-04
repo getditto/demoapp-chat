@@ -155,6 +155,12 @@ val colleagueProfile = ProfileScreenState(
     commonChannels = "2"
 )
 
+val colleagueUser = User(
+    id = "12345",
+    firstName = "Eric",
+    lastName = "Turner"
+)
+
 /**
  * Example "me" profile.
  */

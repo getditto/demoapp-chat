@@ -55,7 +55,7 @@ import live.ditto.chat.viewmodel.MainViewModel
  */
 @Composable
 fun DittochatDrawerContent(
-    onProfileClicked: (String, Boolean) -> Unit,
+    onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     sdkVersion : String,
@@ -79,9 +79,11 @@ fun DittochatDrawerContent(
         ChatItem("private/Eric", false) { onChatClicked("droidcon-nyc") }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
-        ProfileItem(fullName, meProfile.photo) { onProfileClicked(meUserId, true) }
+        ProfileItem(fullName, meProfile.photo) {
+            onProfileClicked(meUserId)
+        }
         ProfileItem("Eric Turner", colleagueProfile.photo) {
-            onProfileClicked(colleagueProfile.userId, false)
+            onProfileClicked(colleagueProfile.userId)
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         TextButton(onClick = {
@@ -213,7 +215,7 @@ fun DrawerPreview() {
     DittochatTheme {
         Surface {
             Column {
-                DittochatDrawerContent({ s: String, b: Boolean -> }, {},{}, "1.90", viewModel = null)
+                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
             }
         }
     }
@@ -224,7 +226,7 @@ fun DrawerPreviewDark() {
     DittochatTheme(isDarkTheme = true) {
         Surface {
             Column {
-                DittochatDrawerContent({ s: String, b: Boolean -> }, {},{}, "1.90", viewModel = null)
+                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
             }
         }
     }

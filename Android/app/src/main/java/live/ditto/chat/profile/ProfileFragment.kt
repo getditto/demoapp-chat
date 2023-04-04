@@ -56,6 +56,7 @@ class ProfileFragment : Fragment() {
         // Consider using safe args plugin
         val userId = arguments?.getString("userId")
         profileViewModel.setUserId(userId)
+        activityViewModel.setUserId(userId)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
