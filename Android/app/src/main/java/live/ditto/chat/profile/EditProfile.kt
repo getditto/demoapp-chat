@@ -25,7 +25,6 @@
 
 package live.ditto.chat.profile
 
-import android.widget.EditText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
@@ -98,6 +97,7 @@ fun EditProfileScreen(
         ProfileFab(
             extended = fabExtended,
             userIsMe = userData.isMe(),
+            isEditMode = true,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 // Offsets the FAB to compensate for CoordinatorLayout collapsing behaviour

@@ -34,11 +34,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -102,6 +104,7 @@ fun ProfileScreen(
         ProfileFab(
             extended = fabExtended,
             userIsMe = isUserMe ?: false,
+            isEditMode = false,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 // Offsets the FAB to compensate for CoordinatorLayout collapsing behaviour
@@ -261,9 +264,22 @@ fun ProfileError() {
 fun ProfileFab(
     extended: Boolean,
     userIsMe: Boolean,
+    isEditMode: Boolean,
     modifier: Modifier = Modifier,
     onFabClicked: () -> Unit = { }
 ) {
+    var id : Int = if (isEditMode) {
+        R.string.save_profile
+    } else {
+        if (userIsMe) R.string.edit_profile else R.string.message
+    }
+
+    var imageVector : ImageVector = if (isEditMode) {
+        Icons.Outlined.Save
+    } else {
+        if (userIsMe) Icons.Outlined.Create else Icons.Outlined.Chat
+    }
+
     key(userIsMe) { // Prevent multiple invocations to execute during composition
         FloatingActionButton(
             onClick = onFabClicked,
@@ -277,16 +293,14 @@ fun ProfileFab(
             AnimatingFabContent(
                 icon = {
                     Icon(
-                        imageVector = if (userIsMe) Icons.Outlined.Create else Icons.Outlined.Chat,
-                        contentDescription = stringResource(
-                            if (userIsMe) R.string.edit_profile else R.string.message
-                        )
+                        imageVector = imageVector,
+                        contentDescription = stringResource(id)
                     )
                 },
                 text = {
                     Text(
                         text = stringResource(
-                            id = if (userIsMe) R.string.edit_profile else R.string.message
+                            id = id
                         ),
                     )
                 },
@@ -327,6 +341,6 @@ fun ProfileFab(
 @Composable
 fun ProfileFabPreview() {
     DittochatTheme {
-        ProfileFab(extended = true, userIsMe = false)
+        ProfileFab(extended = true, userIsMe = false, isEditMode = false)
     }
 }
