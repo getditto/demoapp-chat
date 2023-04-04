@@ -50,6 +50,10 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
     private val _userData = MutableLiveData<ProfileScreenState>()
     val userData: LiveData<ProfileScreenState> = _userData
 
+    /**
+     * This is used in the `onAttach` of the [ProfileFragment]
+     * @param newUserId the id of the user who's profile was tapped on
+     */
     fun setUserId(newUserId: String?) {
         if (newUserId != userId) {
             userId = newUserId ?: meProfile.userId
