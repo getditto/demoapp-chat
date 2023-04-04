@@ -148,11 +148,17 @@ val colleagueProfile = ProfileScreenState(
     photo = R.drawable.someone_else,
     name = "Eric Turner",
     status = "Away",
-    displayName = "taylor",
-    position = "Senior Android Dev at Openlane",
-    twitter = "twitter.com/taylorbrookscodes",
+    displayName = "eric",
+    position = "Senior iOS Dev at Ditto",
+    twitter = "twitter.com/EricTurner",
     timeZone = "12:25 AM local time (Eastern Daylight Time)",
     commonChannels = "2"
+)
+
+val colleagueUser = User(
+    id = "12345",
+    firstName = "Eric",
+    lastName = "Turner"
 )
 
 /**

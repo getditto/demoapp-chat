@@ -31,49 +31,49 @@ import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
 import live.ditto.chat.theme.DittochatTheme
 
-@Preview(widthDp = 340, name = "340 width - Me")
-@Composable
-fun ProfilePreview340() {
-    DittochatTheme {
-        ProfileScreen(meProfile)
-    }
-}
+//@Preview(widthDp = 340, name = "340 width - Me")
+//@Composable
+//fun ProfilePreview340() {
+//    DittochatTheme {
+//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
+//
+//@Preview(widthDp = 480, name = "480 width - Me")
+//@Composable
+//fun ProfilePreview480Me() {
+//    DittochatTheme {
+//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
+//
+//@Preview(widthDp = 480, name = "480 width - Other")
+//@Composable
+//fun ProfilePreview480Other() {
+//    DittochatTheme {
+//        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
+//    }
+//}
+//@Preview(widthDp = 340, name = "340 width - Me - Dark")
+//@Composable
+//fun ProfilePreview340MeDark() {
+//    DittochatTheme(isDarkTheme = true) {
+//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
 
-@Preview(widthDp = 480, name = "480 width - Me")
-@Composable
-fun ProfilePreview480Me() {
-    DittochatTheme {
-        ProfileScreen(meProfile)
-    }
-}
-
-@Preview(widthDp = 480, name = "480 width - Other")
-@Composable
-fun ProfilePreview480Other() {
-    DittochatTheme {
-        ProfileScreen(colleagueProfile)
-    }
-}
-@Preview(widthDp = 340, name = "340 width - Me - Dark")
-@Composable
-fun ProfilePreview340MeDark() {
-    DittochatTheme(isDarkTheme = true) {
-        ProfileScreen(meProfile)
-    }
-}
-
-@Preview(widthDp = 480, name = "480 width - Me - Dark")
-@Composable
-fun ProfilePreview480MeDark() {
-    DittochatTheme(isDarkTheme = true) {
-        ProfileScreen(meProfile)
-    }
-}
-
-@Preview(widthDp = 480, name = "480 width - Other - Dark")
-@Composable
-fun ProfilePreview480OtherDark() {
-    DittochatTheme(isDarkTheme = true) {
-        ProfileScreen(colleagueProfile)
-    }
-}
+//@Preview(widthDp = 480, name = "480 width - Me - Dark")
+//@Composable
+//fun ProfilePreview480MeDark() {
+//    DittochatTheme(isDarkTheme = true) {
+//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
+//
+//@Preview(widthDp = 480, name = "480 width - Other - Dark")
+//@Composable
+//fun ProfilePreview480OtherDark() {
+//    DittochatTheme(isDarkTheme = true) {
+//        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
+//    }
+//}

@@ -29,11 +29,8 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
@@ -41,16 +38,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import live.ditto.chat.FunctionalityNotAvailablePopup
 import live.ditto.chat.R
 import live.ditto.chat.components.DittochatAppBar
 import live.ditto.chat.theme.DittochatTheme
 import live.ditto.chat.viewmodel.MainViewModel
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by activityViewModels()
     private val activityViewModel: MainViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
@@ -58,6 +56,7 @@ class ProfileFragment : Fragment() {
         // Consider using safe args plugin
         val userId = arguments?.getString("userId")
         profileViewModel.setUserId(userId)
+        activityViewModel.setUserId(userId)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -102,15 +101,29 @@ class ProfileFragment : Fragment() {
             setContent {
                 val userData by profileViewModel.userData.observeAsState()
                 val nestedScrollInteropConnection = rememberNestedScrollInteropConnection()
+                val isEditMode = profileViewModel.isEditMode.collectAsState(initial = false)
+
 
                 DittochatTheme {
                     if (userData == null) {
                         ProfileError()
                     } else {
-                        ProfileScreen(
-                            userData = userData!!,
-                            nestedScrollInteropConnection = nestedScrollInteropConnection
-                        )
+                        if (isEditMode.value) {
+                            EditProfileScreen(
+                                userData = userData!!,
+                                nestedScrollInteropConnection = nestedScrollInteropConnection,
+                                viewModel = profileViewModel,
+                                userViewModel = activityViewModel
+                            )
+                        } else {
+                            ProfileScreen(
+                                userData = userData!!,
+                                nestedScrollInteropConnection = nestedScrollInteropConnection,
+                                viewModel = profileViewModel,
+                                userViewModel = activityViewModel
+                            )
+                        }
+
                     }
                 }
             }

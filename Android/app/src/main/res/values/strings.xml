@@ -54,6 +54,7 @@
     <string name="profile_error">There was an error loading the profile</string>
     <string name="message">Message</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="save_profile">Save Profile</string>
 
     <!-- Accessibility descriptions -->
     <string name="emoji_selector_desc">Emoji selector</string>

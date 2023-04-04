@@ -30,27 +30,46 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
+import javax.inject.Inject
 
-class ProfileViewModel : ViewModel() {
+@HiltViewModel
+class ProfileViewModel @Inject constructor(): ViewModel() {
 
     private var userId: String = ""
 
+    //whether the profile screen is in edit mode
+    private val _isEditMode= MutableStateFlow(false)
+    val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
+
+    private val _userData = MutableLiveData<ProfileScreenState>()
+    val userData: LiveData<ProfileScreenState> = _userData
+
+    /**
+     * This is used in the `onAttach` of the [ProfileFragment]
+     * @param newUserId the id of the user who's profile was tapped on
+     */
     fun setUserId(newUserId: String?) {
         if (newUserId != userId) {
             userId = newUserId ?: meProfile.userId
         }
         // Workaround for simplicity
-        _userData.value = if (userId == meProfile.userId || userId == meProfile.displayName) {
-            meProfile
-        } else {
+        _userData.value = if (userId == colleagueProfile.userId) {
             colleagueProfile
+        } else {
+            meProfile
         }
     }
 
-    private val _userData = MutableLiveData<ProfileScreenState>()
-    val userData: LiveData<ProfileScreenState> = _userData
+    fun changeEditMode() {
+        _isEditMode.value = !(_isEditMode.value)
+    }
+
 }
 
 @Immutable
@@ -58,12 +77,16 @@ data class ProfileScreenState(
     val userId: String,
     @DrawableRes val photo: Int?,
     val name: String,
+    val firstName: String = "",
+    val lastName: String = "",
+    val fullName: String = firstName + " " + lastName,
     val status: String,
     val displayName: String,
     val position: String,
     val twitter: String = "",
     val timeZone: String?, // Null if me
-    val commonChannels: String? // Null if me
+    val commonChannels: String?, // Null if me
+
 ) {
     fun isMe() = userId == meProfile.userId
 }
