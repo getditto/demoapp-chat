@@ -124,26 +124,19 @@ fun ProfileScreen(
 }
 
 @Composable
-fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewModel: MainViewModel?, isUserMe: Boolean = false) {
+fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewModel: MainViewModel, isUserMe: Boolean = false) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
-        userViewModel?.let {
-            if (isUserMe) {
-                val user = userViewModel.getCurrentUser()
-                val fullName = user?.fullName ?: userData.name
-                NameAndPosition(name = fullName, position = userData.position)
-            } else {
-                NameAndPosition(userData.name, userData.position)
-            }
-
-        } ?: run {
-            // previews support
+        if (isUserMe) {
+            val mainUiState by userViewModel.uiState.collectAsState()
+            val fullName = mainUiState.currentFirstName + " " + mainUiState.currentLastName
+            NameAndPosition(name = fullName, position = userData.position)
+        } else {
             NameAndPosition(userData.name, userData.position)
-
-
         }
-        ProfileProperty(stringResource(R.string.display_name), userData.displayName)
+
+        ProfileProperty(stringResource(R.string.display_name), "not yet supported")
 
         ProfileProperty(stringResource(R.string.status), userData.status)
 
