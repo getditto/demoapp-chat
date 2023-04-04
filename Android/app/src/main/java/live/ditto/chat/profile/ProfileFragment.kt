@@ -112,7 +112,8 @@ class ProfileFragment : Fragment() {
                             EditProfileScreen(
                                 userData = userData!!,
                                 nestedScrollInteropConnection = nestedScrollInteropConnection,
-                                viewModel = profileViewModel
+                                viewModel = profileViewModel,
+                                userViewModel = activityViewModel
                             )
                         } else {
                             ProfileScreen(

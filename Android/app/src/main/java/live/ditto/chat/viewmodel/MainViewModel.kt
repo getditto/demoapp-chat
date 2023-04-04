@@ -118,9 +118,15 @@ class MainViewModel @Inject constructor(
         val firstName = "My"
         val lastName = android.os.Build.MODEL
         viewModelScope.launch {
-            repository.saveCurrentUser(firstName, lastName) //TODO : set by user on app launch <----
+            repository.saveCurrentUser(firstName, lastName)
         }
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
+    }
+
+    fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
+        viewModelScope.launch {
+            repository.saveCurrentUser(firstName, lastName)
+        }
     }
 
     fun getUserById(id: String): User? {
@@ -132,14 +138,20 @@ class MainViewModel @Inject constructor(
         return getUserById(currentUserId.value)
     }
 
+    fun getCurrentFirstName() : String {
+        val user = getCurrentUser()
+        return user?.firstName ?: ""
+    }
+
+    fun getCurrentLasttName() : String {
+        val user = getCurrentUser()
+        return user?.lastName ?: ""
+    }
+
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
             repository.createMessage(message)
         }
-    }
-
-    fun onProfileClick() {
-        // TODO : open profile screen
     }
 
     fun openDrawer() {
@@ -150,12 +162,32 @@ class MainViewModel @Inject constructor(
         _drawerShouldBeOpened.value = false
     }
 
-    fun displayMeUser() {
-        _isUserMe.value = true
+    /**
+     * Edit Profile Screen State
+     */
+    private val _uiState = MutableStateFlow(EditProfileUiState(getCurrentFirstName(), getCurrentLasttName()))
+    val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
+
+    private var firstName: String = ""
+    private var lastName: String = ""
+
+    fun updateFirstName(firstName: String) {
+        this.firstName = firstName
+        _uiState.value = _uiState.value.copy(
+            currentFirstName = firstName
+        )
     }
 
-    fun displayOtherUser() {
-        _isUserMe.value = false
+    fun updateLastName(lastName: String) {
+        this.lastName = lastName
+        _uiState.value = _uiState.value.copy(
+            currentLastName = lastName
+        )
     }
 
 }
+
+data class EditProfileUiState(
+    val currentFirstName: String = "",
+    val currentLastName: String = ""
+)

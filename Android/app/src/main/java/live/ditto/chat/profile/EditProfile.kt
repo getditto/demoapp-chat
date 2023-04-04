@@ -54,12 +54,14 @@ import live.ditto.chat.components.baselineHeight
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
 import live.ditto.chat.theme.DittochatTheme
+import live.ditto.chat.viewmodel.MainViewModel
 
 @Composable
 fun EditProfileScreen(
     userData: ProfileScreenState,
     nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
-    viewModel: ProfileViewModel?
+    viewModel: ProfileViewModel?,
+    userViewModel: MainViewModel,
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
@@ -89,7 +91,7 @@ fun EditProfileScreen(
                     userData,
                     this@BoxWithConstraints.maxHeight
                 )
-                EditUserInfoFields(userData, this@BoxWithConstraints.maxHeight)
+                EditUserInfoFields(userData, this@BoxWithConstraints.maxHeight, userViewModel)
             }
         }
 
@@ -104,6 +106,10 @@ fun EditProfileScreen(
                 .offset(y = ((-100).dp)),
             onFabClicked = {
                 viewModel?.let {
+                    //TODO : save profile data
+                    userViewModel.updateUserInfo()
+
+                    // switch back to non-edit mode
                     viewModel.changeEditMode()
                 }
             }
@@ -140,21 +146,21 @@ fun EditProfileHeader(
 }
 
 @Composable
-fun EditUserInfoFields(userData: ProfileScreenState, containerHeight: Dp) {
+fun EditUserInfoFields(userData: ProfileScreenState, containerHeight: Dp,  userViewModel: MainViewModel) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
-        EditNameAndPosition(userData)
+        EditNameAndPosition(userData, userViewModel = userViewModel)
 
-        EditProfileProperty(stringResource(R.string.display_name), userData.displayName)
-
-        EditProfileProperty(stringResource(R.string.status), userData.status)
-
-        EditProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
-
-        userData.timeZone?.let {
-            EditProfileProperty(stringResource(R.string.timezone), userData.timeZone)
-        }
+//        EditProfileProperty(stringResource(R.string.display_name), userData.displayName)
+//
+//        EditProfileProperty(stringResource(R.string.status), userData.status)
+//
+//        EditProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
+//
+//        userData.timeZone?.let {
+//            EditProfileProperty(stringResource(R.string.timezone), userData.timeZone)
+//        }
 
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
         // in order to always leave some content at the top.
@@ -164,29 +170,41 @@ fun EditUserInfoFields(userData: ProfileScreenState, containerHeight: Dp) {
 
 @Composable
 private fun EditNameAndPosition(
-    userData: ProfileScreenState
+    userData: ProfileScreenState,
+    userViewModel: MainViewModel
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         EditName(
-            userData,
-            modifier = Modifier.baselineHeight(32.dp)
+            modifier = Modifier.baselineHeight(32.dp),
+            userViewModel = userViewModel
         )
-        Position(
-            userData.position,
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .baselineHeight(24.dp)
-        )
+//        Position(
+//            userData.position,
+//            modifier = Modifier
+//                .padding(bottom = 20.dp)
+//                .baselineHeight(24.dp)
+//        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EditName(userData: ProfileScreenState, modifier: Modifier = Modifier) {
-    val textState = remember { mutableStateOf(TextFieldValue()) }
+private fun EditName(modifier: Modifier = Modifier, userViewModel: MainViewModel) {
+    val mainUiState by userViewModel.uiState.collectAsState()
+
+    Text(text = "First Name")
     TextField(
-        value = textState.value,
-        onValueChange = {textState.value = it}
+        value = mainUiState.currentFirstName,
+        singleLine = true,
+        onValueChange = { userViewModel.updateFirstName(it) },
+
+    )
+
+    Text(text = "Last Name")
+    TextField(
+        value = mainUiState.currentLastName,
+        singleLine = true,
+        onValueChange = { userViewModel.updateLastName(it) },
     )
 }
 
@@ -223,26 +241,26 @@ fun EditProfileProperty(label: String, value: String, isLink: Boolean = false) {
 /**
  * Previews
  */
-@Preview(widthDp = 640, heightDp = 360)
-@Composable
-fun EditConvPreviewLandscapeMeDefault() {
-    DittochatTheme {
-        EditProfileScreen(meProfile, viewModel = null)
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 480)
-@Composable
-fun EditConvPreviewPortraitMeDefault() {
-    DittochatTheme {
-        EditProfileScreen(meProfile, viewModel = null)
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 480)
-@Composable
-fun EditConvPreviewPortraitOtherDefault() {
-    DittochatTheme {
-        EditProfileScreen(colleagueProfile, viewModel = null)
-    }
-}
+//@Preview(widthDp = 640, heightDp = 360)
+//@Composable
+//fun EditConvPreviewLandscapeMeDefault() {
+//    DittochatTheme {
+//        EditProfileScreen(meProfile, viewModel = null)
+//    }
+//}
+//
+//@Preview(widthDp = 360, heightDp = 480)
+//@Composable
+//fun EditConvPreviewPortraitMeDefault() {
+//    DittochatTheme {
+//        EditProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//    }
+//}
+//
+//@Preview(widthDp = 360, heightDp = 480)
+//@Composable
+//fun EditConvPreviewPortraitOtherDefault() {
+//    DittochatTheme {
+//        EditProfileScreen(colleagueProfile, viewModel = null)
+//    }
+//}
