@@ -33,6 +33,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import live.ditto.chat.theme.DittochatTheme
+import live.ditto.chat.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,6 +43,7 @@ fun DittochatDrawer(
     onChatClicked: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     dittoSdkVersion: String,
+    viewModel: MainViewModel,
     content: @Composable () -> Unit
 ) {
     DittochatTheme() {
@@ -53,7 +55,8 @@ fun DittochatDrawer(
                         onProfileClicked = onProfileClicked,
                         onChatClicked = onChatClicked,
                         onPresenceViewerClicked = onPresenceViewerClicked,
-                        sdkVersion = dittoSdkVersion
+                        sdkVersion = dittoSdkVersion,
+                        viewModel = viewModel
                     )
                 }
             },

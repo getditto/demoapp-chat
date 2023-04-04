@@ -29,22 +29,12 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -59,15 +49,27 @@ import live.ditto.chat.R
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
 import live.ditto.chat.theme.DittochatTheme
+import live.ditto.chat.viewmodel.MainViewModel
 
+/**
+ * @param onProfileClicked function defining the action when the profile is clicked. takes userId:String and isMe:Boolean which is to say
+ * whether the profile clicked belongs to the user of the device
+ */
 @Composable
 fun DittochatDrawerContent(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
-    sdkVersion : String
+    sdkVersion : String,
+    viewModel: MainViewModel
 ) {
     val versionName = BuildConfig.VERSION_NAME
+    val mainUiState by viewModel.uiState.collectAsState()
+    val userId by viewModel.currentUserId.collectAsState()
+
+    val fullName = ("${mainUiState.currentFirstName + " " + mainUiState.currentLastName} (you)")
+    val meUserId = userId
+
     // Use windowInsetsTopHeight() to add a spacer which pushes the drawer content
     // below the status bar (y-axis)
     Column(modifier = Modifier
@@ -81,7 +83,9 @@ fun DittochatDrawerContent(
         ChatItem("private/Eric", false) { onChatClicked("droidcon-nyc") }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
-        ProfileItem("Fuad Kamal (you)", meProfile.photo) { onProfileClicked(meProfile.userId) }
+        ProfileItem(fullName, meProfile.photo) {
+            onProfileClicked(meUserId)
+        }
         ProfileItem("Eric Turner", colleagueProfile.photo) {
             onProfileClicked(colleagueProfile.userId)
         }
@@ -209,25 +213,25 @@ fun DividerItem(modifier: Modifier = Modifier) {
     )
 }
 
-@Composable
-@Preview
-fun DrawerPreview() {
-    DittochatTheme {
-        Surface {
-            Column {
-                DittochatDrawerContent({}, {},{}, "1.90")
-            }
-        }
-    }
-}
-@Composable
-@Preview
-fun DrawerPreviewDark() {
-    DittochatTheme(isDarkTheme = true) {
-        Surface {
-            Column {
-                DittochatDrawerContent({}, {},{}, "1.90")
-            }
-        }
-    }
-}
+//@Composable
+//@Preview
+//fun DrawerPreview() {
+//    DittochatTheme {
+//        Surface {
+//            Column {
+//                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
+//            }
+//        }
+//    }
+//}
+//@Composable
+//@Preview
+//fun DrawerPreviewDark() {
+//    DittochatTheme(isDarkTheme = true) {
+//        Surface {
+//            Column {
+//                DittochatDrawerContent({}, {},{}, "1.90", viewModel = null)
+//            }
+//        }
+//    }
+//}

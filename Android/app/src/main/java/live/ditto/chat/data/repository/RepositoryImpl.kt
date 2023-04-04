@@ -96,7 +96,6 @@ class RepositoryImpl @Inject constructor(
     override fun getNumberOfUsers(): Flow<Int> = numberOfUsers
     
     override suspend fun saveCurrentUser(firstName: String, lastName: String) {
-        //TODO : implement
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
         val user = User(userID,firstName, lastName)
         addUser(user)

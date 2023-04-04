@@ -30,10 +30,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import live.ditto.chat.conversation.Message
+import live.ditto.chat.data.colleagueProfile
+import live.ditto.chat.data.colleagueUser
+import live.ditto.chat.data.meProfile
 import live.ditto.chat.data.model.MessageUiModel
 import live.ditto.chat.data.model.User
 import live.ditto.chat.data.repository.Repository
 import live.ditto.chat.data.repository.UserPreferencesRepository
+import live.ditto.chat.profile.ProfileFragment
+import live.ditto.chat.profile.ProfileScreenState
 import javax.inject.Inject
 
 /**
@@ -41,8 +46,6 @@ import javax.inject.Inject
  *
  * This view model is used for all screens.
  */
-
-
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: Repository,
@@ -52,6 +55,13 @@ class MainViewModel @Inject constructor(
     private val _drawerShouldBeOpened = MutableStateFlow(false)
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
+
+
+    /**
+     * Flag for whether the profile that has been clicked is this user or another user
+     */
+    private val _isUserMe = MutableStateFlow(false)
+    val isUserMe = _isUserMe.asStateFlow()
 
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
@@ -77,6 +87,26 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private val _userData = MutableLiveData<User>()
+    val userData: LiveData<User> = _userData
+    private var userId: String = ""
+    /**
+     * This is used in the `onAttach` of the [ProfileFragment]
+     * @param newUserId the id of the user who's profile was tapped on
+     */
+    fun setUserId(newUserId: String?) {
+        if (newUserId != userId) {
+            userId = newUserId ?: meProfile.userId
+        }
+
+        _isUserMe.value = userId == currentUserId.value
+        _userData.value = if (userId == currentUserId.value) {
+            getCurrentUser()
+        } else {
+            colleagueUser
+        }
+    }
+
     /**
      * Some setup required...
      */
@@ -85,25 +115,46 @@ class MainViewModel @Inject constructor(
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
         }
 
-        // temporary user initialziation - replace once UI functionality exists to edit the user name
-        val firstName = "My"
-        val lastName = android.os.Build.MODEL
-        viewModelScope.launch {
-            repository.saveCurrentUser(firstName, lastName) //TODO : set by user on app launch
+        val user = getCurrentUser()
+        if (user?.firstName == null) {
+            // temporary user initialziation - if user name hasn't been set by the user yet, we use the device name
+            val firstName = "My"
+            val lastName = android.os.Build.MODEL
+            updateUserInfo(firstName, lastName)
         }
+
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
     }
 
+    fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
+        viewModelScope.launch {
+            repository.saveCurrentUser(firstName, lastName)
+        }
+    }
 
+    fun getUserById(id: String): User? {
+        val user : User? = users.value?.find { user: User -> user.id == id }
+        return user
+    }
+
+    fun getCurrentUser() : User? {
+        return getUserById(currentUserId.value)
+    }
+
+    fun getCurrentFirstName() : String {
+        val user = getCurrentUser()
+        return user?.firstName ?: ""
+    }
+
+    fun getCurrentLasttName() : String {
+        val user = getCurrentUser()
+        return user?.lastName ?: ""
+    }
 
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
             repository.createMessage(message)
         }
-    }
-
-    fun onProfileClick() {
-        // TODO : open profile screen
     }
 
     fun openDrawer() {
@@ -114,4 +165,32 @@ class MainViewModel @Inject constructor(
         _drawerShouldBeOpened.value = false
     }
 
+    /**
+     * Edit Profile Screen State
+     */
+    private val _uiState = MutableStateFlow(EditProfileUiState(getCurrentFirstName(), getCurrentLasttName()))
+    val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
+
+    private var firstName: String = ""
+    private var lastName: String = ""
+
+    fun updateFirstName(firstName: String) {
+        this.firstName = firstName
+        _uiState.value = _uiState.value.copy(
+            currentFirstName = firstName
+        )
+    }
+
+    fun updateLastName(lastName: String) {
+        this.lastName = lastName
+        _uiState.value = _uiState.value.copy(
+            currentLastName = lastName
+        )
+    }
+
 }
+
+data class EditProfileUiState(
+    val currentFirstName: String = "",
+    val currentLastName: String = ""
+)

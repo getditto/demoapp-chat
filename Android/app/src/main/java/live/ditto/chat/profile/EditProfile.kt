@@ -31,16 +31,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -48,12 +44,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import live.ditto.chat.FunctionalityNotAvailablePopup
 import live.ditto.chat.R
-import live.ditto.chat.components.AnimatingFabContent
 import live.ditto.chat.components.baselineHeight
 import live.ditto.chat.data.colleagueProfile
 import live.ditto.chat.data.meProfile
@@ -61,7 +57,7 @@ import live.ditto.chat.theme.DittochatTheme
 import live.ditto.chat.viewmodel.MainViewModel
 
 @Composable
-fun ProfileScreen(
+fun EditProfileScreen(
     userData: ProfileScreenState,
     nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
     viewModel: ProfileViewModel?,
@@ -74,9 +70,9 @@ fun ProfileScreen(
 
     val scrollState = rememberScrollState()
 
-    val isUserMe : Boolean? by userViewModel
-        .isUserMe
-        .collectAsState(initial = false)
+    var textState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -90,118 +86,42 @@ fun ProfileScreen(
                     .fillMaxSize()
                     .verticalScroll(scrollState),
             ) {
-                ProfileHeader(
+                EditProfileHeader(
                     scrollState,
                     userData,
                     this@BoxWithConstraints.maxHeight
                 )
-                UserInfoFields(userData, this@BoxWithConstraints.maxHeight, userViewModel, isUserMe ?: false)
+                EditUserInfoFields(userData, this@BoxWithConstraints.maxHeight, userViewModel)
             }
         }
 
         val fabExtended by remember { derivedStateOf { scrollState.value == 0 } }
-
         ProfileFab(
             extended = fabExtended,
-            userIsMe = isUserMe ?: false,
-            isEditMode = false,
+            userIsMe = userData.isMe(),
+            isEditMode = true,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 // Offsets the FAB to compensate for CoordinatorLayout collapsing behaviour
                 .offset(y = ((-100).dp)),
             onFabClicked = {
                 viewModel?.let {
-                    if (isUserMe == true) {
-                        viewModel.changeEditMode()
-                    } else {
-                        functionalityNotAvailablePopupShown = true
-                    }
-                }
+                    //TODO : save profile data
+                    userViewModel.updateUserInfo()
 
+                    // switch back to non-edit mode
+                    viewModel.changeEditMode()
+                }
             }
         )
     }
 }
 
 @Composable
-fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewModel: MainViewModel, isUserMe: Boolean = false) {
-    Column {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (isUserMe) {
-            val mainUiState by userViewModel.uiState.collectAsState()
-            val fullName = mainUiState.currentFirstName + " " + mainUiState.currentLastName
-            NameAndPosition(name = fullName, position = userData.position)
-        } else {
-            NameAndPosition(userData.name, userData.position)
-        }
-
-        ProfileProperty(stringResource(R.string.display_name), "not yet supported")
-
-        ProfileProperty(stringResource(R.string.status), userData.status)
-
-        ProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
-
-        userData.timeZone?.let {
-            ProfileProperty(stringResource(R.string.timezone), userData.timeZone)
-        }
-        // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
-        // in order to always leave some content at the top.
-        Spacer(Modifier.height((containerHeight - 320.dp).coerceAtLeast(0.dp)))
-    }
-}
-
-@Composable
-private fun NameAndPosition(
-    name: String, position: String
-) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Name(
-            name,
-            modifier = Modifier.baselineHeight(32.dp)
-        )
-        Position(
-            position,
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .baselineHeight(24.dp)
-        )
-    }
-}
-
-@Composable
-private fun Name(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = name,
-        modifier = modifier,
-        style = MaterialTheme.typography.headlineSmall
-    )
-}
-
-@Composable
-private fun FullName(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = name,
-        modifier = modifier,
-        style = MaterialTheme.typography.headlineSmall
-    )
-}
-
-@Composable
-fun Position(position: String, modifier: Modifier = Modifier) {
-    Text(
-        text = position,
-        modifier = modifier,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
-}
-
-@Composable
-fun ProfileHeader(
+fun EditProfileHeader(
     scrollState: ScrollState,
     data: ProfileScreenState,
-    containerHeight: Dp,
+    containerHeight: Dp
 ) {
     val offset = (scrollState.value / 2)
     val offsetDp = with(LocalDensity.current) { offset.toDp() }
@@ -226,8 +146,73 @@ fun ProfileHeader(
 }
 
 @Composable
-fun ProfileProperty(label: String, value: String, isLink: Boolean = false) {
+fun EditUserInfoFields(userData: ProfileScreenState, containerHeight: Dp,  userViewModel: MainViewModel) {
+    Column {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        EditNameAndPosition(userData, userViewModel = userViewModel)
+
+//        EditProfileProperty(stringResource(R.string.display_name), userData.displayName)
+//
+//        EditProfileProperty(stringResource(R.string.status), userData.status)
+//
+//        EditProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
+//
+//        userData.timeZone?.let {
+//            EditProfileProperty(stringResource(R.string.timezone), userData.timeZone)
+//        }
+
+        // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
+        // in order to always leave some content at the top.
+        Spacer(Modifier.height((containerHeight - 320.dp).coerceAtLeast(0.dp)))
+    }
+}
+
+@Composable
+private fun EditNameAndPosition(
+    userData: ProfileScreenState,
+    userViewModel: MainViewModel
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        EditName(
+            modifier = Modifier.baselineHeight(32.dp),
+            userViewModel = userViewModel
+        )
+//        Position(
+//            userData.position,
+//            modifier = Modifier
+//                .padding(bottom = 20.dp)
+//                .baselineHeight(24.dp)
+//        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditName(modifier: Modifier = Modifier, userViewModel: MainViewModel) {
+    val mainUiState by userViewModel.uiState.collectAsState()
+
+    Text(text = "First Name")
+    TextField(
+        value = mainUiState.currentFirstName,
+        singleLine = true,
+        onValueChange = { userViewModel.updateFirstName(it) },
+
+    )
+
+    Text(text = "Last Name")
+    TextField(
+        value = mainUiState.currentLastName,
+        singleLine = true,
+        onValueChange = { userViewModel.updateLastName(it) },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditProfileProperty(label: String, value: String, isLink: Boolean = false) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
+        val textState = remember { mutableStateOf(TextFieldValue()) }
         Divider()
         Text(
             text = label,
@@ -245,61 +230,11 @@ fun ProfileProperty(label: String, value: String, isLink: Boolean = false) {
             modifier = Modifier.baselineHeight(24.dp),
             style = style
         )
-    }
-}
-
-@Composable
-fun ProfileError() {
-    Text(stringResource(R.string.profile_error))
-}
-
-@Composable
-fun ProfileFab(
-    extended: Boolean,
-    userIsMe: Boolean,
-    isEditMode: Boolean,
-    modifier: Modifier = Modifier,
-    onFabClicked: () -> Unit = { }
-) {
-    var id : Int = if (isEditMode) {
-        R.string.save_profile
-    } else {
-        if (userIsMe) R.string.edit_profile else R.string.message
-    }
-
-    var imageVector : ImageVector = if (isEditMode) {
-        Icons.Outlined.Save
-    } else {
-        if (userIsMe) Icons.Outlined.Create else Icons.Outlined.Chat
-    }
-
-    key(userIsMe) { // Prevent multiple invocations to execute during composition
-        FloatingActionButton(
-            onClick = onFabClicked,
-            modifier = modifier
-                .padding(16.dp)
-                .navigationBarsPadding()
-                .height(48.dp)
-                .widthIn(min = 48.dp),
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
-        ) {
-            AnimatingFabContent(
-                icon = {
-                    Icon(
-                        imageVector = imageVector,
-                        contentDescription = stringResource(id)
-                    )
-                },
-                text = {
-                    Text(
-                        text = stringResource(
-                            id = id
-                        ),
-                    )
-                },
-                extended = extended
-            )
-        }
+        TextField(
+            value =  textState.value,
+            onValueChange = {textState.value = it},
+            modifier = Modifier.baselineHeight(24.dp)
+        )
     }
 }
 
@@ -308,32 +243,24 @@ fun ProfileFab(
  */
 //@Preview(widthDp = 640, heightDp = 360)
 //@Composable
-//fun ConvPreviewLandscapeMeDefault() {
+//fun EditConvPreviewLandscapeMeDefault() {
 //    DittochatTheme {
-//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
-//    }
-//}
-
-//@Preview(widthDp = 360, heightDp = 480)
-//@Composable
-//fun ConvPreviewPortraitMeDefault() {
-//    DittochatTheme {
-//        ProfileScreen(meProfile, viewModel = null, userViewModel = null)
+//        EditProfileScreen(meProfile, viewModel = null)
 //    }
 //}
 //
 //@Preview(widthDp = 360, heightDp = 480)
 //@Composable
-//fun ConvPreviewPortraitOtherDefault() {
+//fun EditConvPreviewPortraitMeDefault() {
 //    DittochatTheme {
-//        ProfileScreen(colleagueProfile, viewModel = null, userViewModel = null)
+//        EditProfileScreen(meProfile, viewModel = null, userViewModel = null)
 //    }
 //}
-
-@Preview
-@Composable
-fun ProfileFabPreview() {
-    DittochatTheme {
-        ProfileFab(extended = true, userIsMe = false, isEditMode = false)
-    }
-}
+//
+//@Preview(widthDp = 360, heightDp = 480)
+//@Composable
+//fun EditConvPreviewPortraitOtherDefault() {
+//    DittochatTheme {
+//        EditProfileScreen(colleagueProfile, viewModel = null)
+//    }
+//}

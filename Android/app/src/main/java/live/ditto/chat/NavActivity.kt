@@ -116,7 +116,8 @@ class NavActivity: AppCompatActivity() {
                                             drawerState.close()
                                         }
                                     },
-                                    dittoSdkVersion = "Ditto SDK ver "+ dittoSdkVersion
+                                    dittoSdkVersion = "Ditto SDK ver "+ dittoSdkVersion,
+                                    viewModel = viewModel
                                 ) {
                                     AndroidViewBinding(NavHostBinding::inflate)
                                 }
