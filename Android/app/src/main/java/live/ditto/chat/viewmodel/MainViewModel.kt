@@ -114,12 +114,14 @@ class MainViewModel @Inject constructor(
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
         }
 
-        // temporary user initialziation - replace once UI functionality exists to edit the user name
-        val firstName = "My"
-        val lastName = android.os.Build.MODEL
-        viewModelScope.launch {
-            repository.saveCurrentUser(firstName, lastName)
+        val user = getCurrentUser()
+        if (user?.firstName == null) {
+            // temporary user initialziation - if user name hasn't been set by the user yet, we use the device name
+            val firstName = "My"
+            val lastName = android.os.Build.MODEL
+            updateUserInfo(firstName, lastName)
         }
+
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
     }
 
