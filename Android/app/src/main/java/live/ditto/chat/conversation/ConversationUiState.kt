@@ -69,7 +69,7 @@ data class Message(
     val text: String = "test",
     val userId: String = UUID.randomUUID().toString(),
     val image: Int? = null,
-    val authorImage: Int = if (userId == "me") R.drawable.fuad else R.drawable.someone_else
+    val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
     constructor(document: DittoDocument) :this(
         document[dbIdKey].stringValue,

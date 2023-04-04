@@ -301,7 +301,7 @@ fun MessageUi(
         MaterialTheme.colorScheme.tertiary
     }
 
-    val authorImageId: Int = if (isUserMe) R.drawable.fuad else R.drawable.someone_else
+    val authorImageId: Int = if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
 
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {

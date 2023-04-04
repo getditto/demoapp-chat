@@ -166,7 +166,7 @@ val colleagueUser = User(
  */
 val meProfile = ProfileScreenState(
     userId = "me",
-    photo = R.drawable.fuad,
+    photo = R.drawable.profile_photo_android_developer,
     name = "Fuad Kamal",
     status = "Online",
     displayName = "flexronin",
