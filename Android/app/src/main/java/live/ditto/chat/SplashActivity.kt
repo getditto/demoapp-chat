@@ -42,7 +42,6 @@ import live.ditto.chat.DittoHandler.Companion.ditto
 import live.ditto.chat.data.ACCESS_LICENSE
 import live.ditto.chat.data.APP_NAME
 
-
 class SplashActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +54,7 @@ class SplashActivity : AppCompatActivity() {
     finish()
   }
 
-  fun setupDitto() {
+  private fun setupDitto() {
     val androidDependencies = DefaultAndroidDittoDependencies(this)
     DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
     DittoHandler.ditto = Ditto(

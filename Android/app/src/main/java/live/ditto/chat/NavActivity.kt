@@ -33,11 +33,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import live.ditto.chat.components.DittochatDrawer
@@ -45,6 +49,7 @@ import live.ditto.chat.conversation.BackPressHandler
 import live.ditto.chat.conversation.LocalBackPressedDispatcher
 import live.ditto.chat.databinding.NavHostBinding
 import live.ditto.chat.viewmodel.MainViewModel
+import live.ditto.transports.DittoSyncPermissions
 
 
 /**
@@ -62,6 +67,8 @@ class NavActivity: AppCompatActivity() {
         setContentView(
             ComposeView(this).apply {
                         setContent {
+                            RequestPermission()
+
                             CompositionLocalProvider(
                                 LocalBackPressedDispatcher provides this@NavActivity.onBackPressedDispatcher
                             ) {
@@ -121,7 +128,6 @@ class NavActivity: AppCompatActivity() {
                                 ) {
                                     AndroidViewBinding(NavHostBinding::inflate)
                                 }
-
                             }
 
                         }
@@ -138,4 +144,26 @@ class NavActivity: AppCompatActivity() {
         return navHostFragment.navController
     }
 
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    private fun RequestPermission() {
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+        val lifecycleObserver = remember {
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_START) {
+                    val missing = DittoSyncPermissions(this).missingPermissions()
+                    if (missing.isNotEmpty()) {
+                        this.requestPermissions(missing, 0)
+                    }
+                }
+            }
+        }
+        DisposableEffect(lifecycle, lifecycleObserver) {
+            lifecycle.addObserver(lifecycleObserver)
+            onDispose {
+                lifecycle.removeObserver(lifecycleObserver)
+            }
+        }
+    }
 }
