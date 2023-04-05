@@ -16,7 +16,6 @@
 
 package live.ditto.chat.conversation
 
-import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,34 +23,26 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import live.ditto.chat.R
 import live.ditto.chat.data.model.MessageUiModel
 import live.ditto.chat.data.model.User
-import live.ditto.chat.screens.getTextToShowGivenPermissions
 import live.ditto.chat.theme.DittochatTheme
-import live.ditto.chat.utilities.Permissions
 import live.ditto.chat.viewmodel.MainViewModel
 
 class ConversationFragment : Fragment() {
 
     private val activityViewModel: MainViewModel by activityViewModels()
 
-    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -78,44 +69,27 @@ class ConversationFragment : Fragment() {
                     viewModel = activityViewModel
                 )
 
-                val multiplePermissionsState = rememberMultiplePermissionsState(Permissions().requiredPermissions())
-
-                if (multiplePermissionsState.allPermissionsGranted) {
-                    DittochatTheme {
-                        ConversationContent(
-                            uiState = currentUiState,
-                            navigateToProfile = { user ->
-                                // Click callback
-                                val bundle = bundleOf("userId" to user)
-                                findNavController().navigate(
-                                    R.id.nav_profile,
-                                    bundle
-                                )
-                            },
-                            onNavIconPressed = {
-                                activityViewModel.openDrawer()
-                            },
-                            // Add padding so that we are inset from any navigation bars
-                            modifier = Modifier.windowInsetsPadding(
-                                WindowInsets
-                                    .navigationBars
-                                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                DittochatTheme {
+                    ConversationContent(
+                        uiState = currentUiState,
+                        navigateToProfile = { user ->
+                            // Click callback
+                            val bundle = bundleOf("userId" to user)
+                            findNavController().navigate(
+                                R.id.nav_profile,
+                                bundle
                             )
+                        },
+                        onNavIconPressed = {
+                            activityViewModel.openDrawer()
+                        },
+                        // Add padding so that we are inset from any navigation bars
+                        modifier = Modifier.windowInsetsPadding(
+                            WindowInsets
+                                .navigationBars
+                                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                         )
-                    }
-                } else {
-                    Column {
-                        Text(
-                            getTextToShowGivenPermissions(
-                                multiplePermissionsState.revokedPermissions,
-                                multiplePermissionsState.shouldShowRationale
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = { multiplePermissionsState.launchMultiplePermissionRequest() }) {
-                            Text("Request permissions")
-                        }
-                    }
+                    )
                 }
             }
         }
