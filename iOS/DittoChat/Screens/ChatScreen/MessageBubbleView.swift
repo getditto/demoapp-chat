@@ -41,6 +41,10 @@ struct MessageBubbleView: View {
     private var hasThumbnail: Bool {
         message.thumbnailImageToken != nil
     }
+    
+    private var isImageMessage: Bool {
+        message.isImageMessage
+    }
 
     // large images sent by local user are always stored in Ditto db
     // and always available to local user to preview at full rez
@@ -165,57 +169,11 @@ struct MessageBubbleView: View {
     }
     
     @ViewBuilder
-    func contextMenuContent() -> some View {
-
-        // display full rez image if EnableLargeImages option is set in Settings, or if local user
-        if hasThumbnail && (largeImageAvailable || user.id == DataManager.shared.currentUserId) {
-            Button {
-                viewModel.presentLargeImageView = true
-            } label: {
-                Text(viewImageTitleKey)
-            }
-        }
-        // Only allow edit/delete operations on local user messages
-        else if user.id == DataManager.shared.currentUserId {
-            if !message.isImageMessage {
-                Button {
-                    if let edit = messageOpCallback {
-                        edit(.edit, message)
-                    } else {
-                        errorHandler.handle(
-                            error: AppError.unknown(editMessageErrorTextKey)
-                        )
-                    }
-                } label: {
-                    Text(editTitleKey)
-                }
-            }
-            
-            Button {
-                if let _ = messageOpCallback {
-                    viewModel.presentDeleteAlert = true
-                } else {
-                    errorHandler.handle(
-                        error: AppError.unknown(deleteMessageErrorTextKey)
-                    )
-                }
-            } label: {
-                Text(deleteTitleKey)
-            }
-        }
-        EmptyView()
-    }
-    
-    @ViewBuilder
-    func deleteAlertContent() -> some View {
-        VStack {
-            Button(deleteEverywhereTitleKey, role: .destructive) {
-                messageOpCallback?(
-                    hasThumbnail ? .deleteImage : .deleteText,
-                    message
-                )
-            }
-            Button(cancelTitleKey, role: .cancel) { }
+    func textContentView() -> some View {
+        if !message.text.isEmpty {
+            Text(message.text)
+        } else {
+            EmptyView()
         }
     }
     
@@ -235,14 +193,77 @@ struct MessageBubbleView: View {
     }
 
     @ViewBuilder
-    func textContentView() -> some View {
-        if !message.text.isEmpty {
-            Text(message.text)
-        } else {
-            EmptyView()
+    func contextMenuContent() -> some View {
+
+        // display full rez image if EnableLargeImages option is set in Settings, or if local user
+        if canDisplayLargeImage() {
+            Button {
+                viewModel.presentLargeImageView = true
+            } label: {
+                Text(viewImageTitleKey)
+            }
         }
+        // Only allow edit on local user text messages
+        if canEdit() {
+            if !isImageMessage {
+                Button {
+                    if let edit = messageOpCallback {
+                        edit(.edit, message)
+                    } else {
+                        errorHandler.handle(
+                            error: AppError.unknown(editMessageErrorTextKey)
+                        )
+                    }
+                } label: {
+                    Text(editTitleKey)
+                }
+            }
+        }
+        
+        // Only allow delete on local user messages
+        if canDelete() {
+            Button {
+                if let _ = messageOpCallback {
+                    viewModel.presentDeleteAlert = true
+                } else {
+                    errorHandler.handle(
+                        error: AppError.unknown(deleteMessageErrorTextKey)
+                    )
+                }
+            } label: {
+                Text(deleteTitleKey)
+            }
+        }
+        
+        EmptyView()
     }
     
+    @ViewBuilder
+    func deleteAlertContent() -> some View {
+        VStack {
+            Button(deleteEverywhereTitleKey, role: .destructive) {
+                messageOpCallback?(
+                    hasThumbnail ? .deleteImage : .deleteText,
+                    message
+                )
+            }
+            Button(cancelTitleKey, role: .cancel) { }
+        }
+    }
+
+    private func canDisplayLargeImage() -> Bool {
+        guard isImageMessage else { return false }
+        return isSelfUser || largeImageAvailable
+    }
+
+    private func canEdit() -> Bool {
+        isSelfUser && !isImageMessage
+    }
+        
+    private func canDelete() -> Bool {
+        isSelfUser
+    }
+
     // for previewing
     private var forPreview = false
     private var previewUserId = "me"
