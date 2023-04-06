@@ -7,14 +7,14 @@ plugins {
 }
 
 android {
-    namespace "live.ditto.chat"
+    namespace "live.dittolive.chat"
     compileSdk 33
 
     defaultConfig {
-        applicationId "live.ditto.chat"
+        applicationId "live.dittolive.chat"
         minSdk 29
         targetSdk 33
-        versionCode 1
+        versionCode 24
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
