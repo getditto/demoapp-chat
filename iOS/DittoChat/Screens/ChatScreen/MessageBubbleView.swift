@@ -14,18 +14,21 @@ struct MessageBubbleView: View {
     @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject private var viewModel: MessageBubbleVM
     @State private var needsImageSync = true
+    @Binding var isEditing: Bool
     let messageUser: MessageWithUser
     var messageOpCallback: ((MessageOperation, Message) -> Void)?
 
     init(
         messageWithUser: MessageWithUser,
         messagesId: String,
-        messageOpCallback: ((MessageOperation, Message) -> Void)? = nil
+        messageOpCallback: ((MessageOperation, Message) -> Void)? = nil,
+        isEditing: Binding<Bool>
     ) {
         self._viewModel = StateObject(
             wrappedValue: MessageBubbleVM(messageWithUser.message, messagesId: messagesId)
         )
         self.messageUser = messageWithUser
+        self._isEditing = isEditing
         self.needsImageSync = messageWithUser.message.thumbnailImageToken != nil
         self.messageOpCallback = messageOpCallback
     }
@@ -147,17 +150,6 @@ struct MessageBubbleView: View {
             }
         }
         .padding(rowInsets)
-        .fullScreenCover(
-            isPresented: $viewModel.presentLargeImageView,
-            onDismiss: {
-                Task {
-                    try? await viewModel.cleanupStorage()
-                }
-            }
-        ) {
-            AttachmentPreview()
-                .environmentObject(viewModel)
-        }
         .task {
             if needsImageSync {
                 needsImageSync = false
@@ -194,16 +186,22 @@ struct MessageBubbleView: View {
 
     @ViewBuilder
     func contextMenuContent() -> some View {
-
-        // display full rez image if EnableLargeImages option is set in Settings, or if local user
+        // display full rez image if EnableLargeImages option is set in Settings, or if local user,
+        // if not editing
         if canDisplayLargeImage() {
             Button {
-                viewModel.presentLargeImageView = true
+                if let show = messageOpCallback {
+                    show(.presentAttachment, message)
+                } else {
+                    errorHandler.handle(
+                        error: AttachmentError.unknown(attachmentMessageErrorTextKey)
+                    )
+                }
             } label: {
                 Text(viewImageTitleKey)
             }
         }
-        // Only allow edit on local user text messages
+        // Only allow edit on local user text messages when not editing
         if canEdit() {
             if !isImageMessage {
                 Button {
@@ -220,7 +218,7 @@ struct MessageBubbleView: View {
             }
         }
         
-        // Only allow delete on local user messages
+        // Only allow delete on local user messages when not editing
         if canDelete() {
             Button {
                 if let _ = messageOpCallback {
@@ -252,28 +250,37 @@ struct MessageBubbleView: View {
     }
 
     private func canDisplayLargeImage() -> Bool {
+        guard !isEditing else { return false }
         guard isImageMessage else { return false }
         return isSelfUser || largeImageAvailable
     }
 
     private func canEdit() -> Bool {
-        isSelfUser && !isImageMessage
+        guard !isEditing else { return false }
+        return isSelfUser && !isImageMessage
     }
         
     private func canDelete() -> Bool {
-        isSelfUser
+        guard !isEditing else { return false }
+        return isSelfUser
     }
 
     // for previewing
     private var forPreview = false
     private var previewUserId = "me"
-    fileprivate init(messageWithUser: MessageWithUser, messagesId: String = "xyz", preview: Bool) {
+    fileprivate init(
+        messageWithUser: MessageWithUser,
+        messagesId: String = "xyz",
+        preview: Bool,
+        isEditing: Binding<Bool> = .constant(false)
+    ) {
         self._viewModel = StateObject(
             wrappedValue: MessageBubbleVM(
                 Message(roomId: "abc", text: "Hello World!"),
                 messagesId: messagesId
             )
         )
+        self._isEditing = isEditing
         self.messageUser = messageWithUser
         self.forPreview = preview
         self.messageOpCallback = nil

@@ -27,7 +27,8 @@ struct ChatScreen: View {
                             MessageBubbleView(
                                 messageWithUser: usrMsg,
                                 messagesId: viewModel.room.messagesId,
-                                messageOpCallback: viewModel.messageOperationCallback
+                                messageOpCallback: viewModel.messageOperationCallback,
+                                isEditing: $viewModel.isEditing
                             )
                             .id(usrMsg.message.id)
                             .transition(.slide)
@@ -63,6 +64,20 @@ struct ChatScreen: View {
         .listStyle(.inset)
         .navigationTitle(viewModel.roomName)
         .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(
+            isPresented: $viewModel.presentAttachmentView,
+            onDismiss: {
+                viewModel.cleanupAttachmentAttribs()
+            }
+        ) {
+            AttachmentPreview(
+                vm: MessageBubbleVM(
+                    viewModel.attachmentMessage!,
+                    messagesId: viewModel.room.messagesId
+                ),
+                errorHandler: errorHandler
+            )
+        }
         .sheet(isPresented: $viewModel.presentShareRoomScreen) {
             if let codeStr = viewModel.shareQRCode() {
                 QRCodeView(
@@ -122,7 +137,8 @@ struct ChatScreen: View {
                     MessageEditView(
                         msgsUsers,
                         roomName: viewModel.roomName,
-                        editFunc: viewModel.saveEditedTextMessage
+                        saveEditCallback: viewModel.saveEditedTextMessage,
+                        cancelEditCallback: viewModel.cancelEditCallback
                     )
                 }
             } else {

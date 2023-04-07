@@ -14,8 +14,12 @@ import QuickLook
 import SwiftUI
 
 struct AttachmentPreview: View {
-    @EnvironmentObject var viewModel: MessageBubbleVM
-    @EnvironmentObject var errorHandler: ErrorHandler
+    @StateObject var viewModel: MessageBubbleVM
+    @StateObject var errorHandler: ErrorHandler
+    init(vm: MessageBubbleVM, errorHandler: ErrorHandler) {
+        self._viewModel = StateObject(wrappedValue: vm)
+        self._errorHandler = StateObject(wrappedValue: errorHandler)
+    }
     
     var body: some View {
         VStack {
@@ -30,6 +34,7 @@ struct AttachmentPreview: View {
         .task {
             await viewModel.fetchAttachment(type: .largeImage)
         }
+//        .onDisappear { print("AttachmentPreview.onDisappear()") }
     }
 }
 

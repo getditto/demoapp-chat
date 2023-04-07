@@ -11,17 +11,20 @@ import PhotosUI
 import SwiftUI
 
 enum MessageOperation {
-    case edit, deleteImage, deleteText
+    case edit, deleteImage, deleteText, presentAttachment
 }
 
 class ChatScreenVM: ObservableObject {
     @Published var inputText: String = ""
     @Published var roomName: String = ""
     @Published var messagesWithUsers = [MessageWithUser]()
-    @Published var presentShareRoomScreen = false
     @Published var selectedItem: PhotosPickerItem?
     @Published var selectedImage: UIImage?
+    @Published var presentAttachmentView = false
+    var attachmentMessage: Message?
+    @Published var presentShareRoomScreen = false
     @Published var presentEditingView = false
+    @Published var isEditing = false
     @Published var keyboardStatus: KeyboardChangeEvent = .unchanged
     let room: Room
     var editMsgId: String?
@@ -90,12 +93,25 @@ class ChatScreenVM: ObservableObject {
             deleteImageMessage(msg)
         case .deleteText:
             deleteTextMessage(msg)
+        case .presentAttachment:
+            presentAttachment(msg)
         }
     }
 
     func editMessageCallback(_ msg: Message) {
         editMsgId = msg.id
+        isEditing = true
         presentEditingView = true
+    }
+    
+    func cancelEditCallback() {
+        cleanupEdit()
+    }
+    
+    func cleanupEdit() {
+        editMsgId = nil
+        isEditing = false
+        presentEditingView = false
     }
 
     func editMessagesWithUsers() throws -> (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>) {
@@ -112,8 +128,7 @@ class ChatScreenVM: ObservableObject {
             return deleteTextMessage(msg)
         }
         DataManager.shared.saveEditedTextMessage(msg, in: room)
-        editMsgId = nil
-        presentEditingView = false
+        cleanupEdit()
     }
     
     func deleteTextMessage(_ msg: Message) {
@@ -128,6 +143,15 @@ class ChatScreenVM: ObservableObject {
         editedMsg.thumbnailImageToken = nil
         editedMsg.largeImageToken = nil
         DataManager.shared.saveDeletedImageMessage(editedMsg, in: room)
+    }
+    
+    func presentAttachment(_ msg: Message) {
+        attachmentMessage = msg
+        presentAttachmentView = true
+    }
+    
+    func cleanupAttachmentAttribs() {
+        attachmentMessage = nil
     }
 
     // private room

@@ -15,7 +15,6 @@ class MessageBubbleVM: ObservableObject {
     @Published var thumbnailProgress: Double = 0
     @Published var fetchProgress: Double = 0
     @Published private(set) var fileURL: URL? = nil
-    @Published var presentLargeImageView = false
     @Published private(set) var message: Message
     @Published var presentDeleteAlert = false
     private let messagesId: String
@@ -78,7 +77,6 @@ class MessageBubbleVM: ObservableObject {
                             self.tmpStorage = tmp
                             
                             if let _ = try? uiImage.jpegData(compressionQuality: 1.0)?.write(to: tmp.fileURL) {
-                                print("ImageAttachmentFetcher.onComplete.success SET fileURL: \(tmp.fileURL.path))")
                                 self.fileURL = tmp.fileURL
                             } else {
                                 print("ImageAttachmentFetcher.onComplete: Error writing JPG attachment data to file at path: \(tmp.fileURL.path) --> Return")
@@ -89,7 +87,7 @@ class MessageBubbleVM: ObservableObject {
                     }
                     
                 case .failure:
-                    print("MessageBubbleVM.ImageAttachmentFetcher.failure: Thumbnail image Error: ??")
+                    print("MessageBubbleVM.ImageAttachmentFetcher.failure: UNKNOWN Thumbnail image Error")
                     self.thumbnailImage = Image(uiImage: UIImage(systemName: messageImageFailKey)!)
                     
                     // do nothing for large image fetch
@@ -99,7 +97,13 @@ class MessageBubbleVM: ObservableObject {
     
     deinit {
         if let storage = tmpStorage {
-            try! storage.deleteDirectory()
+            Task {
+                do {
+                    try storage.deleteDirectory()
+                } catch {
+                    print("MessageBubbleVM.deinit: Error: \(AttachmentError.tmpStorageCleanupFail.localizedDescription)")
+                }
+            }
         }
     }
 }
@@ -141,7 +145,7 @@ struct ImageAttachmentFetcher {
                 onComplete(.failure(AttachmentError.deleted))
 
             @unknown default:
-                print("ImageFetcher.fetch(): case .deleted not handled, or unknown condition")
+                print("ImageFetcher.fetch(): default case - unknown condition")
                 onComplete(.failure(AttachmentError.unknown("Unkown attachment error")))
             }
         }
