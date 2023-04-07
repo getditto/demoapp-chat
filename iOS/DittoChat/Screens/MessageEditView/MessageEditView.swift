@@ -14,16 +14,19 @@ class MessageEditVM: ObservableObject {
     @Published var messagesWithUsers: ArraySlice<MessageWithUser>
     @Published var keyboardStatus: KeyboardChangeEvent = .unchanged
     var editUsrMsg: MessageWithUser
-    let saveEditCallback: (Message) -> Void
+    let saveCallback: (Message) -> Void
+    let cancelCallback: () -> Void
     
     init(
         _ msgsUsers: (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>),
-        editFunc: @escaping (Message) -> Void)
-    {
+        saveEditCallback: @escaping (Message) -> Void,
+        cancelEditCallback: @escaping () -> Void
+    ) {
         self.editUsrMsg = msgsUsers.editUsrMsg
         self.editText = editUsrMsg.message.text
         self.messagesWithUsers = msgsUsers.chats
-        self.saveEditCallback = editFunc
+        self.saveCallback = saveEditCallback
+        self.cancelCallback = cancelEditCallback
 
         Publishers.keyboardStatus
             .assign(to: &$keyboardStatus)
@@ -38,9 +41,8 @@ class MessageEditVM: ObservableObject {
     }
     
     func saveEdit() {
-        if editMessage.text == editText { return } // no edit change
         editUsrMsg.message.text = editText
-        saveEditCallback(editUsrMsg.message)
+        saveCallback(editUsrMsg.message)
     }
 }
 
@@ -49,14 +51,18 @@ struct MessageEditView: View {
     @StateObject var viewModel: MessageEditVM
     let roomName: String
     
-    
     init(
         _ msgsUsers: (editUsrMsg: MessageWithUser, chats: ArraySlice<MessageWithUser>),
         roomName: String,
-        editFunc: @escaping (Message) -> Void
+        saveEditCallback: @escaping (Message) -> Void,
+        cancelEditCallback: @escaping () -> Void
     ) {
         self._viewModel = StateObject(
-            wrappedValue: MessageEditVM(msgsUsers, editFunc: editFunc)
+            wrappedValue: MessageEditVM(
+                msgsUsers,
+                saveEditCallback: saveEditCallback,
+                cancelEditCallback: cancelEditCallback
+            )
         )
         self.roomName = roomName
     }
@@ -87,9 +93,10 @@ struct MessageEditView: View {
                     }
                 }
                 .onChange(of: viewModel.keyboardStatus) { status in
-                    if status == .willShow || status == .willHide { return }
-                    withAnimation {
-                        scrollToBottom(proxy: proxy)
+                    if status == .didShow || status == .didHide {
+                        withAnimation {
+                            scrollToBottom(proxy: proxy)
+                        }
                     }
                 }
             }
@@ -103,23 +110,28 @@ struct MessageEditView: View {
             )
         }
         .listStyle(.inset)
-        .navigationTitle(roomName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
+                    viewModel.cancelCallback()
                     dismiss()
                 } label: {
-                    Text("Cancel")
+                    Text(cancelTitleKey)
                 }
                 .buttonStyle(.borderless)
             }
-
+            ToolbarItem(placement: .principal) {
+                VStack {
+                    Text(roomName)
+                    Text(editingTitleKey).font(.subheadline)
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     viewModel.saveEdit()
                 } label: {
-                    Text("Save")
+                    Text(saveTitleKey)
                 }
                 .buttonStyle(.borderless)
             }
@@ -131,7 +143,8 @@ struct MessageEditView: View {
         if usrMsg.id != viewModel.editUsrMsg.id {
             MessageBubbleView(
                 messageWithUser: usrMsg,
-                messagesId: "placeholder_in_MessageEditView"
+                messagesId: "placeholder_in_MessageEditView",
+                isEditing: .constant(true)
             )
             .id(usrMsg.id)
         } else {
@@ -148,9 +161,3 @@ struct MessageEditView: View {
         proxy.scrollTo(viewModel.messagesWithUsers.last?.id)
     }
 }
-
-//struct MessageEditView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MessageEditView()
-//    }
-//}

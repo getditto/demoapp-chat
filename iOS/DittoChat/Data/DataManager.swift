@@ -45,7 +45,8 @@ protocol ReplicatingDataInterface {
     func deleteRoom(_ room: Room)
 
     func createMessage(for rooom: Room, text: String)
-    func saveEditedMessage(_ message: Message, in room: Room)
+    func saveEditedTextMessage(_ message: Message, in room: Room)
+    func saveDeletedImageMessage(_ message: Message, in room: Room)
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never>
     func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never>
@@ -118,17 +119,21 @@ extension DataManager {
 
 extension DataManager {
     //MARK: Messages
-
+    
     func createMessage(for room: Room, text: String) {
         p2pStore.createMessage(for: room, text: text)
     }
-
+    
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
         try await p2pStore.createImageMessage(for: room, image: image, text: text)
     }
     
-    func saveEditedMessage(_ message: Message, in room: Room) {
-        p2pStore.saveEditedMessage(message, in: room)
+    func saveEditedTextMessage(_ message: Message, in room: Room) {
+        p2pStore.saveEditedTextMessage(message, in: room)
+    }
+    
+    func saveDeletedImageMessage(_ message: Message, in room: Room) {
+        p2pStore.saveDeletedImageMessage(message, in: room)
     }
     
     func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {

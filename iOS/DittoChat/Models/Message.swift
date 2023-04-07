@@ -25,7 +25,7 @@ struct Message: Identifiable, Equatable {
     
     var isImageMessage: Bool {
         thumbnailImageToken != nil || largeImageToken != nil
-    }
+    }    
 }
 
 extension Message {
