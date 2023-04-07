@@ -45,6 +45,7 @@ protocol ReplicatingDataInterface {
     func deleteRoom(_ room: Room)
 
     func createMessage(for rooom: Room, text: String)
+    func saveEditedMessage(_ message: Message, in room: Room)
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never>
     func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never>
@@ -123,14 +124,11 @@ extension DataManager {
     }
 
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
-//        Task {
-//            do {
-                try await p2pStore.createImageMessage(for: room, image: image, text: text)
-//            } catch {
-//                print("Caught error: \(error.localizedDescription)")
-//                throw error
-//            }
-//        }
+        try await p2pStore.createImageMessage(for: room, image: image, text: text)
+    }
+    
+    func saveEditedMessage(_ message: Message, in room: Room) {
+        p2pStore.saveEditedMessage(message, in: room)
     }
     
     func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {

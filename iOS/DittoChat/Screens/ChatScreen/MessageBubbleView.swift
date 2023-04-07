@@ -10,15 +10,16 @@ import Combine
 import DittoSwift
 import SwiftUI
 
-struct MessageBubbleView: View {
+struct MessageBubbleView: View {    
     @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject private var viewModel: MessageBubbleVM
     @State private var needsImageSync = true
     let messageWithUser: MessageWithUser
+    var editCallback: ((String) -> Void)?
     private let user: User
     private let message: Message
 
-    init(messageWithUser: MessageWithUser, messagesId: String) {
+    init(messageWithUser: MessageWithUser, messagesId: String, editCallback: ((String) -> Void)? = nil) {
         self._viewModel = StateObject(
             wrappedValue: MessageBubbleVM(messageWithUser.message, messagesId: messagesId)
         )
@@ -26,6 +27,7 @@ struct MessageBubbleView: View {
         self.user = messageWithUser.user
         self.message = messageWithUser.message
         self.needsImageSync = messageWithUser.message.thumbnailImageToken != nil
+        self.editCallback = editCallback
     }
     
     private var hasThumbnail: Bool {
@@ -121,58 +123,71 @@ struct MessageBubbleView: View {
                     Spacer()
                 }
             }
-            .fullScreenCover(
-                isPresented: $viewModel.presentLargeImageView,
+        }
+        .padding(rowInsets)
+        .fullScreenCover(
+            isPresented: $viewModel.presentLargeImageView,
             onDismiss: {
                 Task {
                     try? await viewModel.cleanupStorage()
                 }
-            }) {
-                AttachmentPreview()
-                    .environmentObject(viewModel)
             }
-            .contextMenu {
-                contextMenuContent()
-            }
-            .task {
-                if needsImageSync {
-                    needsImageSync = false
-                    if let _ = message.thumbnailImageToken {
+        ) {
+            AttachmentPreview()
+                .environmentObject(viewModel)
+        }
+        .contextMenu {
+            contextMenuContent()
+        }
+        .task {
+            if needsImageSync {
+                needsImageSync = false
+                if let _ = message.thumbnailImageToken {
 //                        print(".task: await fetchThumbnail()")
-                        await viewModel.fetchAttachment(type: .thumbnailImage)
-                    }
+                    await viewModel.fetchAttachment(type: .thumbnailImage)
                 }
             }
         }
-        .padding(rowInsets)
     }
     
     @ViewBuilder
     func contextMenuContent() -> some View {
-        if largeImageAvailable {
+
+        // display full rez image if EnableLargeImages option is set in Settings, or if local user
+        if hasThumbnail && (largeImageAvailable || user.id == DataManager.shared.currentUserId) {
             Button {
                 viewModel.presentLargeImageView = true
             } label: {
                 Text(viewImageTitleKey)
             }
         }
-        if !message.isImageMessage {
+        // Only allow edit/delete operations on local user messages
+        else if user.id == DataManager.shared.currentUserId {
+            if !message.isImageMessage {
+                Button {
+                    if let editCallback = editCallback {
+                        editCallback(message.id)
+                    } else {
+                        errorHandler.handle(
+                            error: AppError.featureUnavailable("Something went wrong with Edit feature"),
+                            title: alertTitleKey
+                        )
+                    }
+                } label: {
+                    Text(editTitleKey)
+                }
+            }
+            
             Button {
                 errorHandler.handle(
-                    error: AppError.featureUnavailable("Edit feature not yet available"),
+                    error: AppError.featureUnavailable("Delete feature not yet available"),
                     title: alertTitleKey
                 )
             } label: {
-                Text(editTitleKey)
+                Text(deleteTitleKey)
             }
-        }
-        Button {
-            errorHandler.handle(
-                error: AppError.featureUnavailable("Delete feature not yet available"),
-                title: alertTitleKey
-            )
-        } label: {
-            Text(deleteTitleKey)
+        } else {
+            EmptyView()
         }
     }
     
@@ -211,11 +226,6 @@ struct MessageBubbleView: View {
                 messagesId: messagesId
             )
         )
-//    fileprivate init(messageWithUser: MessageWithUser, messagesId: String = "xyz", preview: Bool) {
-//        self.viewModel = MessageBubbleVM(
-//                Message(roomId: "abc", text: "Hello World!"),
-//                messagesId: messagesId
-//        )
 
         self.messageWithUser = messageWithUser
         self.user = messageWithUser.user
