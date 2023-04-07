@@ -30,12 +30,12 @@
     >
     <activity
         android:id="@+id/presenceViewerActivity"
-        android:name="live.ditto.chat.presenceviewer.PresenceViewerActivity"
+        android:name="live.dittolive.chat.presenceviewer.PresenceViewerActivity"
         android:label="PresenceViewerActivity"
         />
     <fragment
         android:id="@+id/nav_profile"
-        android:name="live.ditto.chat.profile.ProfileFragment"
+        android:name="live.dittolive.chat.profile.ProfileFragment"
         android:label="Profile">
         <argument
             android:name="userId"
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_home"
-        android:name="live.ditto.chat.conversation.ConversationFragment"
+        android:name="live.dittolive.chat.conversation.ConversationFragment"
         android:label="Conversation"
         />
 </navigation>
