@@ -24,9 +24,21 @@ android {
     }
 
     buildTypes {
+        debug{
+            def credsFile = rootProject.file("secure\\debug_creds.properties")
+            def prop = new Properties()
+            prop.load(new FileInputStream(credsFile))
+            buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
+            buildConfigField('String', 'DITTO_ACCESS_LICENSE', prop['DITTO_ACCESS_LICENSE'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            def credsFile = rootProject.file("secure\\release_creds.properties")
+            def prop = new Properties()
+            prop.load(new FileInputStream(credsFile))
+            buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
+            buildConfigField('String', 'DITTO_ACCESS_LICENSE', prop['DITTO_ACCESS_LICENSE'])
         }
     }
     compileOptions {
@@ -115,7 +127,7 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Ditto
-    implementation("live.ditto:ditto:4.0.0")
+    implementation("live.ditto:ditto:4.0.1")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file
