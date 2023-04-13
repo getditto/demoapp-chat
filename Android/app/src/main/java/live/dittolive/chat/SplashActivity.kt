@@ -39,8 +39,6 @@ import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
 import live.ditto.android.DefaultAndroidDittoDependencies
 import live.dittolive.chat.DittoHandler.Companion.ditto
-import live.dittolive.chat.data.ACCESS_LICENSE
-import live.dittolive.chat.data.APP_NAME
 
 class SplashActivity : AppCompatActivity() {
 
@@ -59,9 +57,9 @@ class SplashActivity : AppCompatActivity() {
     DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
     DittoHandler.ditto = Ditto(
       androidDependencies,
-      DittoIdentity.OfflinePlayground(androidDependencies, APP_NAME)
+      DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
     )
-    DittoHandler.ditto.setOfflineOnlyLicenseToken(ACCESS_LICENSE)
+    DittoHandler.ditto.setOfflineOnlyLicenseToken(BuildConfig.DITTO_ACCESS_LICENSE)
     // Disable sync with V3
         ditto.disableSyncWithV3()
     DittoHandler.ditto.startSync()
