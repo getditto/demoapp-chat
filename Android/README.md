@@ -18,17 +18,17 @@ Android version of the Chat App Demo
 
 You need to setup some environment variables in order to build this project:
 
-1. In your project root, create a directory called **secret**
+1. In your project root, create a directory called **secure**
 2. Add two files to that directory called **debug_creds.properties** and **release_creds.properties**, for the debug and release build variants as defined in the app **build.gradle** file.
 2. Add the following environment variables to each credential file, substituting your own values:
 ```
     # Environment Variables  
     DITTO_APP_ID = "replace with your app id"  
-    DITTO_ACCESS_LICENSE = "replace with your access license"  
+    DITTO_LICENSE_TOKEN = "replace with your offline license token"  
 ```
 
-`DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the app in order for them to see each other, including across different platforms.
-`DITTO_ACCESS_LICENSE` is the offline-only playground token. Note this feature will be discontinued in the future.
+* `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the app in order for them to see each other, including across different platforms.
+* `DITTO_LICENSE_TOKEN` is the offline-only playground token. Note this feature will be discontinued in the future.
 
  ## Copyright
 Copyright (c) 2022 DittoLive
