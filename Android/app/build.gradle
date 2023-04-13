@@ -31,6 +31,7 @@ android {
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_ACCESS_LICENSE', prop['DITTO_ACCESS_LICENSE'])
             buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
         }
         release {
             minifyEnabled false
@@ -41,6 +42,7 @@ android {
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_ACCESS_LICENSE', prop['DITTO_ACCESS_LICENSE'])
             buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
         }
     }
     compileOptions {
