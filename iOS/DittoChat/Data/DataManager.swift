@@ -8,9 +8,12 @@
 
 import Combine
 import DittoSwift
-import Foundation
+import SwiftUI
 
 protocol LocalDataInterface {
+    var acceptLargeImages: Bool { get set }
+    var acceptLargeImagesPublisher: AnyPublisher<Bool, Never> { get }
+    
     var privateRoomsPublisher: AnyPublisher<[Room], Never> { get }
     func addPrivateRoom(_ room: Room)
     func removePrivateRoom(roomId: String)
@@ -42,7 +45,15 @@ protocol ReplicatingDataInterface {
     func deleteRoom(_ room: Room)
 
     func createMessage(for rooom: Room, text: String)
+    func saveEditedTextMessage(_ message: Message, in room: Room)
+    func saveDeletedImageMessage(_ message: Message, in room: Room)
+    func createImageMessage(for room: Room, image: UIImage, text: String?) async throws
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never>
+    func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never>
+    func attachmentPublisher(
+        for token: DittoAttachmentToken,
+        in collectionId: String
+    ) -> DittoSwift.DittoCollection.FetchAttachmentPublisher
     
     func addUser(_ usr: User)
     func currentUserPublisher() -> AnyPublisher<User?, Never>
@@ -108,13 +119,36 @@ extension DataManager {
 
 extension DataManager {
     //MARK: Messages
-
+    
     func createMessage(for room: Room, text: String) {
         p2pStore.createMessage(for: room, text: text)
+    }
+    
+    func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
+        try await p2pStore.createImageMessage(for: room, image: image, text: text)
+    }
+    
+    func saveEditedTextMessage(_ message: Message, in room: Room) {
+        p2pStore.saveEditedTextMessage(message, in: room)
+    }
+    
+    func saveDeletedImageMessage(_ message: Message, in room: Room) {
+        p2pStore.saveDeletedImageMessage(message, in: room)
+    }
+    
+    func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {
+        p2pStore.messagePublisher(for: msgId, in: collectionId)
     }
 
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never>{
         p2pStore.messagesPublisher(for: room)
+    }
+
+    func attachmentPublisher(
+        for token: DittoAttachmentToken,
+        in collectionId: String
+    ) -> DittoSwift.DittoCollection.FetchAttachmentPublisher {
+        p2pStore.attachmentPublisher(for: token, in: collectionId)
     }
 }
 
@@ -165,5 +199,16 @@ extension DataManager {
         let version = Bundle.main.appVersion
         let build = Bundle.main.appBuild
         return "\(name) \(version) build \(build)"
+    }
+}
+
+extension DataManager {    
+    var acceptLargeImages: Bool {
+        get { localStore.acceptLargeImages }
+        set { localStore.acceptLargeImages = newValue }
+    }
+    
+    var acceptLargeImagesPublisher: AnyPublisher<Bool, Never> {
+        localStore.acceptLargeImagesPublisher
     }
 }
