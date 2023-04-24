@@ -30,6 +30,8 @@ android {
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
         release {
             minifyEnabled false
@@ -39,6 +41,8 @@ android {
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
     }
     compileOptions {
