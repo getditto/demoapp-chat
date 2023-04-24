@@ -26,7 +26,7 @@ struct RoomsListScreen: View {
                         RoomsListRowItem(room: room)
                     }                    
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(hideTitleKey) {
+                        Button(settingsHideTitleKey) {
                             viewModel.archiveRoom(room)
                         }
                         .tint(.red)
@@ -40,7 +40,7 @@ struct RoomsListScreen: View {
                         RoomsListRowItem(room: room)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(leaveTitleKey) {
+                        Button(settingsLeaveTitleKey) {
                             viewModel.archiveRoom(room)
                         }
                         .tint(.red)
@@ -49,11 +49,8 @@ struct RoomsListScreen: View {
             }
         }
         .navigationDestination(for: Room.self) { room in
-            if room.isPrivate {
-                PrivateChatScreen(room: room)
-            } else {
-                ChatScreen(room: room)
-            }
+            ChatScreen(room: room)
+                .withErrorHandling()
         }
         .sheet(isPresented: $viewModel.presentProfileScreen) {
             ProfileScreen()

@@ -10,7 +10,15 @@
 		145662BE296E1E0900E1C148 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145662BD296E1E0900E1C148 /* LogManager.swift */; };
 		1493FF6A2978763500397DAB /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF682978763500397DAB /* ScannerView.swift */; };
 		1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF692978763500397DAB /* QRCodeView.swift */; };
-		1493FF6F2978764300397DAB /* PrivateChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF6D2978764300397DAB /* PrivateChatScreen.swift */; };
+		14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */; };
+		14A0B87229D3BB5D00D2D625 /* CustomErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87029D3BB5D00D2D625 /* CustomErrors.swift */; };
+		14A0B87429D3BB8B00D2D625 /* AttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87329D3BB8B00D2D625 /* AttachmentPreview.swift */; };
+		14A0B87829D3BBB400D2D625 /* MessageBubbleVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87729D3BBB400D2D625 /* MessageBubbleVM.swift */; };
+		14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87929D3BBC400D2D625 /* DittoProgressView.swift */; };
+		14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */; };
+		14A0B87E29D3BC4100D2D625 /* UIImage+Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */; };
+		14A0B88029D49E7200D2D625 /* GeneralErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */; };
+		14A0B88329D60C6800D2D625 /* MessageEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B88229D60C6800D2D625 /* MessageEditView.swift */; };
 		14A2B744298987D300E0FF86 /* DittoDataBrowser in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B743298987D300E0FF86 /* DittoDataBrowser */; };
 		14A2B746298987D300E0FF86 /* DittoDiskUsage in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B745298987D300E0FF86 /* DittoDiskUsage */; };
 		14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B747298987D300E0FF86 /* DittoExportLogs */; };
@@ -41,6 +49,7 @@
 		14CADB60293FF00700BED068 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5F293FF00700BED068 /* Fakery */; };
 		14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902E82954DFC8006B54E3 /* StringKeys.swift */; };
 		14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902EA2954ED1B006B54E3 /* Utils.swift */; };
+		14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E57BB529D8AA2700D71154 /* EditMessageBubbleView.swift */; };
 		14E834B62953C6E60027D750 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B02953C6E60027D750 /* Message.swift */; };
 		14E834B72953C6E60027D750 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B12953C6E60027D750 /* User.swift */; };
 		14E834B82953C6E60027D750 /* DittoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B22953C6E60027D750 /* DittoService.swift */; };
@@ -76,7 +85,15 @@
 		145662BD296E1E0900E1C148 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		1493FF692978763500397DAB /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
-		1493FF6D2978764300397DAB /* PrivateChatScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateChatScreen.swift; sourceTree = "<group>"; };
+		14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
+		14A0B87029D3BB5D00D2D625 /* CustomErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomErrors.swift; sourceTree = "<group>"; };
+		14A0B87329D3BB8B00D2D625 /* AttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentPreview.swift; sourceTree = "<group>"; };
+		14A0B87729D3BBB400D2D625 /* MessageBubbleVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleVM.swift; sourceTree = "<group>"; };
+		14A0B87929D3BBC400D2D625 /* DittoProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoProgressView.swift; sourceTree = "<group>"; };
+		14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemporaryFile.swift; sourceTree = "<group>"; };
+		14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Rotation.swift"; sourceTree = "<group>"; };
+		14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralErrorView.swift; sourceTree = "<group>"; };
+		14A0B88229D60C6800D2D625 /* MessageEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEditView.swift; sourceTree = "<group>"; };
 		14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoToolsUtilities.swift; sourceTree = "<group>"; };
 		14B4E25F2978F2350069B69D /* ChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
 		14B4E2612978F23E0069B69D /* ExpandingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingTextView.swift; sourceTree = "<group>"; };
@@ -103,6 +120,7 @@
 		14CADC0B2941089A00BED068 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		14D902E82954DFC8006B54E3 /* StringKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringKeys.swift; sourceTree = "<group>"; };
 		14D902EA2954ED1B006B54E3 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		14E57BB529D8AA2700D71154 /* EditMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMessageBubbleView.swift; sourceTree = "<group>"; };
 		14E834B02953C6E60027D750 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		14E834B12953C6E60027D750 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		14E834B22953C6E60027D750 /* DittoService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoService.swift; sourceTree = "<group>"; };
@@ -160,6 +178,25 @@
 			path = CodeScanner;
 			sourceTree = "<group>";
 		};
+		14A0B86E29D3BB5D00D2D625 /* ErrorHandling */ = {
+			isa = PBXGroup;
+			children = (
+				14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */,
+				14A0B87029D3BB5D00D2D625 /* CustomErrors.swift */,
+				14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */,
+			);
+			path = ErrorHandling;
+			sourceTree = "<group>";
+		};
+		14A0B88129D60C3F00D2D625 /* MessageEditView */ = {
+			isa = PBXGroup;
+			children = (
+				14A0B88229D60C6800D2D625 /* MessageEditView.swift */,
+				14E57BB529D8AA2700D71154 /* EditMessageBubbleView.swift */,
+			);
+			path = MessageEditView;
+			sourceTree = "<group>";
+		};
 		14A2B742298987D300E0FF86 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,7 +210,7 @@
 				14B4E2632978F2480069B69D /* AvatarView */,
 				14B4E25C2978F1E10069B69D /* ChatInputView */,
 				14B4E2662978F2740069B69D /* CheckboxButton.swift */,
-				14B4E2682978F2A40069B69D /* MessageBubbleView.swift */,
+				14A0B87929D3BBC400D2D625 /* DittoProgressView.swift */,
 				14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */,
 				14B5F1AA2985A25D00024BE4 /* RoomView.swift */,
 			);
@@ -244,6 +281,7 @@
 			children = (
 				14CADB2D293FEBD500BED068 /* DittoChatApp.swift */,
 				14E834AF2953C6C60027D750 /* Data */,
+				14A0B86E29D3BB5D00D2D625 /* ErrorHandling */,
 				14B4E270297AFE5A0069B69D /* Models */,
 				14E834BC2953C6F60027D750 /* Screens */,
 				14B4E25B2978F18B0069B69D /* Views */,
@@ -286,6 +324,8 @@
 				14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */,
 				145662BD296E1E0900E1C148 /* LogManager.swift */,
 				14D902E82954DFC8006B54E3 /* StringKeys.swift */,
+				14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */,
+				14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */,
 				14D902EA2954ED1B006B54E3 /* Utils.swift */,
 			);
 			path = Utilities;
@@ -304,6 +344,7 @@
 		14E834BC2953C6F60027D750 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				14A0B88129D60C3F00D2D625 /* MessageEditView */,
 				14E834BD2953C70B0027D750 /* ChatScreen */,
 				1493FF672978763500397DAB /* CodeScanner */,
 				14E834BE2953C7280027D750 /* ProfileScreen */,
@@ -317,9 +358,11 @@
 		14E834BD2953C70B0027D750 /* ChatScreen */ = {
 			isa = PBXGroup;
 			children = (
+				14A0B87329D3BB8B00D2D625 /* AttachmentPreview.swift */,
+				14B4E2682978F2A40069B69D /* MessageBubbleView.swift */,
+				14A0B87729D3BBB400D2D625 /* MessageBubbleVM.swift */,
 				14E834C22953C7A30027D750 /* ChatScreen.swift */,
 				14E834C12953C7A30027D750 /* ChatScreenVM.swift */,
-				1493FF6D2978764300397DAB /* PrivateChatScreen.swift */,
 			);
 			path = ChatScreen;
 			sourceTree = "<group>";
@@ -512,26 +555,35 @@
 				14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */,
 				1493FF6A2978763500397DAB /* ScannerView.swift in Sources */,
 				14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */,
+				14A0B87E29D3BC4100D2D625 /* UIImage+Rotation.swift in Sources */,
+				14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */,
 				14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */,
 				14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */,
 				14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */,
 				14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */,
+				14A0B87429D3BB8B00D2D625 /* AttachmentPreview.swift in Sources */,
 				14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */,
 				14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */,
 				14E834B62953C6E60027D750 /* Message.swift in Sources */,
 				14B4E26F297A40380069B69D /* DataManager.swift in Sources */,
+				14A0B87229D3BB5D00D2D625 /* CustomErrors.swift in Sources */,
 				14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */,
 				14E834CB2953C7B20027D750 /* RoomEditScreen.swift in Sources */,
+				14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */,
+				14A0B87829D3BBB400D2D625 /* MessageBubbleVM.swift in Sources */,
+				14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */,
+				14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */,
 				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
 				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
 				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
 				14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */,
 				14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */,
 				1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */,
-				1493FF6F2978764300397DAB /* PrivateChatScreen.swift in Sources */,
 				14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */,
 				14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */,
 				14E834B72953C6E60027D750 /* User.swift in Sources */,
+				14A0B88329D60C6800D2D625 /* MessageEditView.swift in Sources */,
+				14A0B88029D49E7200D2D625 /* GeneralErrorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,7 +670,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -672,7 +724,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -707,7 +759,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0.0;
+				MARKETING_VERSION = 4.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.Chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -741,7 +793,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0.0;
+				MARKETING_VERSION = 4.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.Chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

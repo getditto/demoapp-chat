@@ -1,5 +1,5 @@
 ///
-//  PrivateChatScreen.swift
+//  ChatScreen.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 02/24/23.
@@ -7,9 +7,12 @@
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import SwiftUI
+import PhotosUI
+import SwiftUI
 
 struct ChatScreen: View {
     @StateObject var viewModel: ChatScreenVM
+    @EnvironmentObject var errorHandler: ErrorHandler
 
     init(room: Room) {
         self._viewModel = StateObject(wrappedValue: ChatScreenVM(room: room))
@@ -20,19 +23,34 @@ struct ChatScreen: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(viewModel.messagesWithUsers) { msg in
-                            MessageBubbleView(messageWithUser: msg)
-                                .id(msg.id)
-                                .transition(.slide)
+                        ForEach(viewModel.messagesWithUsers) { usrMsg in
+                            MessageBubbleView(
+                                messageWithUser: usrMsg,
+                                messagesId: viewModel.room.messagesId,
+                                messageOpCallback: viewModel.messageOperationCallback,
+                                isEditing: $viewModel.isEditing
+                            )
+                            .id(usrMsg.message.id)
+                            .transition(.slide)
                         }
                     }
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .onAppear {
                     DispatchQueue.main.async {
                         scrollToBottom(proxy: proxy)
                     }
                 }
                 .onChange(of: viewModel.messagesWithUsers.count) { value in
+                    DispatchQueue.main.async {
+                        withAnimation {
+                            scrollToBottom(proxy: proxy)
+                        }
+                    }
+                }
+                .onChange(of: viewModel.keyboardStatus) { status in
+                    guard !viewModel.presentEditingView else { return }
+                    if status == .willShow || status == .willHide { return }
                     withAnimation {
                         scrollToBottom(proxy: proxy)
                     }
@@ -43,15 +61,92 @@ struct ChatScreen: View {
                 onSendButtonTappedCallback: viewModel.sendMessage
             )
         }
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack {
-                    Text(viewModel.roomName)
+        .listStyle(.inset)
+        .navigationTitle(viewModel.roomName)
+        .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(
+            isPresented: $viewModel.presentAttachmentView,
+            onDismiss: {
+                viewModel.cleanupAttachmentAttribs()
+            }
+        ) {
+            AttachmentPreview(
+                vm: MessageBubbleVM(
+                    viewModel.attachmentMessage!,
+                    messagesId: viewModel.room.messagesId
+                ),
+                errorHandler: errorHandler
+            )
+        }
+        .sheet(isPresented: $viewModel.presentShareRoomScreen) {
+            if let codeStr = viewModel.shareQRCode() {
+                QRCodeView(
+                    roomName: viewModel.roomName,
+                    codeString: codeStr
+                )
+            } else {
+                NavigationView {
+                    GeneralErrorView(message: AppError.qrCodeFail.localizedDescription)
                 }
             }
         }
-    }
-    
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if viewModel.room.isPrivate {
+                    Button {
+                        viewModel.presentShareRoomScreen = true
+                    } label: {
+                        Image(systemName: qrCodeKey)
+                    }
+                }
+
+                PhotosPicker(selection: $viewModel.selectedItem,
+                             matching: .images,
+                             photoLibrary: .shared()
+                ) {
+                    Image(systemName: shareImageIconKey)
+                        .symbolRenderingMode(.multicolor)
+                        .font(.system(size: 24))
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.borderless)
+                .onChange(of: viewModel.selectedItem) { newValue in
+                    Task {
+                        do {
+                            let imageData = try await newValue?.loadTransferable(type: Data.self)
+                            
+                            if let image = UIImage(data: imageData ?? Data()) {
+                                viewModel.selectedImage = image
+                                
+                                do {
+                                    try await viewModel.sendImageMessage()
+                                } catch {
+                                    self.errorHandler.handle(error: error)
+                                }
+                            }
+                        } catch {
+                            self.errorHandler.handle(error: AttachmentError.iCloudLibraryImageFail)
+                        }
+                    }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $viewModel.presentEditingView) {
+            if let msgsUsers = try? viewModel.editMessagesWithUsers() {
+                NavigationView {
+                    MessageEditView(
+                        msgsUsers,
+                        roomName: viewModel.roomName,
+                        saveEditCallback: viewModel.saveEditedTextMessage,
+                        cancelEditCallback: viewModel.cancelEditCallback
+                    )
+                }
+            } else {
+                EmptyView()
+            }
+        }
+    }    
+
     func scrollToBottom(proxy: ScrollViewProxy) {
         proxy.scrollTo(viewModel.messagesWithUsers.last?.id)
     }
