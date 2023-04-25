@@ -80,14 +80,10 @@ fun DittochatDrawerContent(
         DividerItem()
         DrawerItemHeader("Chats")
         ChatItem("public", true) { onChatClicked("public") }
-        ChatItem("private/Eric", false) { onChatClicked("droidcon-nyc") }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
         ProfileItem(fullName, meProfile.photo) {
             onProfileClicked(meUserId)
-        }
-        ProfileItem("Eric Turner", colleagueProfile.photo) {
-            onProfileClicked(colleagueProfile.userId)
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         TextButton(onClick = {
