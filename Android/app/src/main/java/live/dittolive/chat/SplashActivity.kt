@@ -64,7 +64,6 @@ class SplashActivity : AppCompatActivity() {
         true
       )
     )
-    ditto.setOfflineOnlyLicenseToken(BuildConfig.DITTO_LICENSE_TOKEN)
     // Disable sync with V3
         ditto.disableSyncWithV3()
     ditto.startSync()
