@@ -39,6 +39,7 @@ import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
 import live.ditto.android.DefaultAndroidDittoDependencies
 import live.dittolive.chat.DittoHandler.Companion.ditto
+import live.dittolive.chat.DittoHandler.Companion.dittoAuthCallback
 
 class SplashActivity : AppCompatActivity() {
 
@@ -55,13 +56,18 @@ class SplashActivity : AppCompatActivity() {
   private fun setupDitto() {
     val androidDependencies = DefaultAndroidDittoDependencies(this)
     DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
-    DittoHandler.ditto = Ditto(
+    dittoAuthCallback = AuthCallback()
+    ditto = Ditto(
       androidDependencies,
-      DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
+      DittoIdentity.OnlineWithAuthentication(
+        androidDependencies,
+        BuildConfig.DITTO_APP_ID,
+        dittoAuthCallback,
+        true
+      )
     )
-    DittoHandler.ditto.setOfflineOnlyLicenseToken(BuildConfig.DITTO_ACCESS_LICENSE)
     // Disable sync with V3
         ditto.disableSyncWithV3()
-    DittoHandler.ditto.startSync()
+    ditto.startSync()
   }
 }
