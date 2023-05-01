@@ -92,6 +92,12 @@ fun DittochatDrawerContent(
             Text("Presence Viewer")
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
+        TextButton(onClick = {
+            // TODO : implement
+        }) {
+            Text("Logout")  // TODO: make this dynamic - "Logout" or "Login" dependign on state
+        }
+        DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(sdkVersion)
         DrawerItemHeader(text = "Ditto Chat v$versionName")
     }
