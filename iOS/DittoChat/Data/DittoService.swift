@@ -282,8 +282,6 @@ extension DittoService {
             print("DittoService.\(#function): ERROR - expected non-nil thumbnail")
             throw AttachmentError.thumbnailCreateFail
         }
-        print("DittoService.\(#function): UIImage.thumbnail.bytes: \(thumbnailImg.sizeInBytes)")
-
         
         guard let tmpStorage = try? TemporaryFile(creatingTempDirectoryForFilename: "thumbnail.jpg") else {
             print("DittoService.\(#function): Error creating TMP storage directory")
@@ -294,7 +292,6 @@ extension DittoService {
             print("Error writing JPG attachment data to file at path: \(tmpStorage.fileURL.path) --> Throw")
             throw AttachmentError.tmpStorageWriteFail
         }
-        print("DittoService.\(#function): final thumbnail.sizeInBytes: \(thumbnailImg.sizeInBytes)")
         
         guard let thumbAttachment = ditto.store[room.messagesId].newAttachment(
             path: tmpStorage.fileURL.path,
@@ -312,7 +309,6 @@ extension DittoService {
                 createdOnKey: nowDate,
                 roomIdKey: room.id,
                 userIdKey: userId,
-//                largeImageTokenKey: nil,
                 thumbnailImageTokenKey: thumbAttachment
             ])
             
@@ -335,7 +331,6 @@ extension DittoService {
             print("Error writing JPG attachment data to file at path: \(tmpStorage.fileURL.path) --> Return")
             throw AttachmentError.tmpStorageWriteFail
         }
-        print("DittoService.\(#function): final largeImage.sizeInBytes: \(image.sizeInBytes)")
         
         guard let largeAttachment = ditto.store[room.messagesId].newAttachment(
             path: tmpStorage.fileURL.path,
@@ -345,10 +340,9 @@ extension DittoService {
             throw AttachmentError.createFail
         }
 
-        let result = ditto.store[room.messagesId].findByID(docId).update { mutableDoc in
+        let _ = ditto.store[room.messagesId].findByID(docId).update { mutableDoc in
             mutableDoc?[largeImageTokenKey].set(largeAttachment)
         }
-        print("Add largeImage attachment result: \(result) for messages.id: \(docId)")
         
         do {
             try await cleanupTmpStorage(tmpStorage.deleteDirectory)
