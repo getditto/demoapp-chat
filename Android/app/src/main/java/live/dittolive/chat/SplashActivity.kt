@@ -63,7 +63,7 @@ class SplashActivity : AppCompatActivity() {
         androidDependencies,
         BuildConfig.DITTO_APP_ID,
         dittoAuthCallback,
-        true
+        false
       )
     )
     // Disable sync with V3
