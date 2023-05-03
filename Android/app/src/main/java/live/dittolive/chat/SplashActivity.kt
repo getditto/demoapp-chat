@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2018-2023 DittoLive.
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the “Software”), to deal
- * In the Software without restriction, including without limitation the rights
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
@@ -34,7 +34,6 @@ import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
 import live.ditto.android.DefaultAndroidDittoDependencies
 import live.dittolive.chat.DittoHandler.Companion.ditto
-import live.dittolive.chat.DittoHandler.Companion.dittoAuthCallback
 
 class SplashActivity : AppCompatActivity() {
 
@@ -51,16 +50,11 @@ class SplashActivity : AppCompatActivity() {
   private fun setupDitto() {
     val androidDependencies = DefaultAndroidDittoDependencies(this)
     DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
-    dittoAuthCallback = AuthCallback()
     ditto = Ditto(
       androidDependencies,
-      DittoIdentity.OnlineWithAuthentication(
-        androidDependencies,
-        BuildConfig.DITTO_APP_ID,
-        dittoAuthCallback,
-        false
-      )
+      DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
     )
+    ditto.setOfflineOnlyLicenseToken(BuildConfig.DITTO_LICENSE_TOKEN)
     // Disable sync with V3
         ditto.disableSyncWithV3()
     ditto.startSync()
