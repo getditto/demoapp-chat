@@ -50,13 +50,13 @@ class SplashActivity : AppCompatActivity() {
   private fun setupDitto() {
     val androidDependencies = DefaultAndroidDittoDependencies(this)
     DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
-    DittoHandler.ditto = Ditto(
+    ditto = Ditto(
       androidDependencies,
       DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
     )
-    DittoHandler.ditto.setOfflineOnlyLicenseToken(BuildConfig.DITTO_LICENSE_TOKEN)
+    ditto.setOfflineOnlyLicenseToken(BuildConfig.DITTO_LICENSE_TOKEN)
     // Disable sync with V3
         ditto.disableSyncWithV3()
-    DittoHandler.ditto.startSync()
+    ditto.startSync()
   }
 }
