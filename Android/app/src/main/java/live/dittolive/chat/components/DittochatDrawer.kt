@@ -93,9 +93,10 @@ fun DittochatDrawerContent(
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         TextButton(onClick = {
-            // TODO : implement
+            viewModel.logout()
         }) {
-            Text("Logout")  // TODO: make this dynamic - "Logout" or "Login" dependign on state
+
+            Text("Logout")
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(sdkVersion)
