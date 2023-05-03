@@ -2,7 +2,7 @@
  * Copyright (c) 2023 DittoLive.
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
- * in the Software without restriction, including without limitation the rights
+ * In the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
@@ -25,11 +25,22 @@
 
 package live.dittolive.chat
 
-import live.ditto.*
+import live.ditto.DittoAuthenticationCallback
+import live.ditto.DittoAuthenticator
 
-class DittoHandler {
-    companion object {
-        lateinit var ditto: Ditto
-        lateinit var dittoAuthCallback: AuthCallback
+class AuthCallback: DittoAuthenticationCallback {
+    override fun authenticationRequired(authenticator: DittoAuthenticator) {
+        authenticator.loginWithToken(BuildConfig.DITTO_AUTH_TOKEN, BuildConfig.DITTO_AUTH_PROVIDER) { err ->
+            println("Login request completed. Error? $err")
+        }
+    }
+
+    override fun authenticationExpiringSoon(
+        authenticator: DittoAuthenticator,
+        secondsRemaining: Long
+    ) {
+        authenticator.loginWithToken(BuildConfig.DITTO_AUTH_TOKEN, BuildConfig.DITTO_AUTH_PROVIDER) { err ->
+            println("Login request completed. Error? $err")
+        }
     }
 }
