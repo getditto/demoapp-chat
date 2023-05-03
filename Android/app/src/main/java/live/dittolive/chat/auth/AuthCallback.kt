@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2023 DittoLive.
+ * Copyright (c) 2023 DittoLive.
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
  * In the Software without restriction, including without limitation the rights
@@ -23,46 +23,25 @@
  * THE SOFTWARE.
  */
 
-package live.dittolive.chat
+package live.dittolive.chat.auth
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import live.ditto.Ditto
-import live.ditto.DittoIdentity
-import live.ditto.DittoLogLevel
-import live.ditto.DittoLogger
-import live.ditto.android.DefaultAndroidDittoDependencies
-import live.dittolive.chat.DittoHandler.Companion.ditto
-import live.dittolive.chat.DittoHandler.Companion.dittoAuthCallback
+import live.ditto.DittoAuthenticationCallback
+import live.ditto.DittoAuthenticator
+import live.dittolive.chat.BuildConfig
 
-class SplashActivity : AppCompatActivity() {
+class AuthCallback : DittoAuthenticationCallback {
+    override fun authenticationRequired(authenticator: DittoAuthenticator) {
+        authenticator.loginWithToken(BuildConfig.DITTO_AUTH_TOKEN, BuildConfig.DITTO_AUTH_PROVIDER) { err ->
+            println("Login request completed. Error? $err")
+        }
+    }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
-    setupDitto()
-
-    val intent = Intent(this, NavActivity::class.java)
-    startActivity(intent)
-    finish()
-  }
-
-  private fun setupDitto() {
-    val androidDependencies = DefaultAndroidDittoDependencies(this)
-    DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
-    dittoAuthCallback = AuthCallback()
-    ditto = Ditto(
-      androidDependencies,
-      DittoIdentity.OnlineWithAuthentication(
-        androidDependencies,
-        BuildConfig.DITTO_APP_ID,
-        dittoAuthCallback,
-        false
-      )
-    )
-    // Disable sync with V3
-        ditto.disableSyncWithV3()
-    ditto.startSync()
-  }
+    override fun authenticationExpiringSoon(
+        authenticator: DittoAuthenticator,
+        secondsRemaining: Long
+    ) {
+        authenticator.loginWithToken(BuildConfig.DITTO_AUTH_TOKEN, BuildConfig.DITTO_AUTH_PROVIDER) { err ->
+            println("Login request completed. Error? $err")
+        }
+    }
 }

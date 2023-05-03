@@ -30,6 +30,8 @@ android {
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
         release {
             minifyEnabled false
@@ -39,14 +41,16 @@ android {
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        jvmToolchain(17)
     }
     buildFeatures {
         compose true
@@ -127,7 +131,7 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Ditto
-    implementation("live.ditto:ditto:4.0.1")
+    implementation("live.ditto:ditto:4.1.0")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file

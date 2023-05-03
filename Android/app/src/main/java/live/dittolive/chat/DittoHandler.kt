@@ -30,5 +30,6 @@ import live.ditto.*
 class DittoHandler {
     companion object {
         lateinit var ditto: Ditto
+        lateinit var dittoAuthCallback: AuthCallback
     }
 }
