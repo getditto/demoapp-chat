@@ -126,7 +126,7 @@ struct SettingsScreen: View {
 
                 // Private Rooms
                 if viewModel.archivedPrivateRooms.count > 0 {
-                    Section(archivedPrivateRoomsKey) {
+                    Section(archivedPrivateRoomsTitleKey) {
                         ForEach(viewModel.archivedPrivateRooms) { privRoom in
                             NavigationLink {
                                 RoomView(room: privRoom, viewModel: viewModel)
