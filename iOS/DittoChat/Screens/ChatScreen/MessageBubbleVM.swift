@@ -42,14 +42,10 @@ class MessageBubbleVM: ObservableObject {
     }
     
     func fetchAttachment(type: AttachmentType) async {
-        var token = message.thumbnailImageToken
-        if type == .largeImage {
-            token = message.largeImageToken
-        }
-
-        guard let token = token else {
-            return
-        }
+        guard let token = type == .largeImage
+                ? message.largeImageToken
+                : message.thumbnailImageToken
+        else { return }
         
         ImageAttachmentFetcher().fetch(
             with: token,
