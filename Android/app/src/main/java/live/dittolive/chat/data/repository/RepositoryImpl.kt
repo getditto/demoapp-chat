@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import live.ditto.*
+import live.dittolive.chat.BuildConfig
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.*
@@ -220,6 +221,20 @@ class RepositoryImpl @Inject constructor(
 
     override fun getDittoSdkVersion(): String {
         return ditto.sdkVersion
+    }
+
+    override fun login() {
+        ditto.auth?.loginWithToken(BuildConfig.DITTO_AUTH_TOKEN, BuildConfig.DITTO_AUTH_PROVIDER) { err ->
+            println("Login request completed. Error? $err")
+        }
+    }
+
+    override fun logout() {
+        ditto.auth?.logout {
+            ditto.store.collectionNames().forEach() {
+                ditto.store.collection(it).findAll().evict()
+            }
+        }
     }
 
     private fun getAllUsersFromDitto() {

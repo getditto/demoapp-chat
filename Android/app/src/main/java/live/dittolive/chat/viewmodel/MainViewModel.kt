@@ -63,6 +63,14 @@ class MainViewModel @Inject constructor(
     private val _isUserMe = MutableStateFlow(false)
     val isUserMe = _isUserMe.asStateFlow()
 
+    /**
+     * Flag for whether the user is logged in or not
+     * Because in this demo app we are automatically logging in via token on launch, this is
+     * initially set to true
+     */
+    private val _isUserLoggedIn = MutableStateFlow(true)
+    val isUserLoggedIn = _isUserLoggedIn.asStateFlow()
+
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
     }
@@ -124,6 +132,14 @@ class MainViewModel @Inject constructor(
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
+    }
+
+    fun login() {
+        repository.login()
+    }
+
+    fun logout() {
+        repository.logout()
     }
 
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
