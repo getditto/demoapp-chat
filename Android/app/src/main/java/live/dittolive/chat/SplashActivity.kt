@@ -48,7 +48,7 @@ class SplashActivity : AppCompatActivity() {
   }
 
   private fun setupDitto() {
-    val androidDependencies = DefaultAndroidDittoDependencies(this)
+    val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
     DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
     ditto = Ditto(
       androidDependencies,
