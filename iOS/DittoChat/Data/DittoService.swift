@@ -16,9 +16,9 @@ class DittoInstance {
     let ditto: Ditto
 
     init(enableLogging loggingEnabled: Bool = false) {
-        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: APP_ID))
+        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
         
-        try! ditto.setOfflineOnlyLicenseToken(OFFLINE_ONLY_TOKEN)
+        try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
         
         // update to v4 AddWins
         do {
