@@ -9,7 +9,7 @@ settings to your Apple developer account credentials to provision building to yo
 4. Edit `.env` to add environment variables as in the following example:  
 ```
 APP_ID=a01b2c34-5d6e-7fgh-ijkl-8mno9p0q12r3
-ONLINE_AUTH_TOKEN=ab01c2de-3f45-67g8-9012-34hi567j89k0
+DITTO_OFFLINE_TOKEN=a01b2c34-5d6e-7fgh-ijkl-8mno9p0q12r3
 ```
 5. Clean (**Command + Shift + K**), then build (**Command + B**). This will generate `Env.swift`  
 6. Build to two iOS devices and sign in with distinct user names in the first screen  
