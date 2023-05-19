@@ -65,12 +65,6 @@ class LocalStoreService: LocalDataInterface {
         privateRoomsSubject.send(rooms)
     }
     
-    func removePrivateRoom(roomId: String) {
-        let roomsData = removeRoom(roomId: roomId, from: &defaults.privateRooms)
-        let rooms = defaults.decodeRoomsFromData(roomsData)
-        privateRoomsSubject.send(rooms)
-    }
-    
     func archivePrivateRoom(_ room: Room) {
         // remove from privateRooms
         var roomsData = removeRoom(roomId: room.id, from: &defaults.privateRooms)
@@ -80,7 +74,6 @@ class LocalStoreService: LocalDataInterface {
         // add to archivedPrivateRooms
         roomsData = addRoom(room, to: &defaults.archivedPrivateRooms)
         rooms = defaults.decodeRoomsFromData(roomsData)
-        
         archivedPrivateRoomsSubject.send(rooms)
     }
     

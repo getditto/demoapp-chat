@@ -58,6 +58,7 @@ class DittoService: ReplicatingDataInterface {
     private var privateStore: LocalDataInterface
     private let PUBLIC_MESSAGES_ID = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef"
     
+    private var joinRoomQuery: DittoSwift.DittoLiveQuery?
     
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
@@ -153,18 +154,21 @@ extension DittoService {
     func removeSubscriptions(for room: Room) {
         if room.isPrivate {
             guard let rSub = privateRoomSubscriptions[room.id] else {
+                print("\(#function) private room subscription NOT FOUND in privateRoomSubscriptions --> RETURN")
                 return
             }
             rSub.cancel()
             privateRoomSubscriptions.removeValue(forKey: room.id)
             
             guard let mSub = privateRoomMessagesSubscriptions[room.id] else {
+                print("\(#function) privateRoomMessagesSubscriptions subcription NOT FOUND --> RETURN")
                 return
             }
             mSub.cancel()
             privateRoomMessagesSubscriptions.removeValue(forKey: room.id)
         } else {
             guard let rSub = publicRoomMessagesSubscriptions[room.id] else {
+                print("\(#function) publicRoomMessagesSubscriptions subcription NOT FOUND --> RETURN")
                 return
             }
             rSub.cancel()
@@ -438,7 +442,9 @@ extension DittoService {
         let collectionId = room.collectionId ?? publicRoomsCollectionId
         
         guard let doc = ditto.store[collectionId].findByID(room.id).exec() else {
-            print("DittoService.\(#function): ERROR - expected non-nil room for room.id: \(room.id)")
+            print("DittoService.\(#function): WARNING (except for archived private rooms)" +
+                  " - expected non-nil room room.id: \(room.id)"
+            )
             return nil
         }
         let room = Room(document: doc)
@@ -486,10 +492,16 @@ extension DittoService {
             messagesId: messagesId
         )
 
-        _ = ditto.store.collection(collectionId).findByID(roomId).observeLocal { [weak self] doc, _ in
+        joinRoomQuery = ditto.store.collection(collectionId).findByID(roomId).observeLocal { [unowned self] doc, _ in
             if let roomDoc = doc  {
                 let room = Room(document: roomDoc)
-                self?.privateStore.addPrivateRoom(room)
+                self.privateStore.addPrivateRoom(room)
+                
+                // NOTE: the core ditto engine retains the local observer once it's initialized, and
+                // here the observer MUST be stopped after the add operation or else every
+                // subsequent update to this document, local or remote, will fire this closure.
+                self.joinRoomQuery?.stop()
+                self.joinRoomQuery = nil
             }
         }
     }
@@ -524,20 +536,18 @@ extension DittoService {
             archivePublicRoom(room)
         }
     }
-    
+
     private func archivePrivateRoom(_ room: Room) {
         // 1. remove subscriptions first
         removeSubscriptions(for: room)
-        
-        // 2. then evict the data (order matters)
-        evictPrivateRoom(room)
 
-        // 3. PrivateStore
-        //    a. remove room from privateRooms - triggers privateRoomsPublisher
-        //    b. store room as json-encoded data in archivedPrivateRooms
-        //       - triggers archivedPrivateRoomsPublisher
+        // 2. this operation removes the room from the privateRooms collection and adds to the
+        //    archivedPrivateRooms collection, firing the publishers.
+        privateStore.archivePrivateRoom(room)
+                
         DispatchQueue.main.async { [weak self] in
-            self?.privateStore.archivePrivateRoom(room)
+            // 3. then evict the data (order matters)
+            self?.evictPrivateRoom(room)
         }
     }
 
@@ -635,7 +645,7 @@ extension DittoService {
     }
     
     private func evictPublicRoom(_ room: Room) {
-        // evict all messages the collection
+        // evict all messages in collection
         ditto.store[room.messagesId].findAll().evict()
         
         // evict the messages collection

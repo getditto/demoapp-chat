@@ -16,7 +16,6 @@ protocol LocalDataInterface {
     
     var privateRoomsPublisher: AnyPublisher<[Room], Never> { get }
     func addPrivateRoom(_ room: Room)
-    func removePrivateRoom(roomId: String)
     
     var archivedPrivateRoomsPublisher: AnyPublisher<[Room], Never> { get }
     func archivePrivateRoom(_ room: Room)
