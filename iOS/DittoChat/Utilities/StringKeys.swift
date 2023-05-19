@@ -134,4 +134,5 @@ let plusMessageFillKey = "plus.message.fill"
 let qrCodeKey = "qrcode"
 let qrCodeViewfinderKey = "qrcode.viewfinder"
 let shareImageIconKey = "photo"
+let unnamedLargeImageFileKey = "UnnamedLargeImage.jpg"
 
