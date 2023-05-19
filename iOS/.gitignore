@@ -73,6 +73,9 @@ Carthage/Build/
 Dependencies/
 .accio/
 
+# Environment Variable
+.env
+Env.swift
 
 # Code Injection
 #
