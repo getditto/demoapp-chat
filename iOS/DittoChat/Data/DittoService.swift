@@ -357,8 +357,16 @@ extension DittoService {
 
     private func metadata(for image:UIImage, fname: String, timestamp: String) -> [String: String] {
         [
-            // note: there is no actual "file" after tmp storage cleanup;
-            // it will then be just a unique identifier
+            /*
+             Note: "filename" in the metadata is used when displaying a large image attachment in
+             a QLPreviewController, and will be the filename if the image is shared from there.
+             However, the DittoAttachment created with this metadata is initialized (above) from
+             a tmp storage location, and there is no actual "file" after tmp storage cleanup.
+             
+             Also note that the metadata property of DittoAttachment is an empty [String:String] by
+             default. For this example app, fairly rich metadata is generated which could be used
+             for display in various viewing contexts, and not all of it is displayed in this app.
+             */
             filenameKey: fname,
             userIdKey: privateStore.currentUserId ?? "",
             usernameKey: user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey,
@@ -376,8 +384,7 @@ extension DittoService {
         }
     }
 
-    // filename/user utils
-    // make public somewhere?  ---------------------------------------------------------------------
+    // example filename output: John-Doe_thumbnail_2023-05-19T23-19-01Z.jpg
     private func attachmentFilename(
         for user: User?,
         type: AttachmentType,
@@ -385,10 +392,9 @@ extension DittoService {
         ext: String = jpgExtKey
     ) -> String {
         var fname = self.user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey
-        let components = fname.components(separatedBy: " ")
-        fname = components.first ?? unknownUserNameKey
-        if components.count > 1 { fname += components.last! }
-        fname += "-\(type.description)" + "-\(timestamp)" + ext
+        fname = fname.replacingOccurrences(of: " ", with: "-")
+        let tmstamp = timestamp.replacingOccurrences(of: ":", with: "-")
+        fname += "_\(type.description)" + "_\(tmstamp)" + ext
         
         return fname
     }
