@@ -46,11 +46,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        jvmToolchain(17)
     }
     buildFeatures {
         compose true
@@ -131,7 +131,7 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Ditto
-    implementation("live.ditto:ditto:4.0.1")
+    implementation("live.ditto:ditto:4.1.0")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file

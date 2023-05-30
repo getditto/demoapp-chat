@@ -37,6 +37,10 @@ interface Repository {
 
     fun getDittoSdkVersion(): String
 
+    //authentication
+    fun login()
+    fun logout()
+
     // messages
     fun getAllMessages() : Flow<List<Message>>
 
