@@ -7,10 +7,6 @@
 
 import Foundation
 
-let APP_ID = "22389e28-9590-4cbf-b683-b3ac5ab2269e"
-let OFFLINE_ONLY_TOKEN =  "o2d1c2VyX2lkZURpdHRvZmV4cGlyeXgYMjAyMy0xMi0wN1QwNzo1OTo1OS45OTlaaXNpZ25hdHVyZXhYRXdvTUFBQkdvQVk5US9rajVtNmtLejJncVErYkRsZHFhaTBOVW90djJWbHdTYWR0ZmZka1gyWkNaZGV5aVRxNkM1c3RmMnE2ZFNXMjFsR1A4V05hZkE9PQ=="
-
-
 // MARK: Model Keys
 let collectionIdKey = "collectionId"
 let collectionsKey = "collections"
@@ -138,4 +134,5 @@ let plusMessageFillKey = "plus.message.fill"
 let qrCodeKey = "qrcode"
 let qrCodeViewfinderKey = "qrcode.viewfinder"
 let shareImageIconKey = "photo"
+let unnamedLargeImageFileKey = "UnnamedLargeImage.jpg"
 

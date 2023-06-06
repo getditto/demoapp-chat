@@ -48,6 +48,12 @@ extension String {
     }
 }
 
+extension String {
+    func trim() -> String {
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 extension View {
     
     /// Simple view wrapper of built-in utility to print to debugger console the causes of a view redraw

@@ -37,6 +37,9 @@ class ProfileScreenViewModel: ObservableObject {
     }
 
     func saveChanges() {
-        DataManager.shared.saveCurrentUser(firstName: firstName, lastName: lastName)
+        DataManager.shared.saveCurrentUser(
+            firstName: firstName.trim(),
+            lastName: lastName.trim()
+        )
     }
 }

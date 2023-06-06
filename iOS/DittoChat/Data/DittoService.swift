@@ -16,9 +16,9 @@ class DittoInstance {
     let ditto: Ditto
 
     init(enableLogging loggingEnabled: Bool = false) {
-        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: APP_ID))
+        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
         
-        try! ditto.setOfflineOnlyLicenseToken(OFFLINE_ONLY_TOKEN)
+        try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
         
         // update to v4 AddWins
         do {
@@ -58,6 +58,7 @@ class DittoService: ReplicatingDataInterface {
     private var privateStore: LocalDataInterface
     private let PUBLIC_MESSAGES_ID = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef"
     
+    private var joinRoomQuery: DittoSwift.DittoLiveQuery?
     
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
@@ -153,18 +154,21 @@ extension DittoService {
     func removeSubscriptions(for room: Room) {
         if room.isPrivate {
             guard let rSub = privateRoomSubscriptions[room.id] else {
+                print("\(#function) private room subscription NOT FOUND in privateRoomSubscriptions --> RETURN")
                 return
             }
             rSub.cancel()
             privateRoomSubscriptions.removeValue(forKey: room.id)
             
             guard let mSub = privateRoomMessagesSubscriptions[room.id] else {
+                print("\(#function) privateRoomMessagesSubscriptions subcription NOT FOUND --> RETURN")
                 return
             }
             mSub.cancel()
             privateRoomMessagesSubscriptions.removeValue(forKey: room.id)
         } else {
             guard let rSub = publicRoomMessagesSubscriptions[room.id] else {
+                print("\(#function) publicRoomMessagesSubscriptions subcription NOT FOUND --> RETURN")
                 return
             }
             rSub.cancel()
@@ -353,8 +357,16 @@ extension DittoService {
 
     private func metadata(for image:UIImage, fname: String, timestamp: String) -> [String: String] {
         [
-            // note: there is no actual "file" after tmp storage cleanup;
-            // it will then be just a unique identifier
+            /*
+             Note: "filename" in the metadata is used when displaying a large image attachment in
+             a QLPreviewController, and will be the filename if the image is shared from there.
+             However, the DittoAttachment created with this metadata is initialized (above) from
+             a tmp storage location, and there is no actual "file" after tmp storage cleanup.
+             
+             Also note that the metadata property of DittoAttachment is an empty [String:String] by
+             default. For this example app, fairly rich metadata is generated which could be used
+             for display in various viewing contexts, and not all of it is displayed in this app.
+             */
             filenameKey: fname,
             userIdKey: privateStore.currentUserId ?? "",
             usernameKey: user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey,
@@ -372,8 +384,7 @@ extension DittoService {
         }
     }
 
-    // filename/user utils
-    // make public somewhere?  ---------------------------------------------------------------------
+    // example filename output: John-Doe_thumbnail_2023-05-19T23-19-01Z.jpg
     private func attachmentFilename(
         for user: User?,
         type: AttachmentType,
@@ -381,10 +392,9 @@ extension DittoService {
         ext: String = jpgExtKey
     ) -> String {
         var fname = self.user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey
-        let components = fname.components(separatedBy: " ")
-        fname = components.first ?? unknownUserNameKey
-        if components.count > 1 { fname += components.last! }
-        fname += "-\(type.description)" + "-\(timestamp)" + ext
+        fname = fname.replacingOccurrences(of: " ", with: "-")
+        let tmstamp = timestamp.replacingOccurrences(of: ":", with: "-")
+        fname += "_\(type.description)" + "_\(tmstamp)" + ext
         
         return fname
     }
@@ -438,7 +448,9 @@ extension DittoService {
         let collectionId = room.collectionId ?? publicRoomsCollectionId
         
         guard let doc = ditto.store[collectionId].findByID(room.id).exec() else {
-            print("DittoService.\(#function): ERROR - expected non-nil room for room.id: \(room.id)")
+            print("DittoService.\(#function): WARNING (except for archived private rooms)" +
+                  " - expected non-nil room room.id: \(room.id)"
+            )
             return nil
         }
         let room = Room(document: doc)
@@ -486,10 +498,16 @@ extension DittoService {
             messagesId: messagesId
         )
 
-        _ = ditto.store.collection(collectionId).findByID(roomId).observeLocal { [weak self] doc, _ in
+        joinRoomQuery = ditto.store.collection(collectionId).findByID(roomId).observeLocal { [unowned self] doc, _ in
             if let roomDoc = doc  {
                 let room = Room(document: roomDoc)
-                self?.privateStore.addPrivateRoom(room)
+                self.privateStore.addPrivateRoom(room)
+                
+                // NOTE: the core ditto engine retains the local observer once it's initialized, and
+                // here the observer MUST be stopped after the add operation or else every
+                // subsequent update to this document, local or remote, will fire this closure.
+                self.joinRoomQuery?.stop()
+                self.joinRoomQuery = nil
             }
         }
     }
@@ -524,20 +542,18 @@ extension DittoService {
             archivePublicRoom(room)
         }
     }
-    
+
     private func archivePrivateRoom(_ room: Room) {
         // 1. remove subscriptions first
         removeSubscriptions(for: room)
-        
-        // 2. then evict the data (order matters)
-        evictPrivateRoom(room)
 
-        // 3. PrivateStore
-        //    a. remove room from privateRooms - triggers privateRoomsPublisher
-        //    b. store room as json-encoded data in archivedPrivateRooms
-        //       - triggers archivedPrivateRoomsPublisher
+        // 2. this operation removes the room from the privateRooms collection and adds to the
+        //    archivedPrivateRooms collection, firing the publishers.
+        privateStore.archivePrivateRoom(room)
+                
         DispatchQueue.main.async { [weak self] in
-            self?.privateStore.archivePrivateRoom(room)
+            // 3. then evict the data (order matters)
+            self?.evictPrivateRoom(room)
         }
     }
 
@@ -635,7 +651,7 @@ extension DittoService {
     }
     
     private func evictPublicRoom(_ room: Room) {
-        // evict all messages the collection
+        // evict all messages in collection
         ditto.store[room.messagesId].findAll().evict()
         
         // evict the messages collection
