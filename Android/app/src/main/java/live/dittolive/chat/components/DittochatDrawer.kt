@@ -29,9 +29,25 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,13 +58,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import live.dittolive.chat.BuildConfig
 import live.dittolive.chat.R
-import live.dittolive.chat.data.colleagueProfile
 import live.dittolive.chat.data.meProfile
-import live.dittolive.chat.theme.DittochatTheme
 import live.dittolive.chat.viewmodel.MainViewModel
 
 /**
@@ -78,8 +90,14 @@ fun DittochatDrawerContent(
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         DrawerHeader()
         DividerItem()
-        DrawerItemHeader("Chats")
-        ChatItem("public", true) { onChatClicked("public") }
+        DrawerItemHeader(stringResource(R.string.chats))
+        DividerItem()
+        DrawerItemHeader(stringResource(R.string.open_public_room))
+        ChatItem(stringResource(R.string.public_room), true) { onChatClicked("public") }
+        DividerItem()
+        DrawerItemHeader(stringResource(R.string.public_rooms))
+        DividerItem()
+        DrawerItemHeader(stringResource(R.string.private_rooms))
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
         ProfileItem(fullName, meProfile.photo) {
