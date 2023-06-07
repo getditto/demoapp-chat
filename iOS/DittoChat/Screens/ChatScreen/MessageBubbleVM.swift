@@ -42,14 +42,10 @@ class MessageBubbleVM: ObservableObject {
     }
     
     func fetchAttachment(type: AttachmentType) async {
-        var token = message.thumbnailImageToken
-        if type == .largeImage {
-            token = message.largeImageToken
-        }
-
-        guard let token = token else {
-            return
-        }
+        guard let token = type == .largeImage
+                ? message.largeImageToken
+                : message.thumbnailImageToken
+        else { return }
         
         ImageAttachmentFetcher().fetch(
             with: token,
@@ -71,9 +67,9 @@ class MessageBubbleVM: ObservableObject {
                         self.thumbnailImage = Image(uiImage: uiImage)
                     
                     case .largeImage:
-                        let filename = metadata[filenameKey] ?? ""
+                        let fname = metadata[filenameKey] ?? unnamedLargeImageFileKey
                         
-                        if let tmp = try? TemporaryFile(creatingTempDirectoryForFilename: filename) {
+                        if let tmp = try? TemporaryFile(creatingTempDirectoryForFilename: fname) {
                             self.tmpStorage = tmp
                             
                             if let _ = try? uiImage.jpegData(compressionQuality: 1.0)?.write(to: tmp.fileURL) {

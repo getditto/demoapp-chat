@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		145662BE296E1E0900E1C148 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145662BD296E1E0900E1C148 /* LogManager.swift */; };
+		14585D0D2A142B5E00E496AC /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14585D0C2A142B5E00E496AC /* Env.swift */; };
+		14585D0E2A142B5E00E496AC /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14585D0C2A142B5E00E496AC /* Env.swift */; };
+		14585D0F2A142B5E00E496AC /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14585D0C2A142B5E00E496AC /* Env.swift */; };
 		1493FF6A2978763500397DAB /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF682978763500397DAB /* ScannerView.swift */; };
 		1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF692978763500397DAB /* QRCodeView.swift */; };
 		14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */; };
@@ -83,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		145662BD296E1E0900E1C148 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
+		14585D0C2A142B5E00E496AC /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		1493FF692978763500397DAB /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -287,6 +291,7 @@
 				14B4E25B2978F18B0069B69D /* Views */,
 				14D902E72954DF82006B54E3 /* Utilities */,
 				14CADB33293FEBD600BED068 /* Preview Content */,
+				14585D0C2A142B5E00E496AC /* Env.swift */,
 				14CADB57293FEC1400BED068 /* Assets.xcassets */,
 				14CADC0B2941089A00BED068 /* Info.plist */,
 			);
@@ -402,6 +407,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14CADB4E293FEBD600BED068 /* Build configuration list for PBXNativeTarget "DittoChat" */;
 			buildPhases = (
+				14585D072A13F78700E496AC /* Generate Env.swift */,
 				14CADB26293FEBD500BED068 /* Sources */,
 				14CADB27293FEBD500BED068 /* Frameworks */,
 				14CADB28293FEBD500BED068 /* Resources */,
@@ -537,6 +543,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		14585D072A13F78700E496AC /* Generate Env.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/buildEnv.sh",
+			);
+			name = "Generate Env.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Env.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/buildEnv.sh\" \"${SRCROOT}/../.env\" \"${SRCROOT}/${PROJECT}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		14CADB26293FEBD500BED068 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -574,6 +603,7 @@
 				14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */,
 				14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */,
 				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
+				14585D0D2A142B5E00E496AC /* Env.swift in Sources */,
 				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
 				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
 				14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */,
@@ -592,6 +622,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				14CADB3F293FEBD600BED068 /* DittoChatTests.swift in Sources */,
+				14585D0E2A142B5E00E496AC /* Env.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,6 +630,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14585D0F2A142B5E00E496AC /* Env.swift in Sources */,
 				14CADB49293FEBD600BED068 /* DittoChatUITests.swift in Sources */,
 				14CADB4B293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift in Sources */,
 			);
