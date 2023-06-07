@@ -130,6 +130,10 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
+    // QR Code Scanning via Google code scanner |
+    // Manifest MetaData tag causes Google Play services automatically download the scanner module to the device while app is installed from the Play Store
+    implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
+
     // Ditto
     implementation('live.ditto:ditto:4.1.1')
 //    implementation project(":dittoinfomodule")
