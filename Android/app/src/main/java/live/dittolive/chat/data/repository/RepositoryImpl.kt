@@ -210,7 +210,11 @@ class RepositoryImpl @Inject constructor(
         ditto.let { ditto: Ditto ->
             messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
             messagesSubscription = messagesCollection.findAll().subscribe()
-            messagesLiveQuery = messagesCollection.findAll().observeLocal { docs, _ ->
+            messagesLiveQuery = messagesCollection
+                .findAll()
+                .sort(createdOnKey, DittoSortDirection.Ascending)
+                .observeLocal { docs, _ ->
+
                 this.messagesDocs = docs
                 allMessages.value = docs.map { Message(it) }
             }
