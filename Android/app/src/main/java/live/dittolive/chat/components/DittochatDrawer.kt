@@ -43,6 +43,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Message
+import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -90,7 +93,28 @@ fun DittochatDrawerContent(
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         DrawerHeader()
         DividerItem()
-        DrawerItemHeader(stringResource(R.string.chats))
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = CenterVertically) {
+            DrawerItemHeader(stringResource(R.string.chats))
+            Icon(
+                imageVector = Icons.Outlined.QrCodeScanner,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .clickable(onClick = { /* TODO */ })
+                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                    .height(24.dp),
+                contentDescription = stringResource(id = R.string.info)
+            )
+            Icon(
+                imageVector = Icons.Outlined.Message,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .clickable(onClick = { /* TODO */ })
+                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                    .height(24.dp),
+                contentDescription = stringResource(id = R.string.info)
+            )
+        }
+        
         DividerItem()
         DrawerItemHeader(stringResource(R.string.open_public_room))
         ChatItem(stringResource(R.string.public_room), true) { onChatClicked("public") }
