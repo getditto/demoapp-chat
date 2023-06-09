@@ -55,6 +55,7 @@ const val textKey = "text"
 const val userIdKey = "userId"
 const val userIdsKey = "userIds"
 const val usersKey = "users"
+const val thumbnailKey = "thumbnailImageToken"
 
 // UI Keys
 const val appTitleKey = "Ditto Chat"

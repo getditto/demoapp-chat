@@ -25,13 +25,13 @@
 
 package live.dittolive.chat.conversation
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.toMutableStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import live.ditto.DittoAttachmentToken
 import live.ditto.DittoDocument
 import live.dittolive.chat.R
 import live.dittolive.chat.data.*
@@ -68,14 +68,17 @@ data class Message(
     val roomId: String = "public", // "public" is the roomID for the default public chat room
     val text: String = "test",
     val userId: String = UUID.randomUUID().toString(),
+    val attachmentToken: DittoAttachmentToken?,
+    val photoUri: Uri? = null,
     val image: Int? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
-    constructor(document: DittoDocument) :this(
-        document[dbIdKey].stringValue,
-        document[createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
-        document[roomIdKey].stringValue,
-        document[textKey].stringValue,
-        document[userIdKey].stringValue
-    )
+    constructor(document: DittoDocument) : this(
+            document[dbIdKey].stringValue,
+            document [createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
+            document[roomIdKey].stringValue,
+            document[textKey].stringValue,
+            document[userIdKey].stringValue,
+            document[thumbnailKey].attachmentToken
+        )
 }

@@ -86,6 +86,13 @@ dependencies {
     implementation("androidx.activity:activity-ktx:$activity_version")
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    //For PickVisualMedia contract
+    implementation 'androidx.activity:activity-ktx:1.7.2'
+    //for rememberImagePainter and image loading functionality
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    //For rememberLauncherForActivityResult()
+    implementation 'androidx.activity:activity-compose:1.7.2'
+
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"

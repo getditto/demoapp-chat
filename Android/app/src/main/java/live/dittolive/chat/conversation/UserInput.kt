@@ -25,8 +25,11 @@
 
 package live.dittolive.chat.conversation
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -34,6 +37,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -57,11 +61,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AlternateEmail
-import androidx.compose.material.icons.outlined.Duo
 import androidx.compose.material.icons.outlined.InsertPhoto
 import androidx.compose.material.icons.outlined.Mood
-import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -89,6 +90,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
@@ -102,6 +104,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 
@@ -119,16 +124,11 @@ enum class EmojiStickerSelector {
     STICKER
 }
 
-@Preview
-@Composable
-fun UserInputPreview() {
-    UserInput(onMessageSent = {})
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserInput(
-    onMessageSent: (String) -> Unit,
+    onMessageSent: (String, Uri?) -> Unit,
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {},
 ) {
@@ -144,13 +144,16 @@ fun UserInput(
         mutableStateOf(TextFieldValue())
     }
 
+    var photoUri: Uri? by remember { mutableStateOf(null) }
+
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     fun handleKeyboardInputText(){
-        onMessageSent(textState.text)
+        onMessageSent(textState.text, photoUri)
         // Reset text field and close keyboard
         textState = TextFieldValue()
+        photoUri = null
         // Move scroll to bottom
         resetScroll()
         dismissKeyboard()
@@ -175,7 +178,8 @@ fun UserInput(
                 focusState = textFieldFocusState,
                 onMessageSent = {
                     handleKeyboardInputText()
-                }
+                },
+                photoUri = photoUri
             )
             UserInputSelector(
                 onSelectorChange = { currentInputSelector = it },
@@ -188,6 +192,7 @@ fun UserInput(
             SelectorExpanded(
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState = textState.addText(it) },
+                onImageAdded = { photoUri = it },
                 currentSelector = currentInputSelector
             )
         }
@@ -212,7 +217,8 @@ private fun TextFieldValue.addText(newString: String): TextFieldValue {
 private fun SelectorExpanded(
     currentSelector: InputSelector,
     onCloseRequested: () -> Unit,
-    onTextAdded: (String) -> Unit
+    onTextAdded: (String) -> Unit,
+    onImageAdded: (Uri) -> Unit
 ) {
     if (currentSelector == InputSelector.NONE) return
 
@@ -228,12 +234,32 @@ private fun SelectorExpanded(
     Surface(tonalElevation = 8.dp) {
         when (currentSelector) {
             InputSelector.EMOJI -> EmojiSelector(onTextAdded, focusRequester)
-            InputSelector.DM -> NotAvailablePopup(onCloseRequested)
-            InputSelector.PICTURE -> FunctionalityNotAvailablePanel()
-            InputSelector.MAP -> FunctionalityNotAvailablePanel()
-            InputSelector.PHONE -> FunctionalityNotAvailablePanel()
+            InputSelector.PICTURE -> PictureSelector(onImageAdded)
             else -> { throw NotImplementedError() }
         }
+    }
+}
+
+@Composable
+fun PictureSelector(onImageAdded: (Uri) -> Unit) {
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                onImageAdded(uri)
+            }
+        }
+
+    SideEffect {
+        //On button press, launch the photo picker
+        launcher.launch(
+            PickVisualMediaRequest(
+                //Here we request only photos. Change this to .ImageAndVideo if
+                //you want videos too.
+                //Or use .VideoOnly if you only want videos.
+                mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo
+            )
+        )
+
     }
 }
 
@@ -287,28 +313,10 @@ private fun UserInputSelector(
             description = stringResource(id = R.string.emoji_selector_bt_desc)
         )
         InputSelectorButton(
-            onClick = { onSelectorChange(InputSelector.DM) },
-            icon = Icons.Outlined.AlternateEmail,
-            selected = currentInputSelector == InputSelector.DM,
-            description = stringResource(id = R.string.dm_desc)
-        )
-        InputSelectorButton(
             onClick = { onSelectorChange(InputSelector.PICTURE) },
             icon = Icons.Outlined.InsertPhoto,
             selected = currentInputSelector == InputSelector.PICTURE,
             description = stringResource(id = R.string.attach_photo_desc)
-        )
-        InputSelectorButton(
-            onClick = { onSelectorChange(InputSelector.MAP) },
-            icon = Icons.Outlined.Place,
-            selected = currentInputSelector == InputSelector.MAP,
-            description = stringResource(id = R.string.map_selector_desc)
-        )
-        InputSelectorButton(
-            onClick = { onSelectorChange(InputSelector.PHONE) },
-            icon = Icons.Outlined.Duo,
-            selected = currentInputSelector == InputSelector.PHONE,
-            description = stringResource(id = R.string.videochat_desc)
         )
 
         val border = if (!sendMessageEnabled) {
@@ -364,7 +372,9 @@ private fun InputSelectorButton(
     }
     IconButton(
         onClick = onClick,
-        modifier = Modifier.size(56.dp).then(backgroundModifier)
+        modifier = Modifier
+            .size(56.dp)
+            .then(backgroundModifier)
     ) {
         val tint = if (selected) {
             MaterialTheme.colorScheme.onSecondary
@@ -394,6 +404,7 @@ private fun UserInputText(
     keyboardType: KeyboardType = KeyboardType.Text,
     onTextChanged: (TextFieldValue) -> Unit,
     textFieldValue: TextFieldValue,
+    photoUri: Uri?,
     keyboardShown: Boolean,
     onTextFieldFocused: (Boolean) -> Unit,
     focusState: Boolean,
@@ -418,6 +429,20 @@ private fun UserInputText(
                     .align(Alignment.Bottom)
             ) {
                 var lastFocusState by remember { mutableStateOf(false) }
+                if (photoUri != null) {
+                    //Use Coil to display the selected image
+                    val painter = rememberAsyncImagePainter(
+                        ImageRequest
+                            .Builder(LocalContext.current)
+                            .data(data = photoUri)
+                            .build()
+                    )
+
+                    Image(
+                        painter = painter,
+                        contentDescription = null
+                    )
+                }
                 BasicTextField(
                     value = textFieldValue,
                     onValueChange = { onTextChanged(it) },

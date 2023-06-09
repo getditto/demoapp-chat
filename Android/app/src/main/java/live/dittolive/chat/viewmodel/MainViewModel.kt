@@ -24,6 +24,7 @@
  */
 package live.dittolive.chat.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

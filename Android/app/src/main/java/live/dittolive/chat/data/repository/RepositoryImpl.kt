@@ -25,6 +25,7 @@
 
 package live.dittolive.chat.data.repository
 
+import android.net.Uri
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,7 @@ import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.*
 import live.dittolive.chat.data.model.*
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -112,14 +114,26 @@ class RepositoryImpl @Inject constructor(
         val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
         val dateString = datetimeInUtc.toIso8601String()
 
+        val collection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
+        var attachment: DittoAttachment? = null
+        if (message.photoUri != null) {
+            val metadata = mapOf("name" to "my_image.png")
+            attachment = message.photoUri.path?.let { collection.newAttachment(it, metadata) }
+        }
+
+        val doc = mapOf(
+            createdOnKey to dateString,
+            roomIdKey to message.roomId,
+            textKey to message.text,
+            userIdKey to userID,
+            thumbnailKey to attachment
+        )
+
         // TODO : fetch Room - for everything not the default public room
-        ditto.store.collection(DEFAULT_PUBLIC_ROOM) //TODO : update for multiple rooms
-            .upsert(mapOf(
-                createdOnKey to dateString,
-                roomIdKey to message.roomId,
-                textKey to message.text,
-                userIdKey to userID
-            ))
+         //TODO : update for multiple rooms
+        collection.upsert(doc)
+    }
+    override suspend fun createImageMessage(message: Message, image: Uri) {
     }
 
     override suspend fun deleteMessage(id: Long) {

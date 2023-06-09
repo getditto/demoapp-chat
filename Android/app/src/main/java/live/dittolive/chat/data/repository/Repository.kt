@@ -25,6 +25,7 @@
 
 package live.dittolive.chat.data.repository
 
+import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.Room
@@ -41,6 +42,7 @@ interface Repository {
     fun getAllMessages() : Flow<List<Message>>
 
     suspend fun createMessage(message: Message)
+    suspend fun createImageMessage(message: Message, image: Uri)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)

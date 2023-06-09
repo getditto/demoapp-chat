@@ -27,6 +27,8 @@
 
 package live.dittolive.chat.conversation
 
+import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -60,6 +62,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import live.ditto.DittoAttachmentFetchEvent
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
@@ -108,14 +112,14 @@ fun ConversationContent(
                     scrollState = scrollState
                 )
                 UserInput(
-                    onMessageSent = { content ->
+                    onMessageSent = { content, photoUri ->
                         uiState.addMessage(
                         MessageUiModel(
                             Message(
                                 UUID.randomUUID().toString(),
                                 currentMoment,
                                 "public",
-                                content, authorMe
+                                content, authorMe, null, photoUri
                             ),
                             User() // placeholder - don't need
                         )
@@ -232,7 +236,6 @@ fun Messages(
                 val content = messages[index]
                 val isFirstMessageByAuthor = prevAuthor != content.message.userId
                 val isLastMessageByAuthor = nextAuthor != content.message.userId
-
                 // Hardcode day dividers for simplicity
                 if (index == messages.size - 1) {
                     item {
@@ -245,6 +248,23 @@ fun Messages(
                 }
 
                 item {
+                    SideEffect {
+                        Log.d("rae", "got sideeeffect")
+                       content.message.attachmentToken?.let { token ->
+                           Log.d("rae", "got token")
+                           DittoHandler.ditto.store.collection("public").fetchAttachment(token) {
+                               when (it) {
+                                   is DittoAttachmentFetchEvent.Completed -> {
+                                       BitmapFactory.decodeStream(it.attachment.getInputStream())
+                                   }
+                                   is DittoAttachmentFetchEvent.Progress -> {
+                                       Log.d("rae","progress " + it.downloadedBytes + "/" + it.totalBytes)
+                                   }
+                                   is DittoAttachmentFetchEvent.Deleted -> {}
+                               }
+                           }
+                        }
+                    }
                     MessageUi(
                         onAuthorClick = { name -> navigateToProfile(name) },
                         msg = content,
