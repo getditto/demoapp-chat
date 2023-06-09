@@ -59,12 +59,17 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import live.dittolive.chat.R
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.viewmodel.MainViewModel
+
 
 /**
  * @param onProfileClicked function defining the action when the profile is clicked. takes userId:String and isMe:Boolean which is to say
@@ -85,6 +90,18 @@ fun DittochatDrawerContent(
     val fullName = ("${mainUiState.currentFirstName + " " + mainUiState.currentLastName} (you)")
     val meUserId = userId
 
+    /**
+     * QR Code Scanning Functionality
+     */
+    val options = GmsBarcodeScannerOptions.Builder()
+        .setBarcodeFormats(
+            Barcode.FORMAT_QR_CODE)
+        .build()
+
+    val scanner = GmsBarcodeScanning.getClient(LocalContext.current, options)
+
+
+
     // Use windowInsetsTopHeight() to add a spacer which pushes the drawer content
     // below the status bar (y-axis)
     Column(modifier = Modifier
@@ -99,7 +116,18 @@ fun DittochatDrawerContent(
                 imageVector = Icons.Outlined.QrCodeScanner,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
-                    .clickable(onClick = { /* TODO */ })
+                    .clickable(onClick = {
+                        scanner.startScan()
+                            .addOnSuccessListener { barcode ->
+                                // Task completed successfully
+                            }
+                            .addOnCanceledListener {
+                                // Task canceled
+                            }
+                            .addOnFailureListener { e ->
+                                // Task failed with an exception
+                            }
+                    })
                     .padding(horizontal = 12.dp, vertical = 16.dp)
                     .height(24.dp),
                 contentDescription = stringResource(id = R.string.info)
@@ -273,3 +301,4 @@ fun DividerItem(modifier: Modifier = Modifier) {
 //        }
 //    }
 //}
+
