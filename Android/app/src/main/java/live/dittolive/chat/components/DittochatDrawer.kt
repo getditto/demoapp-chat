@@ -120,6 +120,8 @@ fun DittochatDrawerContent(
                         scanner.startScan()
                             .addOnSuccessListener { barcode ->
                                 // Task completed successfully
+                                val rawValue: String? = barcode.rawValue
+                                println(rawValue) // TODO - open chat room with the value
                             }
                             .addOnCanceledListener {
                                 // Task canceled
