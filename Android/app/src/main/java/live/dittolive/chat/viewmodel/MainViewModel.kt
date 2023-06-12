@@ -24,21 +24,29 @@
  */
 package live.dittolive.chat.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.colleagueProfile
 import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.data.model.MessageUiModel
+import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.repository.Repository
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
-import live.dittolive.chat.profile.ProfileScreenState
 import javax.inject.Inject
 
 /**
@@ -73,6 +81,8 @@ class MainViewModel @Inject constructor(
 
     private val _dittoSdkVersion = MutableStateFlow(" ")
     val dittoSdkVersion: StateFlow<String> = _dittoSdkVersion.asStateFlow()
+
+    val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
 
     val messagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
         repository.getAllUsers(),

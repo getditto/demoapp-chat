@@ -29,23 +29,46 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import live.ditto.*
+import kotlinx.datetime.toLocalDateTime
+import live.ditto.Ditto
+import live.ditto.DittoCollection
+import live.ditto.DittoDocument
+import live.ditto.DittoLiveQuery
+import live.ditto.DittoSortDirection
+import live.ditto.DittoSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.*
-import live.dittolive.chat.data.model.*
-import java.util.*
+import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
+import live.dittolive.chat.data.createdOnKey
+import live.dittolive.chat.data.dbIdKey
+import live.dittolive.chat.data.firstNameKey
+import live.dittolive.chat.data.lastNameKey
+import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.User
+import live.dittolive.chat.data.model.toIso8601String
+import live.dittolive.chat.data.roomIdKey
+import live.dittolive.chat.data.roomsKey
+import live.dittolive.chat.data.textKey
+import live.dittolive.chat.data.userIdKey
+import live.dittolive.chat.data.usersKey
+import java.util.UUID
 import javax.inject.Inject
 
 // Constructor-injected, because Hilt needs to know how to
 // provide instances of RepositoryImpl, too.
 class RepositoryImpl @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
-): Repository {
+) : Repository {
 
     private val allMessages: MutableStateFlow<List<Message>> by lazy {
+        MutableStateFlow(emptyList())
+    }
+
+    private val allPublicRooms : MutableStateFlow<List<Room>> by  lazy {
         MutableStateFlow(emptyList())
     }
 
@@ -62,6 +85,14 @@ class RepositoryImpl @Inject constructor(
     private lateinit var messagesCollection: DittoCollection
     private lateinit var messagesLiveQuery: DittoLiveQuery
     private lateinit var messagesSubscription: DittoSubscription
+
+    /**
+     * Rooms
+     */
+    private lateinit var publicRoomsCollection: DittoCollection
+    private lateinit var publicRoomsSubscription: DittoSubscription
+    private lateinit var publicRoomsLiveQuery: DittoLiveQuery
+    private var publicRoomsDocs = listOf<DittoDocument>()
 
     /**
      * Users
@@ -94,10 +125,12 @@ class RepositoryImpl @Inject constructor(
     override fun getAllUsers(): Flow<List<User>> = allUsers
 
     override fun getNumberOfUsers(): Flow<Int> = numberOfUsers
-    
+
+    override fun getAllPublicRooms(): Flow<List<Room>> = allPublicRooms
+
     override suspend fun saveCurrentUser(firstName: String, lastName: String) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
-        val user = User(userID,firstName, lastName)
+        val user = User(userID, firstName, lastName)
         addUser(user)
 
     }
@@ -114,12 +147,14 @@ class RepositoryImpl @Inject constructor(
 
         // TODO : fetch Room - for everything not the default public room
         ditto.store.collection(DEFAULT_PUBLIC_ROOM) //TODO : update for multiple rooms
-            .upsert(mapOf(
-                createdOnKey to dateString,
-                roomIdKey to message.roomId,
-                textKey to message.text,
-                userIdKey to userID
-            ))
+            .upsert(
+                mapOf(
+                    createdOnKey to dateString,
+                    roomIdKey to message.roomId,
+                    textKey to message.text,
+                    userIdKey to userID
+                )
+            )
     }
 
     override suspend fun deleteMessage(id: Long) {
@@ -133,11 +168,13 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun addUser(user: User) {
         ditto.store.collection(usersKey)
-            .upsert(mapOf(
-                dbIdKey to user.id,
-                firstNameKey to user.firstName,
-                lastNameKey to user.lastName
-            ))
+            .upsert(
+                mapOf(
+                    dbIdKey to user.id,
+                    firstNameKey to user.firstName,
+                    lastNameKey to user.lastName
+                )
+            )
     }
 
     override suspend fun createRoom(name: String) {
@@ -195,18 +232,18 @@ class RepositoryImpl @Inject constructor(
     private fun postInitActions() {
         updateMesagesLiveData()
         updateUsersLiveData()
-
+        getPublicRoomsFromDitto()
     }
 
     private fun updateMesagesLiveData() {
-        getAllMessagesFromDitto()
+        getAllMessagesForDefaultPublicRoomFromDitto()
     }
 
     private fun updateUsersLiveData() {
         getAllUsersFromDitto()
     }
 
-    private fun getAllMessagesFromDitto() {
+    private fun getAllMessagesForDefaultPublicRoomFromDitto() {
         ditto.let { ditto: Ditto ->
             messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
             messagesSubscription = messagesCollection.findAll().subscribe()
@@ -215,11 +252,40 @@ class RepositoryImpl @Inject constructor(
                 .sort(createdOnKey, DittoSortDirection.Ascending)
                 .observeLocal { docs, _ ->
 
-                this.messagesDocs = docs
-                allMessages.value = docs.map { Message(it) }
-            }
+                    this.messagesDocs = docs
+                    allMessages.value = docs.map { Message(it) }
+                }
         }
 
+    }
+
+    private fun getAllMessagesForRoomFromDitto(roomId: String) {
+        ditto.let { ditto: Ditto ->
+            messagesCollection = ditto.store.collection(roomId)
+            messagesSubscription = messagesCollection.findAll().subscribe()
+            messagesLiveQuery = messagesCollection
+                .findAll()
+                .sort(createdOnKey, DittoSortDirection.Ascending)
+                .observeLocal { docs, _ ->
+                    this.messagesDocs = docs
+                    allMessages.value = docs.map { Message(it) }
+                }
+        }
+
+    }
+
+    private fun getPublicRoomsFromDitto() {
+        ditto.let { ditto: Ditto ->
+            publicRoomsCollection = ditto.store.collection(roomsKey)
+            publicRoomsSubscription = publicRoomsCollection.findAll().subscribe()
+            publicRoomsLiveQuery = publicRoomsCollection
+                .findAll()
+                .observeLocal { docs, _ ->
+                    this.publicRoomsDocs = docs
+                    allPublicRooms.value = docs.map { Room(it) }
+                }
+
+        }
     }
 
     override fun getDittoSdkVersion(): String {
@@ -227,7 +293,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     private fun getAllUsersFromDitto() {
-        ditto.let { ditto : Ditto ->
+        ditto.let { ditto: Ditto ->
             usersCollection = ditto.store.collection(usersKey)
             usersSubscription = usersCollection.findAll().subscribe()
             usersLiveQuery = usersCollection.findAll().observeLocal { docs, _ ->
