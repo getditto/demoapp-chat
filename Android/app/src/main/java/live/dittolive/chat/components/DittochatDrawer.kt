@@ -191,7 +191,7 @@ fun PublicRoomsList(
 
     LazyColumn {
         items(publicRooms) { publicRoom ->
-            Text(text = "${publicRoom.name}")
+            Text(text = publicRoom.name)
         }
     }
 }
