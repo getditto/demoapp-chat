@@ -192,7 +192,6 @@ fun PublicRoomsList(
 
     LazyColumn {
         items(publicRooms) { publicRoom ->
-//            Text(text = publicRoom.name)
             ChatItem(publicRoom.name, true) { onChatClicked("public") }
         }
     }
