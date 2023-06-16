@@ -156,7 +156,7 @@ fun DittochatDrawerContent(
         DividerItem()
         DrawerItemHeader(stringResource(R.string.public_rooms))
         //list of public rooms
-        PublicRoomsList(viewModel)
+        PublicRoomsList(viewModel, onChatClicked)
 
         DividerItem()
         DrawerItemHeader(stringResource(R.string.private_rooms))
@@ -180,7 +180,8 @@ fun DittochatDrawerContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PublicRoomsList(
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    onChatClicked: (String) -> Unit,
 ) {
 
     val publicRooms : List<Room> by viewModel
@@ -191,7 +192,8 @@ fun PublicRoomsList(
 
     LazyColumn {
         items(publicRooms) { publicRoom ->
-            Text(text = publicRoom.name)
+//            Text(text = publicRoom.name)
+            ChatItem(publicRoom.name, true) { onChatClicked("public") }
         }
     }
 }
