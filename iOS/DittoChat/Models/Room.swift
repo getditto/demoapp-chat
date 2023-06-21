@@ -27,7 +27,7 @@ extension Room {
         self.name = document[nameKey].stringValue
         self.messagesId = document[messagesIdKey].stringValue
         self.isPrivate = document[isPrivateKey].boolValue
-        self.collectionId = document[collectionIdKey].stringValue
+        self.collectionId = document[collectionIdKey].string
         self.createdBy = document[createdByKey].stringValue
         self.createdOn = DateFormatter.isoDate.date(from: document[createdOnKey].stringValue) ?? Date()
     }
