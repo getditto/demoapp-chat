@@ -30,6 +30,7 @@ let messagesKey = "messages"
 let nameKey = "name"
 let privateRoomsKey = "privateRooms"
 let publicKey = "public"
+let publicMessagesIdKey = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef"
 let publicRoomsCollectionId = "rooms"
 let roomIdKey = "roomId"
 let textKey = "text"
@@ -119,7 +120,7 @@ let publicRoomsIDArchiveKey = "publicRoomsIDArchive"
 let archivedPrivateRoomsKey = "archivedPrivateRooms"
 let privateRoomsIDArchiveKey = "privateRoomsIDArchive"
 let acceptLargeImagesKey = "acceptLargeImages"
-
+let basicChatKey = "basicChat"
 
 // MARK: Image Keys
 let arrowUpKey = "arrow.up"

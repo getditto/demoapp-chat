@@ -18,6 +18,14 @@ struct ChatScreen: View {
         self._viewModel = StateObject(wrappedValue: ChatScreenVM(room: room))
     }
 
+    var navBarTitle: String {
+        if viewModel.isBasicChatScreen {
+            return appTitleKey
+        } else {
+            return viewModel.roomName
+        }
+    }
+    
     var body: some View {
         VStack {
             ScrollViewReader { proxy in
@@ -62,7 +70,7 @@ struct ChatScreen: View {
             )
         }
         .listStyle(.inset)
-        .navigationTitle(viewModel.roomName)
+        .navigationTitle(navBarTitle)
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(
             isPresented: $viewModel.presentAttachmentView,
@@ -90,7 +98,28 @@ struct ChatScreen: View {
                 }
             }
         }
+        .sheet(isPresented: $viewModel.presentProfileScreen) {// basic chat mode
+            ProfileScreen()
+        }
+        .sheet(isPresented: $viewModel.presentSettingsView) {// basic chat mode
+            SettingsScreen()
+        }
         .toolbar {
+            // basic chat mode
+            if viewModel.isBasicChatScreen {
+                ToolbarItemGroup(placement: .navigationBarLeading ) {
+                Button {
+                    viewModel.presentProfileScreen = true
+                } label: {
+                    Image(systemName: personCircleKey)
+                }
+                    Button {
+                        viewModel.presentSettingsView = true
+                    } label: {
+                        Image(systemName: gearShapeKey)
+                    }
+                }
+            }
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if viewModel.room.isPrivate {
                     Button {
