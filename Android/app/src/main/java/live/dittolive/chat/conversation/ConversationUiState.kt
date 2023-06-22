@@ -53,7 +53,6 @@ class ConversationUiState(
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
 
     fun addMessage(msg: MessageUiModel) {
-        _messages.add(0, msg) // Add to the beginning of the list -> TODO: maybe append, if we reverse the display order. It seems iOS is reversed from us
         viewModel.onCreateNewMessageClick(msg.message)
     }
 }

@@ -27,9 +27,11 @@ package live.dittolive.chat.data.repository
 
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
+import live.ditto.DittoAttachment
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
+import java.io.InputStream
 
 /**
  * Interface for communication with Ditto Layer
@@ -41,8 +43,8 @@ interface Repository {
     // messages
     fun getAllMessages() : Flow<List<Message>>
 
-    suspend fun createMessage(message: Message)
-    suspend fun createImageMessage(message: Message, image: Uri)
+    suspend fun createMessage(message: Message, attachment: DittoAttachment?)
+    suspend fun createImageMessage(message: Message, image: InputStream)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)

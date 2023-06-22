@@ -24,19 +24,24 @@
  */
 package live.dittolive.chat.viewmodel
 
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import live.ditto.DittoAttachment
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.conversation.Message
+import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
 import live.dittolive.chat.data.colleagueProfile
 import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.repository.Repository
+import live.dittolive.chat.data.repository.RepositoryImpl
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
 import live.dittolive.chat.profile.ProfileScreenState
@@ -154,7 +159,15 @@ class MainViewModel @Inject constructor(
 
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
-            repository.createMessage(message)
+            val attachment: DittoAttachment? = null
+            if (message.photoUri != null) {
+                val collection = DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
+                // get context
+                
+                val attachmentBitmap = BitmapFactory.decodeStream(bitmapStream)
+
+            }
+            repository.createMessage(message, attachment)
         }
     }
 
