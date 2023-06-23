@@ -124,6 +124,7 @@ let basicChatKey = "basicChat"
 
 // MARK: Image Keys
 let arrowUpKey = "arrow.up"
+let cameraFillKey = "camera.fill"
 let checkmarkKey = "checkmark"
 let xmarkCircleKey = "xmark.circle"
 let gearShapeKey = "gearshape"

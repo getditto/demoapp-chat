@@ -64,10 +64,15 @@ struct ChatScreen: View {
                     }
                 }
             }
-            ChatInputView(
-                text: $viewModel.inputText,
-                onSendButtonTappedCallback: viewModel.sendMessage
-            )
+            HStack(alignment: .top) {
+                photosPickerButtonView
+                    .padding(.top, 4)
+                
+                ChatInputView(
+                    text: $viewModel.inputText,
+                    onSendButtonTappedCallback: viewModel.sendMessage
+                )
+            }
         }
         .listStyle(.inset)
         .navigationTitle(navBarTitle)
@@ -128,36 +133,6 @@ struct ChatScreen: View {
                         Image(systemName: qrCodeKey)
                     }
                 }
-
-                PhotosPicker(selection: $viewModel.selectedItem,
-                             matching: .images,
-                             photoLibrary: .shared()
-                ) {
-                    Image(systemName: shareImageIconKey)
-                        .symbolRenderingMode(.multicolor)
-                        .font(.system(size: 24))
-                        .foregroundColor(.accentColor)
-                }
-                .buttonStyle(.borderless)
-                .onChange(of: viewModel.selectedItem) { newValue in
-                    Task {
-                        do {
-                            let imageData = try await newValue?.loadTransferable(type: Data.self)
-                            
-                            if let image = UIImage(data: imageData ?? Data()) {
-                                viewModel.selectedImage = image
-                                
-                                do {
-                                    try await viewModel.sendImageMessage()
-                                } catch {
-                                    self.errorHandler.handle(error: error)
-                                }
-                            }
-                        } catch {
-                            self.errorHandler.handle(error: AttachmentError.iCloudLibraryImageFail)
-                        }
-                    }
-                }
             }
         }
         .fullScreenCover(isPresented: $viewModel.presentEditingView) {
@@ -174,7 +149,39 @@ struct ChatScreen: View {
                 EmptyView()
             }
         }
-    }    
+    }
+    
+    var photosPickerButtonView: some View {
+        PhotosPicker(selection: $viewModel.selectedItem,
+                     matching: .images,
+                     photoLibrary: .shared()
+        ) {
+            Image(systemName: cameraFillKey)
+                .symbolRenderingMode(.multicolor)
+                .font(.system(size: 28))
+                .foregroundColor(.accentColor)
+        }
+        .buttonStyle(.borderless)
+        .onChange(of: viewModel.selectedItem) { newValue in
+            Task {
+                do {
+                    let imageData = try await newValue?.loadTransferable(type: Data.self)
+                    
+                    if let image = UIImage(data: imageData ?? Data()) {
+                        viewModel.selectedImage = image
+                        
+                        do {
+                            try await viewModel.sendImageMessage()
+                        } catch {
+                            self.errorHandler.handle(error: error)
+                        }
+                    }
+                } catch {
+                    self.errorHandler.handle(error: AttachmentError.iCloudLibraryImageFail)
+                }
+            }
+        }
+    }
 
     func scrollToBottom(proxy: ScrollViewProxy) {
         proxy.scrollTo(viewModel.messagesWithUsers.last?.id)
