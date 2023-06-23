@@ -35,14 +35,6 @@ import live.dittolive.chat.profile.ProfileScreenState
 import java.util.*
 
 
-
-//val exampleUiState = ConversationUiState(
-//    initialMessages = initialUiMessages,
-//    channelName = "#public",
-//    channelMembers = 42,
-//    viewModel = null
-//)
-
 /**
  * Example colleague profile
  */

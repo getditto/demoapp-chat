@@ -29,6 +29,8 @@ package live.dittolive.chat.conversation
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -46,6 +48,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,6 +64,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -74,6 +78,7 @@ import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
+import java.io.ByteArrayInputStream
 import java.util.*
 
 /**
@@ -118,15 +123,15 @@ fun ConversationContent(
                 UserInput(
                     onMessageSent = { content, photoUri ->
                         uiState.addMessage(
-                        MessageUiModel(
-                            Message(
-                                UUID.randomUUID().toString(),
-                                currentMoment,
-                                "public",
-                                content, authorMe, null, photoUri
-                            ),
-                            User() // placeholder - don't need
-                        )
+                            MessageUiModel(
+                                Message(
+                                    UUID.randomUUID().toString(),
+                                    currentMoment,
+                                    "public",
+                                    content, authorMe, null, photoUri
+                                ),
+                                User() // placeholder - don't need
+                            )
                         )
                     },
                     resetScroll = {
@@ -144,7 +149,6 @@ fun ConversationContent(
             // Channel name bar floats above the messages
             ChannelNameBar(
                 channelName = uiState.channelName,
-                channelMembers = uiState.channelMembers,
                 onNavIconPressed = onNavIconPressed,
                 scrollBehavior = scrollBehavior,
             )
@@ -156,7 +160,6 @@ fun ConversationContent(
 @Composable
 fun ChannelNameBar(
     channelName: String,
-    channelMembers: Int,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onNavIconPressed: () -> Unit = { }
@@ -175,12 +178,6 @@ fun ChannelNameBar(
                 Text(
                     text = channelName,
                     style = MaterialTheme.typography.titleMedium
-                )
-                // Number of members
-                Text(
-                    text = stringResource(R.string.members, channelMembers),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
@@ -263,7 +260,7 @@ fun Messages(
         val jumpToBottomButtonEnabled by remember {
             derivedStateOf {
                 scrollState.firstVisibleItemIndex != 0 ||
-                    scrollState.firstVisibleItemScrollOffset > jumpThreshold
+                        scrollState.firstVisibleItemScrollOffset > jumpThreshold
             }
         }
 
@@ -290,28 +287,15 @@ fun MessageUi(
     isLastMessageByAuthor: Boolean
 ) {
     val isUserMe = authorId == userId
-
     val borderColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.tertiary
     }
 
-    val authorImageId: Int = if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
+    val authorImageId: Int =
+        if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
 
-    msg.message.attachmentToken?.let { token ->
-        val fetcher = DittoHandler.ditto.store.collection("public").fetchAttachment(token) { it ->
-            when (it) {
-                is DittoAttachmentFetchEvent.Completed -> {
-                    msg.message.image = it.attachment.getInputStream()
-                }
-                is DittoAttachmentFetchEvent.Progress -> {
-                    msg.message.imageProgress =  it.downloadedBytes / it.totalBytes
-                }
-                is DittoAttachmentFetchEvent.Deleted -> {}
-            }
-        }
-    }
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
         if (isLastMessageByAuthor) {
@@ -372,12 +356,10 @@ fun AuthorAndTextMessage(
 
 @Composable
 private fun AuthorNameTimestamp(msg: MessageUiModel, isUserMe: Boolean = false) {
-
     var userFullName: String = msg.user.fullName
-        if (isUserMe) {
-           userFullName = "me"
-        }
-
+    if (isUserMe) {
+        userFullName = "me"
+    }
 
     // Combine author and timestamp for author.
     Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
@@ -464,6 +446,31 @@ fun ChatItemBubble(
         MaterialTheme.colorScheme.surfaceVariant
     }
 
+    var progress by rememberSaveable { mutableDoubleStateOf(1.0) }
+
+    LaunchedEffect(key1 = progress) {
+        this.launch {
+                DittoHandler.getAttachment(message) { it ->
+                    when (it) {
+                        is DittoAttachmentFetchEvent.Completed -> {
+                            message.image = it.attachment.getInputStream()
+                            progress = 1.0
+                        }
+
+                        is DittoAttachmentFetchEvent.Progress -> {
+                            val percentage =
+                                it.downloadedBytes.toDouble() / it.totalBytes.toDouble()
+                            progress = percentage
+                        }
+
+                        is DittoAttachmentFetchEvent.Deleted -> {
+                            message.image = null
+                            progress = 1.0
+                        }
+                    }
+                }
+        }
+    }
     Column {
         Surface(
             color = backgroundBubbleColor,
@@ -478,24 +485,52 @@ fun ChatItemBubble(
             }
         }
 
-        message.imageProgress?.let{
-            Text(message.imageProgress.toString())
-        }
-
-        message.image?.let {
-            Spacer(modifier = Modifier.height(4.dp))
+        if (progress != 1.0) {
             Surface(
                 color = backgroundBubbleColor,
                 shape = ChatBubbleShape
             ) {
-                val bitmap: Bitmap = BitmapFactory.decodeStream(it)
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(160.dp),
-                    contentDescription = stringResource(id = R.string.attached_image)
-                )
+                CircularProgressIndicator(progress.toFloat())
             }
+        }
+
+        message.image?.let {
+            var rotatedBitmap: Bitmap? = null
+            try {
+                val byteArray = it.readBytes()
+                val exifInterface = runCatching { ExifInterface(ByteArrayInputStream(byteArray)) }.getOrNull()
+                val orientation = exifInterface?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED) ?: ExifInterface.ORIENTATION_UNDEFINED
+
+                val rotationDegrees = when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                    else -> 0
+                }
+                val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(byteArray))
+
+                bitmap?.let {
+                    val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+                    rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, it.width, it.height, matrix, true)
+                }
+                } catch (err: Error) {
+                // TODO: catch error
+            }
+            rotatedBitmap?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    color = backgroundBubbleColor,
+                    shape = ChatBubbleShape
+                ) {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.size(300.dp),
+                        contentDescription = stringResource(id = R.string.attached_image)
+                    )
+                }
+            }
+
         }
     }
 }
@@ -548,7 +583,6 @@ fun ClickableMessage(
 @Composable
 fun ChannelBarPrev() {
     DittochatTheme {
-        ChannelNameBar(channelName = "public", channelMembers = 52)
     }
 }
 

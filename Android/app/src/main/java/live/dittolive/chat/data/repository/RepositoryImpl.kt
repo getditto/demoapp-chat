@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import live.ditto.*
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.*
@@ -104,7 +105,6 @@ class RepositoryImpl @Inject constructor(
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
         val user = User(userID,firstName, lastName)
         addUser(user)
-
     }
 
     /**
@@ -218,10 +218,12 @@ class RepositoryImpl @Inject constructor(
     private fun getAllMessagesFromDitto() {
         ditto.let { ditto: Ditto ->
             messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
-            messagesSubscription = messagesCollection.findAll().subscribe()
+            messagesSubscription = messagesCollection.findAll().limit(1000).subscribe()
+            // TODO: Add pagination.
             messagesLiveQuery = messagesCollection
                 .findAll()
                 .sort(createdOnKey, DittoSortDirection.Ascending)
+                .limit(100)
                 .observeLocal { docs, _ ->
 
                 this.messagesDocs = docs

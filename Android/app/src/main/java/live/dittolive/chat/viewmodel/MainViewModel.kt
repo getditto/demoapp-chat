@@ -29,6 +29,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toFile
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -106,11 +107,12 @@ class MainViewModel @Inject constructor(
         repository.getAllMessages()
     ) { users: List<User>, messages:List<Message> ->
 
-        messages.map {
+        messages.map { message ->
             MessageUiModel.invoke(
-                message = it,
+                message = message,
                 users = users
             )
+
         }
     }
 
@@ -189,7 +191,9 @@ class MainViewModel @Inject constructor(
         options.inJustDecodeBounds = false
 
         contentResolver.openInputStream(uri)?.use { inputStream2 ->
-            return BitmapFactory.decodeStream(inputStream2, null, options)
+            if (inputStream2 != null) {
+                return BitmapFactory.decodeStream(inputStream2, null, options)
+            }
         }
 
         throw IllegalStateException("Unable to open input stream.")

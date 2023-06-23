@@ -74,7 +74,6 @@ class ConversationFragment : Fragment() {
                 val currentUiState = ConversationUiState(
                     initialMessages = messagesWithUsers.asReversed(), // We reverse the list, b/c iOS list is reverse order of ours
                     channelName = "#public", // TODO : update with actual room name - "public" is the default public room
-                    channelMembers = users.count() , // TODO : update with actual count from room members
                     viewModel = activityViewModel
                 )
 

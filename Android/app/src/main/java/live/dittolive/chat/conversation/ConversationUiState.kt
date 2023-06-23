@@ -46,7 +46,6 @@ import java.util.*
 
 class ConversationUiState(
     val channelName: String,
-    val channelMembers: Int,
     initialMessages: List<MessageUiModel>,
     val viewModel: MainViewModel
 ) {
@@ -54,7 +53,6 @@ class ConversationUiState(
     val messages: List<MessageUiModel> = _messages
     //author ID is set to the user ID - it's used to tell if the message is sent from this user (self) when rendering the UI
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
-    private var fetcher: DittoAttachmentFetcher? = null
     fun addMessage(msg: MessageUiModel) {
         viewModel.onCreateNewMessageClick(msg.message)
     }
@@ -74,7 +72,7 @@ data class Message(
     // this below is local metadata, not part of the ditto document.
     val photoUri: Uri? = null,
     var image: InputStream? = null,
-    var imageProgress: Long? = null,
+    var imageProgress: Double? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
     constructor(document: DittoDocument) : this(
@@ -84,5 +82,6 @@ data class Message(
             document[textKey].stringValue,
             document[userIdKey].stringValue,
             document[thumbnailKey].attachmentToken
-        )
+
+    )
 }
