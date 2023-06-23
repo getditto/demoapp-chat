@@ -26,6 +26,7 @@ package live.dittolive.chat.viewmodel
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.net.toFile
@@ -61,6 +62,8 @@ import live.dittolive.chat.profile.ProfileFragment
 import live.dittolive.chat.profile.ProfileScreenState
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -174,8 +177,39 @@ class MainViewModel @Inject constructor(
         val user = getCurrentUser()
         return user?.lastName ?: ""
     }
+    private fun downsampleImageFromUri(contentResolver: ContentResolver, uri: Uri, targetWidth: Int, targetHeight: Int): Bitmap? {
+        val inputStream = contentResolver.openInputStream(uri)
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
 
-    fun uriToInputStream(uri: Uri): InputStream? {
+        inputStream?.use { BitmapFactory.decodeStream(it, null, options) }
+
+        options.inSampleSize = calculateInSampleSize(options, targetWidth, targetHeight)
+        options.inJustDecodeBounds = false
+
+        contentResolver.openInputStream(uri)?.use { inputStream2 ->
+            return BitmapFactory.decodeStream(inputStream2, null, options)
+        }
+
+        throw IllegalStateException("Unable to open input stream.")
+    }
+    private fun calculateInSampleSize(options: BitmapFactory.Options, targetWidth: Int, targetHeight: Int): Int {
+        val (width, height) = options.outWidth to options.outHeight
+        var inSampleSize = 1
+
+        if (height > targetHeight || width > targetWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+
+            while (halfHeight / inSampleSize >= targetHeight && halfWidth / inSampleSize >= targetWidth) {
+                inSampleSize *= 2
+            }
+        }
+
+        return inSampleSize
+    }
+    private fun uriToInputStream(uri: Uri): InputStream? {
         val contentResolver: ContentResolver = context.contentResolver
 
         return when {
@@ -192,6 +226,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    @Throws(IOException::class)
+    fun saveBitmapToTempFile(context: Context, bitmap: Bitmap, quality: Int, extension: String = "jpg"): File {
+        val tempFile = File.createTempFile("temp_image", ".$extension", context.cacheDir).apply {
+            deleteOnExit()
+        }
+
+        FileOutputStream(tempFile).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        }
+
+        return tempFile
+    }
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
             if (message.photoUri == null) {
@@ -199,20 +245,40 @@ class MainViewModel @Inject constructor(
             } else {
                 // get context
                 GlobalScope.launch(Dispatchers.IO) {
-                    val inputStream = uriToInputStream(message.photoUri)
-                    if (inputStream != null) {
                         val currentMoment: Instant = Clock.System.now()
                         val timestamp = currentMoment.toLocalDateTime(TimeZone.UTC).toIso8601String()
+                        val contentResolver = context.contentResolver
+                        val targetWidth = 282 // Replace it with the desired width
+                        val targetHeight = 376 // Replace it with the desired height
 
-                        val collection = DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
-                        val attachment = collection.newAttachment(inputStream, mapOf(
-                            "filename" to message.userId + "_thumbnail_"+ timestamp + ".jpg",
-                            "fileformat" to ".jpg",
-                            "timestamp" to timestamp,
-                            "filesize" to "1000"
-                        ))
-                        repository.createMessage(message, attachment)
-                    }
+                        val downsampledBitmap = downsampleImageFromUri(contentResolver, message.photoUri, targetWidth, targetHeight)
+                        if (downsampledBitmap == null) {
+                            println("Failed to downsample attachment")
+                            repository.createMessage(message, null)
+                        } else {
+                            // Save the downscaled image to a temporary file
+                            val quality = 100
+                            var tempFile: File? = null
+                            try {
+                                tempFile = saveBitmapToTempFile(context, downsampledBitmap, quality)
+                                val collection =
+                                    DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
+                                val attachment = collection.newAttachment(
+                                    tempFile.inputStream(), mapOf(
+                                        "filename" to message.userId + "_thumbnail_" + timestamp + ".jpg",
+                                        "fileformat" to ".jpg",
+                                        "timestamp" to timestamp,
+                                        "filesize" to "1000"
+                                    )
+                                )
+                                repository.createMessage(message, attachment)
+                            } catch (e: IOException) {
+                                e.printStackTrace()
+                                // Handle the error appropriately
+                                println("Failed to save attachment to tempfile")
+                                repository.createMessage(message, null)
+                            }
+                        }
                 }
             }
         }
