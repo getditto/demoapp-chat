@@ -89,9 +89,6 @@ class RepositoryImpl @Inject constructor(
      */
     private fun initDatabase(postInitAction: suspend () -> Unit) {
         GlobalScope.launch {
-            // Prepopulate messasges
-            // TODO : Implement
-            // TODO : pre-pend dummy data
 
             postInitAction.invoke()
         }
@@ -132,13 +129,6 @@ class RepositoryImpl @Inject constructor(
         // TODO : fetch Room - for everything not the default public room
          //TODO : update for multiple rooms
         collection.upsert(doc)
-    }
-    override suspend fun createImageMessage(message: Message, imageStream: InputStream) {
-        val collection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
-        val metadata = mapOf("name" to "my_image.png")
-        var attachment = collection.newAttachment(imageStream, metadata)
-
-        createMessage(message, attachment)
     }
 
     override suspend fun deleteMessage(id: Long) {

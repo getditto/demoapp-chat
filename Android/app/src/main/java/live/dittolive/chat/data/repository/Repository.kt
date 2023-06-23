@@ -44,7 +44,6 @@ interface Repository {
     fun getAllMessages() : Flow<List<Message>>
 
     suspend fun createMessage(message: Message, attachment: DittoAttachment?)
-    suspend fun createImageMessage(message: Message, image: InputStream)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)

@@ -27,6 +27,7 @@
 
 package live.dittolive.chat.conversation
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -48,9 +49,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
@@ -59,9 +62,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import live.ditto.DittoAttachment
 import live.ditto.DittoAttachmentFetchEvent
 import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.FunctionalityNotAvailablePopup
@@ -70,6 +76,7 @@ import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
+import java.io.InputStream
 import java.util.*
 
 /**
@@ -246,25 +253,7 @@ fun Messages(
                         DayHeader("Today")
                     }
                 }
-
                 item {
-                    SideEffect {
-                        Log.d("rae", "got sideeeffect")
-                       content.message.attachmentToken?.let { token ->
-                           Log.d("rae", "got token")
-                           DittoHandler.ditto.store.collection("public").fetchAttachment(token) {
-                               when (it) {
-                                   is DittoAttachmentFetchEvent.Completed -> {
-                                       BitmapFactory.decodeStream(it.attachment.getInputStream())
-                                   }
-                                   is DittoAttachmentFetchEvent.Progress -> {
-                                       Log.d("rae","progress " + it.downloadedBytes + "/" + it.totalBytes)
-                                   }
-                                   is DittoAttachmentFetchEvent.Deleted -> {}
-                               }
-                           }
-                        }
-                    }
                     MessageUi(
                         onAuthorClick = { name -> navigateToProfile(name) },
                         msg = content,
@@ -323,6 +312,19 @@ fun MessageUi(
 
     val authorImageId: Int = if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
 
+    msg.message.attachmentToken?.let { token ->
+        val fetcher = DittoHandler.ditto.store.collection("public").fetchAttachment(token) { it ->
+            when (it) {
+                is DittoAttachmentFetchEvent.Completed -> {
+                    msg.message.image = it.attachment.getInputStream()
+                }
+                is DittoAttachmentFetchEvent.Progress -> {
+                    msg.message.imageProgress =  it.downloadedBytes / it.totalBytes
+                }
+                is DittoAttachmentFetchEvent.Deleted -> {}
+            }
+        }
+    }
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
         if (isLastMessageByAuthor) {
@@ -457,11 +459,13 @@ fun ChatItemBubble(
             color = backgroundBubbleColor,
             shape = ChatBubbleShape
         ) {
-            ClickableMessage(
-                message = message,
-                isUserMe = isUserMe,
-                authorClicked = authorClicked
-            )
+            if (message.text.isNotEmpty()) {
+                ClickableMessage(
+                    message = message,
+                    isUserMe = isUserMe,
+                    authorClicked = authorClicked
+                )
+            }
         }
 
         message.image?.let {
@@ -470,8 +474,9 @@ fun ChatItemBubble(
                 color = backgroundBubbleColor,
                 shape = ChatBubbleShape
             ) {
+                val bitmap: Bitmap = BitmapFactory.decodeStream(it)
                 Image(
-                    painter = painterResource(it),
+                    bitmap = bitmap.asImageBitmap(),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.size(160.dp),
                     contentDescription = stringResource(id = R.string.attached_image)

@@ -25,6 +25,7 @@
 
 package live.dittolive.chat.conversation
 
+import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -104,11 +105,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
+import android.content.pm.PackageManager
 
 enum class InputSelector {
     NONE,
@@ -123,7 +126,6 @@ enum class EmojiStickerSelector {
     EMOJI,
     STICKER
 }
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -183,7 +185,7 @@ fun UserInput(
             )
             UserInputSelector(
                 onSelectorChange = { currentInputSelector = it },
-                sendMessageEnabled = textState.text.isNotBlank(),
+                sendMessageEnabled = textState.text.isNotBlank() || photoUri != null,
                 onMessageSent = {
                     handleKeyboardInputText()
                 },
@@ -192,7 +194,10 @@ fun UserInput(
             SelectorExpanded(
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState = textState.addText(it) },
-                onImageAdded = { photoUri = it },
+                onImageAdded = {
+                    photoUri = it
+                    handleKeyboardInputText()
+                },
                 currentSelector = currentInputSelector
             )
         }
@@ -242,6 +247,7 @@ private fun SelectorExpanded(
 
 @Composable
 fun PictureSelector(onImageAdded: (Uri) -> Unit) {
+
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
@@ -249,17 +255,14 @@ fun PictureSelector(onImageAdded: (Uri) -> Unit) {
             }
         }
 
-    SideEffect {
-        //On button press, launch the photo picker
-        launcher.launch(
-            PickVisualMediaRequest(
-                //Here we request only photos. Change this to .ImageAndVideo if
-                //you want videos too.
-                //Or use .VideoOnly if you only want videos.
-                mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo
-            )
-        )
-
+    Column {
+            SideEffect {
+                launcher.launch(
+                    PickVisualMediaRequest(
+                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            }
     }
 }
 

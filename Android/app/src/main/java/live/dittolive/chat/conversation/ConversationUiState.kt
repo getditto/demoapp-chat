@@ -31,13 +31,17 @@ import androidx.compose.runtime.toMutableStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import live.ditto.DittoAttachmentFetchEvent
+import live.ditto.DittoAttachmentFetcher
 import live.ditto.DittoAttachmentToken
 import live.ditto.DittoDocument
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.R
 import live.dittolive.chat.data.*
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.toInstant
 import live.dittolive.chat.viewmodel.MainViewModel
+import java.io.InputStream
 import java.util.*
 
 class ConversationUiState(
@@ -47,11 +51,10 @@ class ConversationUiState(
     val viewModel: MainViewModel
 ) {
     private val _messages: MutableList<MessageUiModel> = initialMessages.toMutableStateList()
-
     val messages: List<MessageUiModel> = _messages
     //author ID is set to the user ID - it's used to tell if the message is sent from this user (self) when rendering the UI
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
-
+    private var fetcher: DittoAttachmentFetcher? = null
     fun addMessage(msg: MessageUiModel) {
         viewModel.onCreateNewMessageClick(msg.message)
     }
@@ -69,12 +72,13 @@ data class Message(
     val userId: String = UUID.randomUUID().toString(),
     val attachmentToken: DittoAttachmentToken?,
     val photoUri: Uri? = null,
-    val image: Int? = null,
+    var image: InputStream? = null,
+    var imageProgress: Long? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
     constructor(document: DittoDocument) : this(
             document[dbIdKey].stringValue,
-            document [createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
+            document[createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
             document[roomIdKey].stringValue,
             document[textKey].stringValue,
             document[userIdKey].stringValue,

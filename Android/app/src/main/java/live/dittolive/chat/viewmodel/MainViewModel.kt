@@ -24,14 +24,22 @@
  */
 package live.dittolive.chat.viewmodel
 
+import android.content.ContentResolver
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.core.net.toFile
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import hilt_aggregated_deps._dagger_hilt_android_internal_modules_ApplicationContextModule
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import live.ditto.DittoAttachment
+import live.ditto.DittoAttachmentFetchEvent
 import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
@@ -45,6 +53,9 @@ import live.dittolive.chat.data.repository.RepositoryImpl
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
 import live.dittolive.chat.profile.ProfileScreenState
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import javax.inject.Inject
 
 /**
@@ -54,6 +65,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: Repository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
@@ -157,17 +169,39 @@ class MainViewModel @Inject constructor(
         return user?.lastName ?: ""
     }
 
+    fun uriToInputStream(uri: Uri): InputStream? {
+        val contentResolver: ContentResolver = context.contentResolver
+
+        return when {
+            uri.scheme == ContentResolver.SCHEME_FILE -> {
+                // Handle file scheme (e.g., "file://")
+                val file = File(uri.path)
+                file.inputStream()
+            }
+            uri.scheme == ContentResolver.SCHEME_CONTENT -> {
+                // Handle content scheme (e.g., "content://")
+                contentResolver.openInputStream(uri)
+            }
+            else -> null
+        }
+    }
+
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
-            val attachment: DittoAttachment? = null
-            if (message.photoUri != null) {
+
+            if (message.photoUri == null) {
+                repository.createMessage(message, null)
+            } else {
                 val collection = DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
                 // get context
-                
-                val attachmentBitmap = BitmapFactory.decodeStream(bitmapStream)
-
+                GlobalScope.launch(Dispatchers.IO) {
+                    val inputStream = uriToInputStream(message.photoUri)
+                    if (inputStream != null) {
+                        val attachment = collection.newAttachment(inputStream, mapOf("name" to "test"))
+                        repository.createMessage(message, attachment)
+                    }
+                }
             }
-            repository.createMessage(message, attachment)
         }
     }
 
