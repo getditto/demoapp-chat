@@ -68,3 +68,16 @@ extension Room {
     }
 }
 
+extension Room {
+    // This "dummy" object is a Room object used by DittoChatApp.swift
+    // to initialize a basic chat mode ChatScreen as root view
+    static var basicChatDummy: Room {
+        Room(
+            id: publicKey,
+            name: publicRoomTitleKey,
+            messagesId: publicMessagesIdKey,
+            isPrivate: false
+        )
+    }
+}
+
