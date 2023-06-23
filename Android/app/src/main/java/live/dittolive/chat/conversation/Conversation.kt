@@ -468,6 +468,10 @@ fun ChatItemBubble(
             }
         }
 
+        message.imageProgress?.let{
+            Text(message.imageProgress.toString())
+        }
+
         message.image?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Surface(

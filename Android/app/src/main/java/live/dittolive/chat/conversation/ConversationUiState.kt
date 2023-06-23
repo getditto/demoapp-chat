@@ -71,6 +71,7 @@ data class Message(
     val text: String = "test",
     val userId: String = UUID.randomUUID().toString(),
     val attachmentToken: DittoAttachmentToken?,
+    // this below is local metadata, not part of the ditto document.
     val photoUri: Uri? = null,
     var image: InputStream? = null,
     var imageProgress: Long? = null,

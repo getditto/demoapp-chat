@@ -38,6 +38,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import live.ditto.DittoAttachment
 import live.ditto.DittoAttachmentFetchEvent
 import live.dittolive.chat.DittoHandler
@@ -48,6 +53,7 @@ import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
+import live.dittolive.chat.data.model.toIso8601String
 import live.dittolive.chat.data.repository.Repository
 import live.dittolive.chat.data.repository.RepositoryImpl
 import live.dittolive.chat.data.repository.UserPreferencesRepository
@@ -188,16 +194,23 @@ class MainViewModel @Inject constructor(
 
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
-
             if (message.photoUri == null) {
                 repository.createMessage(message, null)
             } else {
-                val collection = DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
                 // get context
                 GlobalScope.launch(Dispatchers.IO) {
                     val inputStream = uriToInputStream(message.photoUri)
                     if (inputStream != null) {
-                        val attachment = collection.newAttachment(inputStream, mapOf("name" to "test"))
+                        val currentMoment: Instant = Clock.System.now()
+                        val timestamp = currentMoment.toLocalDateTime(TimeZone.UTC).toIso8601String()
+
+                        val collection = DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
+                        val attachment = collection.newAttachment(inputStream, mapOf(
+                            "filename" to message.userId + "_thumbnail_"+ timestamp + ".jpg",
+                            "fileformat" to ".jpg",
+                            "timestamp" to timestamp,
+                            "filesize" to "1000"
+                        ))
                         repository.createMessage(message, attachment)
                     }
                 }
