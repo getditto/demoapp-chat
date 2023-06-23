@@ -53,7 +53,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
@@ -62,12 +61,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import live.ditto.DittoAttachment
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.periodUntil
 import live.ditto.DittoAttachmentFetchEvent
 import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.FunctionalityNotAvailablePopup
@@ -76,7 +74,6 @@ import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
-import java.io.InputStream
 import java.util.*
 
 /**
@@ -243,16 +240,6 @@ fun Messages(
                 val content = messages[index]
                 val isFirstMessageByAuthor = prevAuthor != content.message.userId
                 val isLastMessageByAuthor = nextAuthor != content.message.userId
-                // Hardcode day dividers for simplicity
-                if (index == messages.size - 1) {
-                    item {
-                        DayHeader("20 Aug")
-                    }
-                } else if (index == 2) {
-                    item {
-                        DayHeader("Today")
-                    }
-                }
                 item {
                     MessageUi(
                         onAuthorClick = { name -> navigateToProfile(name) },
@@ -403,11 +390,34 @@ private fun AuthorNameTimestamp(msg: MessageUiModel, isUserMe: Boolean = false) 
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = msg.message.createdOn.toString(), // TODO : format for less verbose display
+            text = isoToTimeAgo(msg.message.createdOn.toString()),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.alignBy(LastBaseline),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+fun isoToTimeAgo(isoString: String): String {
+    return try {
+        val instant = Instant.parse(isoString)
+        val now = Clock.System.now()
+        val timeZone = TimeZone.currentSystemDefault()
+
+        val period = instant.periodUntil(now, timeZone)
+        val days = period.days
+        val hours = period.hours
+        val minutes = period.minutes
+        val seconds = period.seconds
+
+        when {
+            days > 0 -> "$days day${if (days > 1) "s" else ""} ago"
+            hours > 0 -> "$hours hour${if (hours > 1) "s" else ""} ago"
+            minutes > 0 -> "$minutes minute${if (minutes > 1) "s" else ""} ago"
+            else -> "$seconds second${if (seconds > 1) "s" else ""} ago"
+        }
+    } catch (e: Exception) {
+        "Invalid date"
     }
 }
 
