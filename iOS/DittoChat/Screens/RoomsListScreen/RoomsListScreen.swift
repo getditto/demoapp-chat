@@ -10,94 +10,91 @@ import SwiftUI
 
 struct RoomsListScreen: View {
     @ObservedObject var viewModel = RoomsListScreenVM()
-    @State private var selection: Room? = nil
 
     var body: some View {
-        NavigationStack{
-            List {
-                if let defaultPublicRoom = viewModel.defaultPublicRoom {
-                    Section(openPublicRoomTitleKey) {
-                        NavigationLink(value: defaultPublicRoom) {
-                            RoomsListRowItem(room: defaultPublicRoom)
-                        }
-                    }
-                }
-                Section( viewModel.publicRooms.count > 0 ? publicRoomsTitleKey : "" ) {
-                    ForEach(viewModel.publicRooms) { room in
-                        NavigationLink(value: room) {
-                            RoomsListRowItem(room: room)
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(settingsHideTitleKey) {
-                                viewModel.archiveRoom(room)
-                            }
-                            .tint(.red)
-                        }
-                    }
-                }
-                
-                Section( viewModel.privateRooms.count > 0 ? privateRoomsTitleKey : "" ) {
-                    ForEach(viewModel.privateRooms) { room in
-                        NavigationLink(value: room) {
-                            RoomsListRowItem(room: room)
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(settingsLeaveTitleKey) {
-                                viewModel.archiveRoom(room)
-                            }
-                            .tint(.red)
-                        }
+        List {
+            if let defaultPublicRoom = viewModel.defaultPublicRoom {
+                Section(openPublicRoomTitleKey) {
+                    NavigationLink(value: defaultPublicRoom) {
+                        RoomsListRowItem(room: defaultPublicRoom)
                     }
                 }
             }
-            .navigationDestination(for: Room.self) { room in
-                ChatScreen(room: room)
-                    .withErrorHandling()
-            }
-            .sheet(isPresented: $viewModel.presentProfileScreen) {
-                ProfileScreen()
-            }
-            .sheet(isPresented: $viewModel.presentScannerView) {
-                ScannerView(
-                    successAction: { code in
-                        viewModel.joinPrivateRoom(code: code)
+            Section( viewModel.publicRooms.count > 0 ? publicRoomsTitleKey : "" ) {
+                ForEach(viewModel.publicRooms) { room in
+                    NavigationLink(value: room) {
+                        RoomsListRowItem(room: room)
                     }
-                )
-            }
-            .sheet(isPresented: $viewModel.presentCreateRoomScreen) {
-                RoomEditScreen()
-            }
-            .sheet(isPresented: $viewModel.presentSettingsView) {
-                SettingsScreen()
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading ) {
-                    Button {
-                        viewModel.profileButtonAction()
-                    } label: {
-                        Image(systemName: personCircleKey)
-                    }
-                    Button {
-                        viewModel.presentSettingsView = true
-                    } label: {
-                        Image(systemName: gearShapeKey)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(settingsHideTitleKey) {
+                            viewModel.archiveRoom(room)
+                        }
+                        .tint(.red)
                     }
                 }
-                ToolbarItemGroup(placement: .principal ) {
-                    Text(appTitleKey)
-                        .fontWeight(.bold)
+            }
+            
+            Section( viewModel.privateRooms.count > 0 ? privateRoomsTitleKey : "" ) {
+                ForEach(viewModel.privateRooms) { room in
+                    NavigationLink(value: room) {
+                        RoomsListRowItem(room: room)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(settingsLeaveTitleKey) {
+                            viewModel.archiveRoom(room)
+                        }
+                        .tint(.red)
+                    }
                 }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        viewModel.scanButtonAction()
-                    } label: {
-                        Label(scanPrivateRoomTitleKey, systemImage: qrCodeViewfinderKey)
-                    }
-                    Button {
-                        viewModel.createRoomButtonAction()
-                    } label: {
-                        Label(newRoomTitleKey, systemImage: plusMessageFillKey)
-                    }
+            }
+        }
+        .navigationDestination(for: Room.self) { room in
+            ChatScreen(room: room)
+                .withErrorHandling()
+        }
+        .sheet(isPresented: $viewModel.presentProfileScreen) {
+            ProfileScreen()
+        }
+        .sheet(isPresented: $viewModel.presentScannerView) {
+            ScannerView(
+                successAction: { code in
+                    viewModel.joinPrivateRoom(code: code)
+                }
+            )
+        }
+        .sheet(isPresented: $viewModel.presentCreateRoomScreen) {
+            RoomEditScreen()
+        }
+        .sheet(isPresented: $viewModel.presentSettingsView) {
+            SettingsScreen()
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarLeading ) {
+                Button {
+                    viewModel.profileButtonAction()
+                } label: {
+                    Image(systemName: personCircleKey)
+                }
+                Button {
+                    viewModel.presentSettingsView = true
+                } label: {
+                    Image(systemName: gearShapeKey)
+                }
+            }
+            ToolbarItemGroup(placement: .principal ) {
+                Text(appTitleKey)
+                    .fontWeight(.bold)
+            }
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    viewModel.scanButtonAction()
+                } label: {
+                    Label(scanPrivateRoomTitleKey, systemImage: qrCodeViewfinderKey)
+                }
+                Button {
+                    viewModel.createRoomButtonAction()
+                } label: {
+                    Label(newRoomTitleKey, systemImage: plusMessageFillKey)
                 }
             }
         }
