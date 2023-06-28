@@ -74,6 +74,7 @@ import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
+import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
@@ -93,6 +94,7 @@ import java.util.*
 fun ConversationContent(
     uiState: ConversationUiState,
     navigateToProfile: (String) -> Unit,
+    navigateToPresenceViewer: () -> Unit,
     modifier: Modifier = Modifier,
     onNavIconPressed: () -> Unit = { },
 ) {
@@ -105,6 +107,13 @@ fun ConversationContent(
     val currentMoment: Instant = Clock.System.now()
     val authorId = uiState.authorId.collectAsState(initial = "")
 
+    LaunchedEffect(key1 = uiState.messages) {
+        if (uiState.messages.isNotEmpty() && uiState.messages[0].user.id == uiState.authorId.value) {
+            scope.launch {
+                scrollState.scrollToItem(0)
+            }
+        }
+    }
     Surface(modifier = modifier) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
