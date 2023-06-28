@@ -135,7 +135,7 @@ fun ConversationContent(
                                 Message(
                                     UUID.randomUUID().toString(),
                                     currentMoment,
-                                    "public",
+                                    DEFAULT_PUBLIC_ROOM,
                                     content, authorMe, null, photoUri
                                 ),
                                 User() // placeholder - don't need
@@ -159,6 +159,7 @@ fun ConversationContent(
                 channelName = uiState.channelName,
                 onNavIconPressed = onNavIconPressed,
                 scrollBehavior = scrollBehavior,
+                navigateToPresenceViewer = navigateToPresenceViewer
             )
         }
     }
@@ -170,6 +171,7 @@ fun ChannelNameBar(
     channelName: String,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    navigateToPresenceViewer: () -> Unit,
     onNavIconPressed: () -> Unit = { }
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
@@ -190,22 +192,12 @@ fun ChannelNameBar(
             }
         },
         actions = {
-            // Search icon
-            Icon(
-                imageVector = Icons.Outlined.Search,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .clickable(onClick = { functionalityNotAvailablePopupShown = true })
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
-                    .height(24.dp),
-                contentDescription = stringResource(id = R.string.search)
-            )
             // Info icon
             Icon(
                 imageVector = Icons.Outlined.Info,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
-                    .clickable(onClick = { functionalityNotAvailablePopupShown = true })
+                    .clickable(onClick = { navigateToPresenceViewer() })
                     .padding(horizontal = 12.dp, vertical = 16.dp)
                     .height(24.dp),
                 contentDescription = stringResource(id = R.string.info)

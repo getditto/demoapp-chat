@@ -195,7 +195,9 @@ fun UserInput(
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState = textState.addText(it) },
                 onImageAdded = {
-                    photoUri = it
+                    if (it != null) {
+                        photoUri = it
+                    }
                     handleKeyboardInputText()
                 },
                 currentSelector = currentInputSelector
@@ -223,7 +225,7 @@ private fun SelectorExpanded(
     currentSelector: InputSelector,
     onCloseRequested: () -> Unit,
     onTextAdded: (String) -> Unit,
-    onImageAdded: (Uri) -> Unit
+    onImageAdded: (Uri?) -> Unit
 ) {
     if (currentSelector == InputSelector.NONE) return
 
@@ -246,13 +248,11 @@ private fun SelectorExpanded(
 }
 
 @Composable
-fun PictureSelector(onImageAdded: (Uri) -> Unit) {
+fun PictureSelector(onImageAdded: (Uri?) -> Unit) {
 
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                onImageAdded(uri)
-            }
+            onImageAdded(uri)
         }
 
     Column {

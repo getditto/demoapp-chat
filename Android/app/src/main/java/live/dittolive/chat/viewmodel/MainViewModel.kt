@@ -55,6 +55,8 @@ import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.data.metadataFileformatKey
 import live.dittolive.chat.data.metadataFilenameKey
+import live.dittolive.chat.data.metadataFilesizeKey
+import live.dittolive.chat.data.metadataTimestampKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
@@ -274,7 +276,7 @@ class MainViewModel @Inject constructor(
                                         metadataFilenameKey to message.userId + "_thumbnail_" + timestamp + ".jpg",
                                         metadataFileformatKey to ".jpg",
                                         metadataTimestampKey to timestamp,
-                                        metadataFilesizeKey to tempFile.
+                                        metadataFilesizeKey to tempFile.length().toString()
                                     )
                                 )
                                 repository.createMessage(message, attachment)
