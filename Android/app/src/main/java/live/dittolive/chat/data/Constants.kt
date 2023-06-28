@@ -56,6 +56,10 @@ const val userIdKey = "userId"
 const val userIdsKey = "userIds"
 const val usersKey = "users"
 const val thumbnailKey = "thumbnailImageToken"
+const val metadataFilenameKey = "filename"
+const val metadataFileformatKey = "fileformat"
+const val metadataTimestampKey = "timestamp"
+const val metadataFilesizeKey = "filesize"
 
 // UI Keys
 const val appTitleKey = "Ditto Chat"

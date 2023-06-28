@@ -53,6 +53,8 @@ import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
 import live.dittolive.chat.data.colleagueProfile
 import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
+import live.dittolive.chat.data.metadataFileformatKey
+import live.dittolive.chat.data.metadataFilenameKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
@@ -269,10 +271,10 @@ class MainViewModel @Inject constructor(
                                     DittoHandler.ditto.store.collection(DEFAULT_PUBLIC_ROOM)
                                 val attachment = collection.newAttachment(
                                     tempFile.inputStream(), mapOf(
-                                        "filename" to message.userId + "_thumbnail_" + timestamp + ".jpg",
-                                        "fileformat" to ".jpg",
-                                        "timestamp" to timestamp,
-                                        "filesize" to "1000"
+                                        metadataFilenameKey to message.userId + "_thumbnail_" + timestamp + ".jpg",
+                                        metadataFileformatKey to ".jpg",
+                                        metadataTimestampKey to timestamp,
+                                        metadataFilesizeKey to tempFile.
                                     )
                                 )
                                 repository.createMessage(message, attachment)
