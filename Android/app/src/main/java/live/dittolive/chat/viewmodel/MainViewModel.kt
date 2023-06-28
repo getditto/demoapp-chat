@@ -111,12 +111,11 @@ class MainViewModel @Inject constructor(
         repository.getAllMessages()
     ) { users: List<User>, messages:List<Message> ->
 
-        messages.map { message ->
+        messages.map {
             MessageUiModel.invoke(
-                message = message,
+                message = it,
                 users = users
             )
-
         }
     }
 

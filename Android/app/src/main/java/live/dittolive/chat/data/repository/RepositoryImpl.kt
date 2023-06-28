@@ -218,7 +218,7 @@ class RepositoryImpl @Inject constructor(
     private fun getAllMessagesFromDitto() {
         ditto.let { ditto: Ditto ->
             messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
-            messagesSubscription = messagesCollection.findAll().limit(1000).subscribe()
+            messagesSubscription = messagesCollection.findAll().subscribe()
             // TODO: Add pagination.
             messagesLiveQuery = messagesCollection
                 .findAll()
