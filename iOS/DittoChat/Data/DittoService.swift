@@ -10,16 +10,59 @@ import Combine
 import DittoSwift
 import SwiftUI
 
+//------------------------------------------------------------------------------------------
+// TEST SDK v4.2.1 on portal-stg.ditto.live BP v1.9.0
+class AuthDelegate: DittoAuthenticationDelegate {
+    func authenticationRequired(authenticator: DittoAuthenticator) {
+        authenticator.login(
+            token: Env.DITTO_AUTH_PASSWORD,
+            provider: Env.DITTO_AUTH_PROVIDER
+        )  { clientInfo, err in
+            print("Login request completed \(err == nil ? "successfully!" : "with error: \(err.debugDescription)")")
+        }
+    }
+
+    func authenticationExpiringSoon(authenticator: DittoAuthenticator, secondsRemaining: Int64) {
+        authenticator.login(
+            token: Env.DITTO_AUTH_PASSWORD,
+            provider: Env.DITTO_AUTH_PROVIDER
+        )  { clientInfo, err in
+            print("Login request completed \(err == nil ? "successfully!" : "with error: \(err.debugDescription)")")
+        }
+    }
+}
+//------------------------------------------------------------------------------------------
+
 
 class DittoInstance {
     static var shared = DittoInstance()
     let ditto: Ditto
 
     init(enableLogging loggingEnabled: Bool = false) {
+        /*
         ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
         
         try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
+        */
+
+        //------------------------------------------------------------------------------------------
+        // TEST SDK v4.2.1 on portal-stg.ditto.live BP v1.9.0
+        let authDelegate = AuthDelegate()
         
+        ditto = Ditto(identity:
+            .onlineWithAuthentication(
+                appID: Env.DITTO_APP_ID,
+                authenticationDelegate: authDelegate,
+                enableDittoCloudSync: false,
+                customAuthURL: URL(string: "https://\(Env.DITTO_APP_ID).cloud-stg.ditto.live")
+            )
+        )
+        
+        var config = DittoTransportConfig()
+        config.connect.webSocketURLs.insert("wss://\(Env.DITTO_APP_ID).cloud-stg.ditto.live")
+        config.enableAllPeerToPeer()
+        ditto.transportConfig = config
+        //------------------------------------------------------------------------------------------
         // update to v4 AddWins
         do {
             try ditto.disableSyncWithV3()
