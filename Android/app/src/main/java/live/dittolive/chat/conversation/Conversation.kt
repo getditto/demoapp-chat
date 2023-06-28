@@ -31,7 +31,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -48,10 +47,10 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -64,7 +63,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -296,6 +294,60 @@ fun MessageUi(
     val authorImageId: Int =
         if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
 
+    val thumbnail: MutableState<ImageBitmap?> = remember { mutableStateOf(null) }
+    val fetchProgress: MutableState<Double> = remember { mutableDoubleStateOf(1.0) }
+
+    LaunchedEffect(key1 = msg.message._id) {
+        DittoHandler.getAttachment(msg.message) { it ->
+            when (it) {
+                is DittoAttachmentFetchEvent.Completed -> {
+                    var rotatedBitmap: Bitmap? = null
+                    try {
+                        val byteArray = it.attachment.getInputStream().readBytes()
+                        val exifInterface =
+                            runCatching { ExifInterface(ByteArrayInputStream(byteArray)) }.getOrNull()
+                        val orientation = exifInterface?.getAttributeInt(
+                            ExifInterface.TAG_ORIENTATION,
+                            ExifInterface.ORIENTATION_UNDEFINED
+                        ) ?: ExifInterface.ORIENTATION_UNDEFINED
+
+                        val rotationDegrees = when (orientation) {
+                            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                            else -> 0
+                        }
+                        val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(byteArray))
+
+                        bitmap?.let {
+                            val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+                            rotatedBitmap =
+                                Bitmap.createBitmap(bitmap, 0, 0, it.width, it.height, matrix, true)
+                        }
+                    } catch (err: Error) {
+                        // TODO: catch error
+                    }
+                    rotatedBitmap?.let {
+                        thumbnail.value = rotatedBitmap!!.asImageBitmap()
+                    }
+                    fetchProgress.value = 1.0
+                }
+
+                is DittoAttachmentFetchEvent.Progress -> {
+                    val percentage =
+                        it.downloadedBytes.toDouble() / it.totalBytes.toDouble()
+                    fetchProgress.value = percentage
+                }
+
+                is DittoAttachmentFetchEvent.Deleted -> {
+                    thumbnail.value = null
+                    fetchProgress.value = 1.0
+                }
+            }
+        }
+    }
+
+
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
         if (isLastMessageByAuthor) {
@@ -311,39 +363,22 @@ fun MessageUi(
                     .align(Alignment.Top),
                 painter = painterResource(id = authorImageId),
                 contentScale = ContentScale.Crop,
-                contentDescription = null,
+                contentDescription = null
             )
         } else {
             // Space under avatar
             Spacer(modifier = Modifier.width(74.dp))
         }
-        AuthorAndTextMessage(
-            msg = msg,
-            isUserMe = isUserMe,
-            isFirstMessageByAuthor = isFirstMessageByAuthor,
-            isLastMessageByAuthor = isLastMessageByAuthor,
-            authorClicked = onAuthorClick,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .weight(1f)
-        )
-    }
-}
-
-@Composable
-fun AuthorAndTextMessage(
-    msg: MessageUiModel,
-    isUserMe: Boolean,
-    isFirstMessageByAuthor: Boolean,
-    isLastMessageByAuthor: Boolean,
-    authorClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
         if (isLastMessageByAuthor) {
             AuthorNameTimestamp(msg, isUserMe)
         }
-        ChatItemBubble(msg.message, isUserMe, authorClicked = authorClicked)
+        ChatItemBubble(
+            msg.message,
+            isUserMe,
+            fetchProgress.value,
+            thumbnail.value,
+            authorClicked = onAuthorClick
+        )
         if (isFirstMessageByAuthor) {
             // Last bubble before next author
             Spacer(modifier = Modifier.height(8.dp))
@@ -437,6 +472,8 @@ private fun RowScope.DayHeaderLine() {
 fun ChatItemBubble(
     message: Message,
     isUserMe: Boolean,
+    progress: Double?,
+    image: ImageBitmap?,
     authorClicked: (String) -> Unit
 ) {
 
@@ -446,31 +483,6 @@ fun ChatItemBubble(
         MaterialTheme.colorScheme.surfaceVariant
     }
 
-    var progress by rememberSaveable { mutableDoubleStateOf(1.0) }
-
-    LaunchedEffect(key1 = progress) {
-        this.launch {
-                DittoHandler.getAttachment(message) { it ->
-                    when (it) {
-                        is DittoAttachmentFetchEvent.Completed -> {
-                            message.image = it.attachment.getInputStream()
-                            progress = 1.0
-                        }
-
-                        is DittoAttachmentFetchEvent.Progress -> {
-                            val percentage =
-                                it.downloadedBytes.toDouble() / it.totalBytes.toDouble()
-                            progress = percentage
-                        }
-
-                        is DittoAttachmentFetchEvent.Deleted -> {
-                            message.image = null
-                            progress = 1.0
-                        }
-                    }
-                }
-        }
-    }
     Column {
         Surface(
             color = backgroundBubbleColor,
@@ -485,7 +497,7 @@ fun ChatItemBubble(
             }
         }
 
-        if (progress != 1.0) {
+        if (progress != null && progress != 1.0) {
             Surface(
                 color = backgroundBubbleColor,
                 shape = ChatBubbleShape
@@ -494,43 +506,19 @@ fun ChatItemBubble(
             }
         }
 
-        message.image?.let {
-            var rotatedBitmap: Bitmap? = null
-            try {
-                val byteArray = it.readBytes()
-                val exifInterface = runCatching { ExifInterface(ByteArrayInputStream(byteArray)) }.getOrNull()
-                val orientation = exifInterface?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED) ?: ExifInterface.ORIENTATION_UNDEFINED
-
-                val rotationDegrees = when (orientation) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> 90
-                    ExifInterface.ORIENTATION_ROTATE_180 -> 180
-                    ExifInterface.ORIENTATION_ROTATE_270 -> 270
-                    else -> 0
-                }
-                val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(byteArray))
-
-                bitmap?.let {
-                    val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
-                    rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, it.width, it.height, matrix, true)
-                }
-                } catch (err: Error) {
-                // TODO: catch error
+        image?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Surface(
+                color = backgroundBubbleColor,
+                shape = ChatBubbleShape
+            ) {
+                Image(
+                    bitmap = it,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.size(300.dp),
+                    contentDescription = stringResource(id = R.string.attached_image)
+                )
             }
-            rotatedBitmap?.let {
-                Spacer(modifier = Modifier.height(4.dp))
-                Surface(
-                    color = backgroundBubbleColor,
-                    shape = ChatBubbleShape
-                ) {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.size(300.dp),
-                        contentDescription = stringResource(id = R.string.attached_image)
-                    )
-                }
-            }
-
         }
     }
 }

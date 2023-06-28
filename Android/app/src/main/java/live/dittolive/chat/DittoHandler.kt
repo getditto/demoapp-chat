@@ -27,11 +27,11 @@ package live.dittolive.chat
 
 import live.ditto.*
 import live.dittolive.chat.conversation.Message
+import live.dittolive.chat.data.model.MessageUiModel
 
 class DittoHandler {
     companion object {
         lateinit var ditto: Ditto
-        lateinit var dittoAuthCallback: AuthCallback
         private val fetchers: MutableMap<DittoAttachmentToken, DittoAttachmentFetcher> = mutableMapOf()
 
         fun getAttachment(message: Message, callback: (Any) -> Unit) {
