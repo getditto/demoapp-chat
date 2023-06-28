@@ -38,6 +38,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -228,14 +229,15 @@ fun Messages(
                 .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
-            for (index in messages.indices) {
-                val prevAuthor = messages.getOrNull(index - 1)?.message?.userId
-                val nextAuthor = messages.getOrNull(index + 1)?.message?.userId
-                val userId = messages.getOrNull(index)?.message?.userId
-                val content = messages[index]
-                val isFirstMessageByAuthor = prevAuthor != content.message.userId
-                val isLastMessageByAuthor = nextAuthor != content.message.userId
-                item {
+                itemsIndexed(
+                    items = messages,
+                    key= { _, message -> message.id }
+                ) { index, content ->
+                    val prevAuthor = messages.getOrNull(index - 1)?.message?.userId
+                    val nextAuthor = messages.getOrNull(index + 1)?.message?.userId
+                    val userId = content.message?.userId
+                    val isFirstMessageByAuthor = prevAuthor != content.message.userId
+                    val isLastMessageByAuthor = nextAuthor != content.message.userId
                     MessageUi(
                         onAuthorClick = { name -> navigateToProfile(name) },
                         msg = content,
@@ -245,7 +247,7 @@ fun Messages(
                         isLastMessageByAuthor = isLastMessageByAuthor
                     )
                 }
-            }
+
         }
         // Jump to bottom button shows up when user scrolls past a threshold.
         // Convert to pixels:
