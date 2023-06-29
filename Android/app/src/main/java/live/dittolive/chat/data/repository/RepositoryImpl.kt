@@ -222,12 +222,12 @@ class RepositoryImpl @Inject constructor(
             // TODO: Add pagination.
             messagesLiveQuery = messagesCollection
                 .findAll()
-                .sort(createdOnKey, DittoSortDirection.Ascending)
+                .sort(createdOnKey, DittoSortDirection.Descending)
                 .limit(100)
                 .observeLocal { docs, _ ->
-
-                this.messagesDocs = docs
-                allMessages.value = docs.map { Message(it) }
+                val reversed = docs.reversed()
+                this.messagesDocs = reversed
+                allMessages.value = reversed.map { Message(it) }
             }
         }
 

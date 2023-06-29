@@ -31,11 +31,22 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -45,15 +56,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalDensity
@@ -63,6 +80,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -71,7 +89,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.periodUntil
 import live.ditto.DittoAttachmentFetchEvent
 import live.dittolive.chat.DittoHandler
-import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
@@ -80,6 +97,7 @@ import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
 import java.io.ByteArrayInputStream
 import java.util.*
+import kotlin.math.floor
 
 /**
  * Entry point for a conversation screen.
@@ -108,10 +126,8 @@ fun ConversationContent(
     val authorId = uiState.authorId.collectAsState(initial = "")
 
     LaunchedEffect(key1 = uiState.messages) {
-        if (uiState.messages.isNotEmpty() && uiState.messages[0].user.id == uiState.authorId.value) {
             scope.launch {
                 scrollState.scrollToItem(0)
-            }
         }
     }
     Surface(modifier = modifier) {
@@ -174,10 +190,6 @@ fun ChannelNameBar(
     navigateToPresenceViewer: () -> Unit,
     onNavIconPressed: () -> Unit = { }
 ) {
-    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
-    if (functionalityNotAvailablePopupShown) {
-        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
-    }
     DittochatAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
@@ -297,8 +309,8 @@ fun MessageUi(
     val authorImageId: Int =
         if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
 
-    val thumbnail: MutableState<ImageBitmap?> = remember { mutableStateOf(null) }
-    val fetchProgress: MutableState<Double> = remember { mutableDoubleStateOf(1.0) }
+    var thumbnail: ImageBitmap? by remember { mutableStateOf(null) }
+    var fetchProgress by remember { mutableDoubleStateOf(1.0) }
 
     LaunchedEffect(key1 = msg.message._id) {
         DittoHandler.getAttachment(msg.message) { it ->
@@ -331,20 +343,20 @@ fun MessageUi(
                         // TODO: catch error
                     }
                     rotatedBitmap?.let {
-                        thumbnail.value = rotatedBitmap!!.asImageBitmap()
+                        thumbnail = rotatedBitmap!!.asImageBitmap()
                     }
-                    fetchProgress.value = 1.0
+                    fetchProgress = 1.0
                 }
 
                 is DittoAttachmentFetchEvent.Progress -> {
                     val percentage =
                         it.downloadedBytes.toDouble() / it.totalBytes.toDouble()
-                    fetchProgress.value = percentage
+                    fetchProgress = percentage
                 }
 
                 is DittoAttachmentFetchEvent.Deleted -> {
-                    thumbnail.value = null
-                    fetchProgress.value = 1.0
+                    thumbnail = null
+                    fetchProgress = 1.0
                 }
             }
         }
@@ -372,22 +384,26 @@ fun MessageUi(
             // Space under avatar
             Spacer(modifier = Modifier.width(74.dp))
         }
-        if (isLastMessageByAuthor) {
-            AuthorNameTimestamp(msg, isUserMe)
-        }
-        ChatItemBubble(
-            msg.message,
-            isUserMe,
-            fetchProgress.value,
-            thumbnail.value,
-            authorClicked = onAuthorClick
-        )
-        if (isFirstMessageByAuthor) {
-            // Last bubble before next author
-            Spacer(modifier = Modifier.height(8.dp))
-        } else {
-            // Between bubbles
-            Spacer(modifier = Modifier.height(4.dp))
+        Column(modifier = Modifier
+            .padding(end = 16.dp)
+            .weight(1f)) {
+            if (isLastMessageByAuthor) {
+                AuthorNameTimestamp(msg, isUserMe)
+            }
+            ChatItemBubble(
+                msg.message,
+                isUserMe,
+                fetchProgress,
+                thumbnail,
+                authorClicked = onAuthorClick
+            )
+            if (isFirstMessageByAuthor) {
+                // Last bubble before next author
+                Spacer(modifier = Modifier.height(8.dp))
+            } else {
+                // Between bubbles
+                Spacer(modifier = Modifier.height(4.dp))
+            }
         }
     }
 }
@@ -472,6 +488,25 @@ private fun RowScope.DayHeaderLine() {
 }
 
 @Composable
+fun ViewLargeImage (message: Message, dismiss: () -> Unit) {
+
+    AnimatedVisibility(
+        visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+        enter = expandHorizontally() + fadeIn(),
+        exit = shrinkHorizontally() + fadeOut()
+     ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        )
+        {
+            // TODO: fetch large attachment.
+            Text("hello world")
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun ChatItemBubble(
     message: Message,
     isUserMe: Boolean,
@@ -480,6 +515,10 @@ fun ChatItemBubble(
     authorClicked: (String) -> Unit
 ) {
 
+    var pressedState = remember { mutableStateOf(false) }
+    if (pressedState.value) {
+       // ViewLargeImage(message) { pressedState.value = false }
+    }
     val backgroundBubbleColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
     } else {
@@ -505,10 +544,10 @@ fun ChatItemBubble(
                 color = backgroundBubbleColor,
                 shape = ChatBubbleShape
             ) {
-                CircularProgressIndicator(progress.toFloat())
+                ProgressWithText(progress.toFloat())
             }
         }
-
+        val modifier =
         image?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Surface(
@@ -518,7 +557,12 @@ fun ChatItemBubble(
                 Image(
                     bitmap = it,
                     contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.size(300.dp),
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                pressedState.value = true
+                            }
+                        )},
                     contentDescription = stringResource(id = R.string.attached_image)
                 )
             }
@@ -526,6 +570,92 @@ fun ChatItemBubble(
     }
 }
 
+@Composable
+fun ProgressWithText(
+    progress: Float,
+    size: Dp = 260.dp,
+    foregroundIndicatorColor: Color = Color(0xFF35898f),
+    shadowColor: Color = Color.LightGray,
+    indicatorThickness: Dp = 24.dp,
+    animationDuration: Int = 1000
+) {
+
+    // This is to animate the foreground indicator
+    val progressAnimate = animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(
+            durationMillis = animationDuration
+        )
+    )
+    Box(
+        modifier = Modifier
+            .size(size),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier
+                .size(size)
+        ) {
+            // For shadow
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(shadowColor, Color.White),
+                    center = Offset(x = this.size.width / 2, y = this.size.height / 2),
+                    radius = this.size.height / 2
+                ),
+                radius = this.size.height / 2,
+                center = Offset(x = this.size.width / 2, y = this.size.height / 2)
+            )
+
+            // This is the white circle that appears on the top of the shadow circle
+            drawCircle(
+                color = Color.White,
+                radius = (size / 2 - indicatorThickness).toPx(),
+                center = Offset(x = this.size.width / 2, y = this.size.height / 2)
+            )
+
+            // Convert the dataUsage to angle
+            val sweepAngle = (progress * 100) * 360 / 100
+
+            // Foreground indicator
+            drawArc(
+                color = foregroundIndicatorColor,
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                style = Stroke(width = indicatorThickness.toPx(), cap = StrokeCap.Round),
+                size = Size(
+                    width = (size - indicatorThickness).toPx(),
+                    height = (size - indicatorThickness).toPx()
+                ),
+                topLeft = Offset(
+                    x = (indicatorThickness / 2).toPx(),
+                    y = (indicatorThickness / 2).toPx()
+                )
+            )
+        }
+
+        // Display the data usage value
+        DisplayText(
+            animateNumber = progressAnimate
+        )
+    }
+}
+
+@Composable
+private fun DisplayText(
+    animateNumber: State<Float>
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Text that shows the number inside the circle
+        Text(
+            text = floor(animateNumber.value * 100).toInt().toString() + "%"
+        )
+    }
+}
 @Composable
 fun ClickableMessage(
     message: Message,

@@ -71,8 +71,6 @@ data class Message(
     val attachmentToken: DittoAttachmentToken?,
     // this below is local metadata, not part of the ditto document.
     val photoUri: Uri? = null,
-    var image: InputStream? = null,
-    var imageProgress: Double? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
     constructor(document: DittoDocument) : this(

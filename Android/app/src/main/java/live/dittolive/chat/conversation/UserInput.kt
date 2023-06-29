@@ -267,34 +267,6 @@ fun PictureSelector(onImageAdded: (Uri?) -> Unit) {
 }
 
 @Composable
-fun FunctionalityNotAvailablePanel() {
-    AnimatedVisibility(
-        visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
-        enter = expandHorizontally() + fadeIn(),
-        exit = shrinkHorizontally() + fadeOut()
-    ) {
-        Column(
-            modifier = Modifier
-                .height(320.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = stringResource(id = R.string.not_available),
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = stringResource(id = R.string.not_available_subtitle),
-                modifier = Modifier.paddingFrom(FirstBaseline, before = 32.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-@Composable
 private fun UserInputSelector(
     onSelectorChange: (InputSelector) -> Unit,
     sendMessageEnabled: Boolean,
