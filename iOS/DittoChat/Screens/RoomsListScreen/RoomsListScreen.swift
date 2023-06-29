@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct RoomsListScreen: View {
-    @ObservedObject var viewModel = RoomsListScreenVM()
+    @ObservedObject var viewModel = RoomsListScreenVM()    
 
     var body: some View {
         List {
@@ -48,6 +48,7 @@ struct RoomsListScreen: View {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Room.self) { room in
             ChatScreen(room: room)
                 .withErrorHandling()
