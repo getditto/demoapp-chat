@@ -38,12 +38,20 @@ class DittoInstance {
     static var shared = DittoInstance()
     let ditto: Ditto
 
-    init(enableLogging loggingEnabled: Bool = false) {
+    init(enableLogging loggingEnabled: Bool = true) {
         /*
         ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
         
         try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
         */
+
+        if loggingEnabled {
+            // make sure log level is set _before_ starting ditto
+            DittoLogger.minimumLogLevel = .debug
+            if let logFileURL = LogManager.shared.logFileURL {
+                DittoLogger.setLogFileURL(logFileURL)
+            }
+        }
 
         //------------------------------------------------------------------------------------------
         // TEST SDK v4.2.1 on portal-stg.ditto.live BP v1.9.0
@@ -55,7 +63,8 @@ class DittoInstance {
                 authenticationDelegate: authDelegate,
                 enableDittoCloudSync: false,
                 customAuthURL: URL(string: "https://\(Env.DITTO_APP_ID).cloud-stg.ditto.live")
-            )
+            ),
+                      persistenceDirectory: self.appDirectory
         )
         
         var config = DittoTransportConfig()
@@ -70,13 +79,13 @@ class DittoInstance {
             print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
         }
         
-        if loggingEnabled {
-            // make sure log level is set _before_ starting ditto
-            DittoLogger.minimumLogLevel = .debug
-            if let logFileURL = LogManager.shared.logFileURL {
-                DittoLogger.setLogFileURL(logFileURL)
-            }
-        }
+//        if loggingEnabled {
+//            // make sure log level is set _before_ starting ditto
+//            DittoLogger.minimumLogLevel = .debug
+//            if let logFileURL = LogManager.shared.logFileURL {
+//                DittoLogger.setLogFileURL(logFileURL)
+//            }
+//        }
         
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
         let isPreview: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
@@ -84,6 +93,11 @@ class DittoInstance {
             try! ditto.startSync()
         }
     }
+    
+    var appDirectory: URL! = {
+        let directory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return directory.appendingPathComponent(Env.DITTO_APP_ID, isDirectory: true)
+    }()
 }
 
 class DittoService: ReplicatingDataInterface {
