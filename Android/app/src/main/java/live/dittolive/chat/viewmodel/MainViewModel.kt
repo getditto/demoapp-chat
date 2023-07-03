@@ -38,12 +38,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import live.dittolive.chat.conversation.Message
+import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
+import live.dittolive.chat.data.publicKey
+import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.repository.Repository
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
@@ -63,10 +67,22 @@ class MainViewModel @Inject constructor(
     private val _drawerShouldBeOpened = MutableStateFlow(false)
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
-    var currentRoom = MutableStateFlow<Room?>(null)
+
+    private val emptyRoom = Room(
+        id = publicKey,
+        name = publicRoomTitleKey,
+        createdOn = Clock.System.now(),
+        messagesCollectionId = DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID,
+        isPrivate = false,
+        collectionID = publicKey,
+        createdBy = "Ditto System"
+    )
+
+    private val _currentRoom = MutableStateFlow<Room>(emptyRoom)
+    val currentRoom = _currentRoom.asStateFlow()
 
     fun setCurrentChatRoom(newChatRoom: Room) {
-        currentRoom.value = newChatRoom
+        _currentRoom.value = newChatRoom
     }
 
     /**
@@ -88,24 +104,10 @@ class MainViewModel @Inject constructor(
 
     val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
 
-    // These are the messages for the default public room
-    val messagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
-        repository.getAllUsers(),
-        repository.getAllMessages()
-    ) { users: List<User>, messages:List<Message> ->
-
-        messages.map {
-            MessageUiModel.invoke(
-                message = it,
-                users = users
-            )
-        }
-    }
-
     // messages for a particular chat room
     val roomMessagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
         repository.getAllUsers(),
-        repository.getAllMessages()
+        repository.getAllMessagesForRoom(currentRoom.value)
     ) { users: List<User>, messages:List<Message> ->
 
         messages.map {
@@ -136,8 +138,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    suspend fun getDefaultPublicRoom() : Room? {
-        val defaultPublicRoom = repository.publicRoomForId()
+    suspend fun getDefaultPublicRoom() : Room {
+        val defaultPublicRoom = repository.publicRoomForId(publicKey)
         return defaultPublicRoom
     }
 
@@ -147,7 +149,7 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
-            currentRoom.value = getDefaultPublicRoom()
+            _currentRoom.value = getDefaultPublicRoom()
         }
 
         val user = getCurrentUser()

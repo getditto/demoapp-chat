@@ -73,7 +73,7 @@ class ConversationFragment : Fragment() {
                     .observeAsState(listOf())
 
                 val messagesWithUsers : List<MessageUiModel> by activityViewModel
-                    .messagesWithUsersFlow
+                    .roomMessagesWithUsersFlow
                     .collectAsStateWithLifecycle(initialValue = emptyList())
 
                 val currentChannelName: Room? by activityViewModel

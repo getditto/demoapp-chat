@@ -50,6 +50,8 @@ import live.dittolive.chat.data.lastNameKey
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
+import live.dittolive.chat.data.publicKey
+import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.roomIdKey
 import live.dittolive.chat.data.roomsKey
 import live.dittolive.chat.data.textKey
@@ -65,6 +67,10 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
     private val allMessages: MutableStateFlow<List<Message>> by lazy {
+        MutableStateFlow(emptyList())
+    }
+
+    private val allMessagesForRoom: MutableStateFlow<List<Message>> by lazy {
         MutableStateFlow(emptyList())
     }
 
@@ -121,6 +127,12 @@ class RepositoryImpl @Inject constructor(
     }
 
     override fun getAllMessages(): Flow<List<Message>> = allMessages
+
+    override fun getAllMessagesForRoom(room: Room): Flow<List<Message>> {
+        getAllMessagesForRoomFromDitto(room)
+
+        return allMessagesForRoom
+    }
 
     override fun getAllUsers(): Flow<List<User>> = allUsers
 
@@ -258,7 +270,8 @@ class RepositoryImpl @Inject constructor(
                 .sort(createdOnKey, DittoSortDirection.Ascending)
                 .observeLocal { docs, _ ->
                     this.messagesDocs = docs
-                    allMessages.value = docs.map { Message(it) }
+                    allMessagesForRoom.value = docs.map { Message(it) }
+                    allMessages.value = docs.map { Message(it) } // DEBUG
                 }
         }
 
@@ -278,13 +291,22 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun publicRoomForId(roomId: String): Room? {
+    override suspend fun publicRoomForId(roomId: String): Room {
         val document = ditto.store.collection(roomsKey).findById(roomId).exec()
         document?.let {
             val room = Room(document)
             return room
         }
-        return null
+        val emptyRoom = Room(
+            id = publicKey,
+            name = publicRoomTitleKey,
+            createdOn = Clock.System.now(),
+            messagesCollectionId = DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID,
+            isPrivate = false,
+            collectionID = publicKey,
+            createdBy = "Ditto System"
+        )
+        return emptyRoom
     }
 
     override fun getDittoSdkVersion(): String {

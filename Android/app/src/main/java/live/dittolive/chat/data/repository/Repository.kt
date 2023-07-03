@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.Flow
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
-import live.dittolive.chat.data.publicKey
 
 /**
  * Interface for communication with Ditto Layer
@@ -42,7 +41,8 @@ interface Repository {
     fun getAllPublicRooms(): Flow<List<Room>>
 
     // messages
-    fun getAllMessages() : Flow<List<Message>>
+    fun getAllMessages(): Flow<List<Message>>
+    fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
 
     suspend fun createMessage(message: Message)
     suspend fun deleteMessage(id: Long)
@@ -58,7 +58,7 @@ interface Repository {
 
     // rooms
     suspend fun createRoom(name: String)
-    suspend fun publicRoomForId( roomId: String = publicKey) : Room?
+    suspend fun publicRoomForId( roomId: String) : Room
     suspend fun archivePublicRoom(room: Room)
     suspend fun unarchivePublicRoom(room: Room)
 
