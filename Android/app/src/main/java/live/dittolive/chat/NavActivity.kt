@@ -108,9 +108,11 @@ class NavActivity: AppCompatActivity() {
                                     }
                                 }
 
-                                DittochatDrawer(
+                                 DittochatDrawer(
                                     drawerState = drawerState,
                                     onChatClicked = {
+                                        println(it) // it is the name of the room
+                                        viewModel.setCurrentChatRoomName(it)
                                         findNavController().popBackStack(R.id.nav_home, false)
                                         scope.launch {
                                             drawerState.close()

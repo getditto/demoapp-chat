@@ -67,6 +67,10 @@ class MainViewModel @Inject constructor(
     private val _currentChatRoomName = MutableStateFlow("public")
     val currentChatRoomName = _currentChatRoomName.asStateFlow()
 
+    fun setCurrentChatRoomName(newChatRoomName: String) {
+        _currentChatRoomName.value = newChatRoomName
+    }
+
     /**
      * Flag for whether the profile that has been clicked is this user or another user
      */
