@@ -86,7 +86,12 @@ class SettingsScreenVM: ObservableObject {
         let appInfo = DataManager.shared.appInfo
         return "\(appInfo)\nDitto SDK \(vSDK)"
     }
-    
+
+    // Set basicChat to inverse of useAdvanced arg
+    func enableAdvancedFeatures(useAdvanced: Bool) {
+        DataManager.shared.basicChat = !useAdvanced
+    }
+
     func setLargeImagesPrefs(_ accept: Bool) {
         DataManager.shared.acceptLargeImages = accept
     }

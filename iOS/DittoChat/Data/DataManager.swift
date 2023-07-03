@@ -29,6 +29,9 @@ protocol LocalDataInterface {
     
     var currentUserId: String? { get set }
     var currentUserIdPublisher: AnyPublisher<String?, Never> { get }
+    
+    var basicChat: Bool { get set }
+    var basicChatPublisher: AnyPublisher<Bool, Never> { get }
 }
 
 protocol ReplicatingDataInterface {
@@ -209,5 +212,16 @@ extension DataManager {
     
     var acceptLargeImagesPublisher: AnyPublisher<Bool, Never> {
         localStore.acceptLargeImagesPublisher
+    }
+}
+
+extension DataManager {
+    var basicChat: Bool {
+        get { localStore.basicChat }
+        set { localStore.basicChat = newValue }
+    }
+    
+    var basicChatPublisher: AnyPublisher<Bool, Never> {
+        get { localStore.basicChatPublisher }
     }
 }
