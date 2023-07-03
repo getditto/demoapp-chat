@@ -63,12 +63,10 @@ class MainViewModel @Inject constructor(
     private val _drawerShouldBeOpened = MutableStateFlow(false)
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
+    var currentRoom = MutableStateFlow<Room?>(null)
 
-    private val _currentChatRoomName = MutableStateFlow("public")
-    val currentChatRoomName = _currentChatRoomName.asStateFlow()
-
-    fun setCurrentChatRoomName(newChatRoomName: String) {
-        _currentChatRoomName.value = newChatRoomName
+    fun setCurrentChatRoom(newChatRoom: Room) {
+        currentRoom.value = newChatRoom
     }
 
     /**
@@ -90,7 +88,22 @@ class MainViewModel @Inject constructor(
 
     val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
 
+    // These are the messages for the default public room
     val messagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
+        repository.getAllUsers(),
+        repository.getAllMessages()
+    ) { users: List<User>, messages:List<Message> ->
+
+        messages.map {
+            MessageUiModel.invoke(
+                message = it,
+                users = users
+            )
+        }
+    }
+
+    // messages for a particular chat room
+    val roomMessagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
         repository.getAllUsers(),
         repository.getAllMessages()
     ) { users: List<User>, messages:List<Message> ->
@@ -123,12 +136,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    suspend fun getDefaultPublicRoom() : Room? {
+        val defaultPublicRoom = repository.publicRoomForId()
+        return defaultPublicRoom
+    }
+
     /**
      * Some setup required...
      */
     init {
         viewModelScope.launch {
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
+            currentRoom.value = getDefaultPublicRoom()
         }
 
         val user = getCurrentUser()

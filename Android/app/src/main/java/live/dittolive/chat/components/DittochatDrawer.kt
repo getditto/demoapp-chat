@@ -82,7 +82,7 @@ import live.dittolive.chat.viewmodel.MainViewModel
 @Composable
 fun DittochatDrawerContent(
     onProfileClicked: (String) -> Unit,
-    onChatClicked: (String) -> Unit,
+    onChatClicked: (Room) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     sdkVersion : String,
     viewModel: MainViewModel
@@ -151,9 +151,6 @@ fun DittochatDrawerContent(
         }
         
         DividerItem()
-        DrawerItemHeader(stringResource(R.string.open_public_room))
-        ChatItem(stringResource(R.string.public_room), true) { onChatClicked("public") }
-        DividerItem()
         DrawerItemHeader(stringResource(R.string.public_rooms))
         //list of public rooms
         PublicRoomsList(viewModel, onChatClicked)
@@ -181,7 +178,7 @@ fun DittochatDrawerContent(
 @Composable
 fun PublicRoomsList(
     viewModel: MainViewModel,
-    onChatClicked: (String) -> Unit,
+    onChatClicked: (Room) -> Unit,
 ) {
 
     val publicRooms : List<Room> by viewModel
@@ -192,7 +189,7 @@ fun PublicRoomsList(
 
     LazyColumn {
         items(publicRooms) { publicRoom ->
-            ChatItem(publicRoom.name, true) { onChatClicked(publicRoom.name) }
+            ChatItem(publicRoom.name, true) { onChatClicked(publicRoom) }
         }
     }
 }

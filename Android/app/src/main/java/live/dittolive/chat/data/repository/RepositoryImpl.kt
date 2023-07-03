@@ -42,7 +42,7 @@ import live.ditto.DittoSortDirection
 import live.ditto.DittoSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
+import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.firstNameKey
@@ -146,7 +146,7 @@ class RepositoryImpl @Inject constructor(
         val dateString = datetimeInUtc.toIso8601String()
 
         // TODO : fetch Room - for everything not the default public room
-        ditto.store.collection(DEFAULT_PUBLIC_ROOM) //TODO : update for multiple rooms
+        ditto.store.collection(DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID) //TODO : update for multiple rooms
             .upsert(
                 mapOf(
                     createdOnKey to dateString,
@@ -184,16 +184,6 @@ class RepositoryImpl @Inject constructor(
             // TODO : Implement upsert
 
         }
-    }
-
-    override suspend fun roomForId(roomId: String): Room? {
-
-        val document = ditto.store.collection(DEFAULT_PUBLIC_ROOM).findById(roomId).exec()
-        document?.let {
-            // TODO : implement - for everything not the default public room
-            //val room = Room(document)
-        }
-        return null
     }
 
     override suspend fun archivePublicRoom(room: Room) {
@@ -245,7 +235,7 @@ class RepositoryImpl @Inject constructor(
 
     private fun getAllMessagesForDefaultPublicRoomFromDitto() {
         ditto.let { ditto: Ditto ->
-            messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
+            messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID)
             messagesSubscription = messagesCollection.findAll().subscribe()
             messagesLiveQuery = messagesCollection
                 .findAll()
@@ -259,9 +249,9 @@ class RepositoryImpl @Inject constructor(
 
     }
 
-    private fun getAllMessagesForRoomFromDitto(roomId: String) {
+    private fun getAllMessagesForRoomFromDitto(room: Room) {
         ditto.let { ditto: Ditto ->
-            messagesCollection = ditto.store.collection(roomId)
+            messagesCollection = ditto.store.collection(room.messagesCollectionId)
             messagesSubscription = messagesCollection.findAll().subscribe()
             messagesLiveQuery = messagesCollection
                 .findAll()
@@ -286,6 +276,15 @@ class RepositoryImpl @Inject constructor(
                 }
 
         }
+    }
+
+    override suspend fun publicRoomForId(roomId: String): Room? {
+        val document = ditto.store.collection(roomsKey).findById(roomId).exec()
+        document?.let {
+            val room = Room(document)
+            return room
+        }
+        return null
     }
 
     override fun getDittoSdkVersion(): String {

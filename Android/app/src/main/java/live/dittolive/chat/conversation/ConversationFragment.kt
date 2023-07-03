@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.findNavController
 import live.dittolive.chat.R
 import live.dittolive.chat.data.model.MessageUiModel
+import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
 import live.dittolive.chat.viewmodel.MainViewModel
@@ -75,38 +76,42 @@ class ConversationFragment : Fragment() {
                     .messagesWithUsersFlow
                     .collectAsStateWithLifecycle(initialValue = emptyList())
 
-                val currentChannelName: String by activityViewModel
-                    .currentChatRoomName
-                    .collectAsStateWithLifecycle(initialValue = "public")
+                val currentChannelName: Room? by activityViewModel
+                    .currentRoom
+                    .collectAsStateWithLifecycle(initialValue = null)
 
-                val currentUiState = ConversationUiState(
-                    initialMessages = messagesWithUsers.asReversed(), // We reverse the list, b/c iOS list is reverse order of ours
-                    channelName = currentChannelName,
-                    channelMembers = users.count() , // TODO : update with actual count from room members
-                    viewModel = activityViewModel
-                )
+                val currentUiState = currentChannelName?.let {
+                    ConversationUiState(
+                        initialMessages = messagesWithUsers.asReversed(), // We reverse the list, b/c iOS list is reverse order of ours
+                        channelName = it.name,
+                        channelMembers = users.count(),
+                        viewModel = activityViewModel
+                    )
+                }
 
                 DittochatTheme {
-                    ConversationContent(
-                        uiState = currentUiState,
-                        navigateToProfile = { user ->
-                            // Click callback
-                            val bundle = bundleOf("userId" to user)
-                            findNavController().navigate(
-                                R.id.nav_profile,
-                                bundle
+                    if (currentUiState != null) {
+                        ConversationContent(
+                            uiState = currentUiState,
+                            navigateToProfile = { user ->
+                                // Click callback
+                                val bundle = bundleOf("userId" to user)
+                                findNavController().navigate(
+                                    R.id.nav_profile,
+                                    bundle
+                                )
+                            },
+                            onNavIconPressed = {
+                                activityViewModel.openDrawer()
+                            },
+                            // Add padding so that we are inset from any navigation bars
+                            modifier = Modifier.windowInsetsPadding(
+                                WindowInsets
+                                    .navigationBars
+                                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                             )
-                        },
-                        onNavIconPressed = {
-                            activityViewModel.openDrawer()
-                        },
-                        // Add padding so that we are inset from any navigation bars
-                        modifier = Modifier.windowInsetsPadding(
-                            WindowInsets
-                                .navigationBars
-                                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                         )
-                    )
+                    }
                 }
             }
         }

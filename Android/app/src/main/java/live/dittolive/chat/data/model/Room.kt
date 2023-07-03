@@ -42,7 +42,7 @@ data class Room(
     val id: String,
     val name: String,
     val createdOn: Instant? = Clock.System.now(),
-    val messagesId: String,
+    val messagesCollectionId: String,
     val isPrivate: Boolean = false,
     val collectionID : String?,
     val createdBy: String
