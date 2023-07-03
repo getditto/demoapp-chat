@@ -64,6 +64,8 @@ class MainViewModel @Inject constructor(
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
 
+    private val _currentChatRoomName = MutableStateFlow("public")
+    val currentChatRoomName = _currentChatRoomName.asStateFlow()
 
     /**
      * Flag for whether the profile that has been clicked is this user or another user
