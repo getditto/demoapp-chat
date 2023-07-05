@@ -78,7 +78,7 @@ Dependencies/
 Env.swift
 
 # Android Secret Keys
-secure/*
+secure/
 
 # Code Injection
 #

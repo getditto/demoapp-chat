@@ -14,7 +14,7 @@ android {
         applicationId "live.dittolive.chat"
         minSdk 29
         targetSdk 33
-        versionCode 24
+        versionCode 26
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -138,7 +138,7 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Ditto
-    implementation('live.ditto:ditto:4.1.1')
+    implementation('live.ditto:ditto:4.2.2')
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file
