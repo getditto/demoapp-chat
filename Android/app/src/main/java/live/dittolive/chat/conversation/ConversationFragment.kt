@@ -36,12 +36,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import kotlinx.coroutines.launch
 import live.dittolive.chat.R
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
@@ -74,7 +76,6 @@ class ConversationFragment : Fragment() {
                 val currentUiState = ConversationUiState(
                     initialMessages = messagesWithUsers.asReversed(), // We reverse the list, b/c iOS list is reverse order of ours
                     channelName = "#public", // TODO : update with actual room name - "public" is the default public room
-                    channelMembers = users.count() , // TODO : update with actual count from room members
                     viewModel = activityViewModel
                 )
 
@@ -88,6 +89,9 @@ class ConversationFragment : Fragment() {
                                 R.id.nav_profile,
                                 bundle
                             )
+                        },
+                        navigateToPresenceViewer = {
+                            findNavController().navigate(R.id.presenceViewerActivity)
                         },
                         onNavIconPressed = {
                             activityViewModel.openDrawer()

@@ -25,6 +25,12 @@
 
 package live.dittolive.chat.data.repository
 
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,10 +38,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import live.ditto.*
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.*
 import live.dittolive.chat.data.model.*
+import java.io.File
+import java.io.InputStream
 import java.util.*
 import javax.inject.Inject
 
@@ -81,9 +90,6 @@ class RepositoryImpl @Inject constructor(
      */
     private fun initDatabase(postInitAction: suspend () -> Unit) {
         GlobalScope.launch {
-            // Prepopulate messasges
-            // TODO : Implement
-            // TODO : pre-pend dummy data
 
             postInitAction.invoke()
         }
@@ -99,27 +105,30 @@ class RepositoryImpl @Inject constructor(
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
         val user = User(userID,firstName, lastName)
         addUser(user)
-
     }
 
     /**
      * when implementing multiple rooms / public / private rooms,
      * replace `publicMessagesId` with MessagesId for the room
      */
-    override suspend fun createMessage(message: Message) {
+    override suspend fun createMessage(message: Message, attachment: DittoAttachment?) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
         val currentMoment: Instant = Clock.System.now()
         val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
         val dateString = datetimeInUtc.toIso8601String()
 
+        val collection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
+        val doc = mapOf(
+            createdOnKey to dateString,
+            roomIdKey to message.roomId,
+            textKey to message.text,
+            userIdKey to userID,
+            thumbnailKey to attachment
+        )
+
         // TODO : fetch Room - for everything not the default public room
-        ditto.store.collection(DEFAULT_PUBLIC_ROOM) //TODO : update for multiple rooms
-            .upsert(mapOf(
-                createdOnKey to dateString,
-                roomIdKey to message.roomId,
-                textKey to message.text,
-                userIdKey to userID
-            ))
+         //TODO : update for multiple rooms
+        collection.upsert(doc)
     }
 
     override suspend fun deleteMessage(id: Long) {
@@ -210,13 +219,15 @@ class RepositoryImpl @Inject constructor(
         ditto.let { ditto: Ditto ->
             messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM)
             messagesSubscription = messagesCollection.findAll().subscribe()
+            // TODO: Add pagination.
             messagesLiveQuery = messagesCollection
                 .findAll()
-                .sort(createdOnKey, DittoSortDirection.Ascending)
+                .sort(createdOnKey, DittoSortDirection.Descending)
+                .limit(100)
                 .observeLocal { docs, _ ->
-
-                this.messagesDocs = docs
-                allMessages.value = docs.map { Message(it) }
+                val reversed = docs.reversed()
+                this.messagesDocs = reversed
+                allMessages.value = reversed.map { Message(it) }
             }
         }
 

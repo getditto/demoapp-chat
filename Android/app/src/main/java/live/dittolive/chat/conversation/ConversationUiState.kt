@@ -25,35 +25,35 @@
 
 package live.dittolive.chat.conversation
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.toMutableStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import live.ditto.DittoAttachmentFetchEvent
+import live.ditto.DittoAttachmentFetcher
+import live.ditto.DittoAttachmentToken
 import live.ditto.DittoDocument
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.R
 import live.dittolive.chat.data.*
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.toInstant
 import live.dittolive.chat.viewmodel.MainViewModel
+import java.io.InputStream
 import java.util.*
 
 class ConversationUiState(
     val channelName: String,
-    val channelMembers: Int,
     initialMessages: List<MessageUiModel>,
     val viewModel: MainViewModel
 ) {
     private val _messages: MutableList<MessageUiModel> = initialMessages.toMutableStateList()
-
     val messages: List<MessageUiModel> = _messages
     //author ID is set to the user ID - it's used to tell if the message is sent from this user (self) when rendering the UI
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
-
     fun addMessage(msg: MessageUiModel) {
-        _messages.add(0, msg) // Add to the beginning of the list -> TODO: maybe append, if we reverse the display order. It seems iOS is reversed from us
         viewModel.onCreateNewMessageClick(msg.message)
     }
 }
@@ -68,14 +68,18 @@ data class Message(
     val roomId: String = "public", // "public" is the roomID for the default public chat room
     val text: String = "test",
     val userId: String = UUID.randomUUID().toString(),
-    val image: Int? = null,
+    val attachmentToken: DittoAttachmentToken?,
+    // this below is local metadata, not part of the ditto document.
+    val photoUri: Uri? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
-    constructor(document: DittoDocument) :this(
-        document[dbIdKey].stringValue,
-        document[createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
-        document[roomIdKey].stringValue,
-        document[textKey].stringValue,
-        document[userIdKey].stringValue
+    constructor(document: DittoDocument) : this(
+            document[dbIdKey].stringValue,
+            document[createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
+            document[roomIdKey].stringValue,
+            document[textKey].stringValue,
+            document[userIdKey].stringValue,
+            document[thumbnailKey].attachmentToken
+
     )
 }
