@@ -196,7 +196,7 @@ class MainViewModel @Inject constructor(
 
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
-            repository.createMessage(message)
+            repository.createMessageForRoom(message, currentRoom.value)
         }
     }
 

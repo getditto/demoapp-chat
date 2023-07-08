@@ -147,18 +147,14 @@ class RepositoryImpl @Inject constructor(
 
     }
 
-    /**
-     * when implementing multiple rooms / public / private rooms,
-     * replace `publicMessagesId` with MessagesId for the room
-     */
-    override suspend fun createMessage(message: Message) {
+    override suspend fun createMessageForRoom(message: Message, room: Room) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
         val currentMoment: Instant = Clock.System.now()
         val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
         val dateString = datetimeInUtc.toIso8601String()
 
         // TODO : fetch Room - for everything not the default public room
-        ditto.store.collection(DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID) //TODO : update for multiple rooms
+        ditto.store.collection(room.messagesCollectionId)
             .upsert(
                 mapOf(
                     createdOnKey to dateString,

@@ -44,7 +44,7 @@ interface Repository {
     fun getAllMessages(): Flow<List<Message>>
     fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
 
-    suspend fun createMessage(message: Message)
+    suspend fun createMessageForRoom(message: Message, room: Room)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)
