@@ -37,14 +37,14 @@ interface Repository {
 
     fun getDittoSdkVersion(): String
 
-    //authentication
-    fun login()
-    fun logout()
+    // rooms
+    fun getAllPublicRooms(): Flow<List<Room>>
 
     // messages
-    fun getAllMessages() : Flow<List<Message>>
+    fun getAllMessages(): Flow<List<Message>>
+    fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
 
-    suspend fun createMessage(message: Message)
+    suspend fun createMessageForRoom(message: Message, room: Room)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)
@@ -58,7 +58,7 @@ interface Repository {
 
     // rooms
     suspend fun createRoom(name: String)
-    suspend fun roomForId( roomId: String) : Room?
+    suspend fun publicRoomForId( roomId: String) : Room
     suspend fun archivePublicRoom(room: Room)
     suspend fun unarchivePublicRoom(room: Room)
 
@@ -69,6 +69,4 @@ interface Repository {
     suspend fun archivePrivateRoom(room: Room)
     suspend fun unarchivePrivateRoom(room: Room)
     suspend fun deletePrivateRoom(room: Room)
-
-
 }

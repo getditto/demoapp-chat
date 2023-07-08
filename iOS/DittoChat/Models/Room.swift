@@ -27,7 +27,7 @@ extension Room {
         self.name = document[nameKey].stringValue
         self.messagesId = document[messagesIdKey].stringValue
         self.isPrivate = document[isPrivateKey].boolValue
-        self.collectionId = document[collectionIdKey].stringValue
+        self.collectionId = document[collectionIdKey].string
         self.createdBy = document[createdByKey].stringValue
         self.createdOn = DateFormatter.isoDate.date(from: document[createdOnKey].stringValue) ?? Date()
     }
@@ -65,6 +65,19 @@ extension Room {
             createdByKey: createdBy,
             createdOnKey: DateFormatter.isoDate.string(from: createdOn),
         ]
+    }
+}
+
+extension Room {
+    // This "dummy" object is a Room object used by DittoChatApp.swift
+    // to initialize a basic chat mode ChatScreen as root view
+    static var basicChatDummy: Room {
+        Room(
+            id: publicKey,
+            name: publicRoomTitleKey,
+            messagesId: publicMessagesIdKey,
+            isPrivate: false
+        )
     }
 }
 

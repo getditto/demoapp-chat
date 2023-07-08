@@ -26,7 +26,6 @@ class RoomsListScreenVM: ObservableObject {
             .receive(on: DispatchQueue.main)
             .map {[weak self] rooms in
                 self?.defaultPublicRoom = rooms.first(where: { $0.id == publicKey })
-                
                 // remove default public room; it's presented by itself in 1st list section
                 return rooms.filter { $0.id != publicKey }
             }

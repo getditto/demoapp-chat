@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileScreen: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var viewModel = ProfileScreenViewModel()
+    @StateObject var viewModel = ProfileScreenViewModel()
 
     var body: some View {
         NavigationView {

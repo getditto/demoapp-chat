@@ -18,18 +18,32 @@ class ChatScreenVM: ObservableObject {
     @Published var inputText: String = ""
     @Published var roomName: String = ""
     @Published var messagesWithUsers = [MessageWithUser]()
+    var room: Room
+    
     @Published var selectedItem: PhotosPickerItem?
     @Published var selectedImage: UIImage?
     @Published var presentAttachmentView = false
     var attachmentMessage: Message?
-    @Published var presentShareRoomScreen = false
+    
     @Published var presentEditingView = false
     @Published var isEditing = false
     @Published var keyboardStatus: KeyboardChangeEvent = .unchanged
-    let room: Room
     var editMsgId: String?
+        
+    @Published var presentShareRoomScreen = false
+    
+    // Basic chat mode
+    @Published var presentProfileScreen: Bool = false
+    @Published var presentSettingsView = false
+    var isBasicChatScreen: Bool {
+        DataManager.shared.basicChat && room.id == publicKey
+    }
 
     init(room: Room) {
+        // In Basic chat mode, display profile screen if user is nil (first launch)
+        if room.id == publicKey && DataManager.shared.basicChat {
+            self.presentProfileScreen = DataManager.shared.currentUserId == nil
+        }
         self.room = room
 
         let users = DataManager.shared.allUsersPublisher()
@@ -48,6 +62,7 @@ class ChatScreenVM: ObservableObject {
 
         DataManager.shared.roomPublisher(for: room)
             .map { room -> String in
+                if let room = room { self.room = room }
                 return room?.name ?? ""
             }
             .assign(to: &$roomName)

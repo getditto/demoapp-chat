@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct RoomsListScreen: View {
-    @ObservedObject var viewModel = RoomsListScreenVM()
+    @ObservedObject var viewModel = RoomsListScreenVM()    
 
     var body: some View {
         List {
@@ -24,7 +24,7 @@ struct RoomsListScreen: View {
                 ForEach(viewModel.publicRooms) { room in
                     NavigationLink(value: room) {
                         RoomsListRowItem(room: room)
-                    }                    
+                    }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button(settingsHideTitleKey) {
                             viewModel.archiveRoom(room)
@@ -33,7 +33,7 @@ struct RoomsListScreen: View {
                     }
                 }
             }
-
+            
             Section( viewModel.privateRooms.count > 0 ? privateRoomsTitleKey : "" ) {
                 ForEach(viewModel.privateRooms) { room in
                     NavigationLink(value: room) {
@@ -48,6 +48,7 @@ struct RoomsListScreen: View {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Room.self) { room in
             ChatScreen(room: room)
                 .withErrorHandling()

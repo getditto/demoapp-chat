@@ -11,30 +11,36 @@ import SwiftUI
 struct SettingsScreen: View {
     @StateObject var viewModel: SettingsScreenVM
     @State var acceptLargeImages: Bool
+    @State var advancedFeaturesEnabled: Bool
     
     init() {
         self._viewModel = StateObject(wrappedValue: SettingsScreenVM())
         self.acceptLargeImages = DataManager.shared.acceptLargeImages
+        self.advancedFeaturesEnabled = !DataManager.shared.basicChat
     }
     
     var body: some View {
         NavigationView {
-
             List {
-                
                 Section(userSettingsTitleKey) {
                     VStack(alignment: .leading) {
+                        
+                        Toggle("Enable Advanced Features", isOn: $advancedFeaturesEnabled)
+                            .onChange(of: advancedFeaturesEnabled) { shouldEnable in
+                                viewModel.enableAdvancedFeatures(useAdvanced: shouldEnable)
+                            }
+
+                        Divider()
+                        
                         Toggle("Enable Large Images", isOn: $acceptLargeImages)
                             .onChange(of: acceptLargeImages) { accept in
                                 viewModel.setLargeImagesPrefs(accept)
                             }
-
                         Text("Large image sync should only be enabled if all peers are known to be using WiFi.")
                             .font(.subheadline)
                             .padding(.top, 8)
                     }
                 }
-                
                 // DittoSwiftTools
                 Section {
                     NavigationLink {

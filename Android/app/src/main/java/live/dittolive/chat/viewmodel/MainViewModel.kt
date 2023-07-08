@@ -24,21 +24,33 @@
  */
 package live.dittolive.chat.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.colleagueProfile
+import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
 import live.dittolive.chat.data.model.MessageUiModel
+import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
+import live.dittolive.chat.data.publicKey
+import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.repository.Repository
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
-import live.dittolive.chat.profile.ProfileScreenState
 import javax.inject.Inject
 
 /**
@@ -56,6 +68,23 @@ class MainViewModel @Inject constructor(
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
 
+    private val emptyRoom = Room(
+        id = publicKey,
+        name = publicRoomTitleKey,
+        createdOn = Clock.System.now(),
+        messagesCollectionId = DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID,
+        isPrivate = false,
+        collectionID = publicKey,
+        createdBy = "Ditto System"
+    )
+
+    private val _currentRoom = MutableStateFlow<Room>(emptyRoom)
+    val currentRoom = _currentRoom.asStateFlow()
+
+    fun setCurrentChatRoom(newChatRoom: Room) {
+        _currentRoom.value = newChatRoom
+        setRoomMessagesWithUsers(newChatRoom)
+    }
 
     /**
      * Flag for whether the profile that has been clicked is this user or another user
@@ -82,9 +111,17 @@ class MainViewModel @Inject constructor(
     private val _dittoSdkVersion = MutableStateFlow(" ")
     val dittoSdkVersion: StateFlow<String> = _dittoSdkVersion.asStateFlow()
 
-    val messagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
+    val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
+
+    private fun setRoomMessagesWithUsers(chatRoom: Room) {
+        // updating a flow will automatically update flows that rely on it
+        repository.getAllMessagesForRoom(chatRoom)
+    }
+
+    // messages for a particular chat room
+    val roomMessagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
         repository.getAllUsers(),
-        repository.getAllMessages()
+        repository.getAllMessagesForRoom(currentRoom.value)
     ) { users: List<User>, messages:List<Message> ->
 
         messages.map {
@@ -115,12 +152,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    suspend fun getDefaultPublicRoom() : Room {
+        val defaultPublicRoom = repository.publicRoomForId(publicKey)
+        return defaultPublicRoom
+    }
+
     /**
      * Some setup required...
      */
     init {
         viewModelScope.launch {
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
+            _currentRoom.value = getDefaultPublicRoom()
         }
 
         val user = getCurrentUser()
@@ -132,14 +175,6 @@ class MainViewModel @Inject constructor(
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
-    }
-
-    fun login() {
-        repository.login()
-    }
-
-    fun logout() {
-        repository.logout()
     }
 
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
@@ -169,7 +204,7 @@ class MainViewModel @Inject constructor(
 
     fun onCreateNewMessageClick(message: Message) {
         viewModelScope.launch(Dispatchers.Default) {
-            repository.createMessage(message)
+            repository.createMessageForRoom(message, currentRoom.value)
         }
     }
 

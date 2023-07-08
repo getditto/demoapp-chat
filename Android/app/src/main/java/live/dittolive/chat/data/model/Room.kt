@@ -25,17 +25,37 @@
 
 package live.dittolive.chat.data.model
 
-import java.util.Date
+import androidx.compose.runtime.Immutable
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import live.ditto.DittoDocument
+import live.dittolive.chat.data.collectionIdKey
+import live.dittolive.chat.data.createdByKey
+import live.dittolive.chat.data.createdOnKey
+import live.dittolive.chat.data.dbIdKey
+import live.dittolive.chat.data.isPrivateKey
+import live.dittolive.chat.data.messagesIdKey
+import live.dittolive.chat.data.nameKey
 
+@Immutable
 data class Room(
     val id: String,
     val name: String,
-    val createdOn: Date,
-    val messagesId: String,
+    val createdOn: Instant? = Clock.System.now(),
+    val messagesCollectionId: String,
     val isPrivate: Boolean = false,
     val collectionID : String?,
-    val createdBy: String,
-    val userIds : List<String>
-)
+    val createdBy: String
+){
+    constructor(document: DittoDocument) :this(
+        document[dbIdKey].stringValue,
+        document[nameKey].stringValue,
+        document[createdOnKey].stringValue.toInstant(),
+        document[messagesIdKey].stringValue,
+        document[isPrivateKey].booleanValue,
+        document[collectionIdKey].stringValue,
+        document[createdByKey].stringValue,
+    )
+}
 
 

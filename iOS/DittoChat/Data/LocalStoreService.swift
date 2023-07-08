@@ -14,7 +14,7 @@ class LocalStoreService: LocalDataInterface {
     private let privateRoomsSubject: CurrentValueSubject<[Room], Never>
     private let archivedPrivateRoomsSubject: CurrentValueSubject<[Room], Never>
     private let archivedPublicRoomsSubject: CurrentValueSubject<[Room], Never>
-    
+        
     init() {
         let tmpDefaults = UserDefaults.standard
         
@@ -29,6 +29,17 @@ class LocalStoreService: LocalDataInterface {
         // prime archivedPublicRoomsSubject with decoded Room instances
         rooms = tmpDefaults.decodeRoomsFromData(Array(tmpDefaults.archivedPublicRooms.values))
         self.archivedPublicRoomsSubject = CurrentValueSubject<[Room], Never>(rooms)
+        
+        self.basicChat = UserDefaults.standard.basicChat        
+    }
+    
+    var basicChat: Bool {
+        get { defaults.basicChat }
+        set { defaults.basicChat = newValue }
+    }
+    
+    var basicChatPublisher: AnyPublisher<Bool, Never> {
+        defaults.basicChatPublisher
     }
     
     var acceptLargeImages: Bool {
@@ -239,6 +250,24 @@ fileprivate extension UserDefaults {
     var acceptLargeImagesPublisher: AnyPublisher<Bool, Never> {
         UserDefaults.standard
             .publisher(for: \.acceptLargeImages)
+            .eraseToAnyPublisher()
+    }
+}
+
+fileprivate extension UserDefaults {
+    
+    @objc var basicChat: Bool {
+        get {
+            object(forKey: basicChatKey) as? Bool ?? true
+        }
+        set(value) {
+            set(value, forKey: basicChatKey)
+        }
+    }
+    
+    var basicChatPublisher: AnyPublisher<Bool, Never> {
+        UserDefaults.standard
+            .publisher(for: \.basicChat)
             .eraseToAnyPublisher()
     }
 }

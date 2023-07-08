@@ -26,6 +26,11 @@
 <resources>
     <string name="app_name">Ditto Chat</string>
     <string name="app_title">Ditto Chat</string>
+    <string name="chats">chats</string>
+    <string name="open_public_room">OPEN PUBLIC ROOM</string>
+    <string name="public_room">Public Room</string>
+    <string name="public_rooms">PUBLIC ROOMS</string>
+    <string name="private_rooms">PRIVATE ROOMS</string>
     <string name="presence_viewer">Presence Viewer</string>
     <string name="menu">"Menu"</string>
     <string name="all_rooms_button_text">"All"</string>

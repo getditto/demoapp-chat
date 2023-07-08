@@ -56,7 +56,6 @@ class DittoService: ReplicatingDataInterface {
 
     private let ditto = DittoInstance.shared.ditto
     private var privateStore: LocalDataInterface
-    private let PUBLIC_MESSAGES_ID = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef"
     
     private var joinRoomQuery: DittoSwift.DittoLiveQuery?
     
@@ -238,7 +237,7 @@ extension DittoService {
             .sort(createdOnKey, direction: .ascending)
             .liveQueryPublisher()
             .map { docs, _ in
-                docs.map { Message(document: $0) }
+                docs.map { Message(document: $0) }                
             }
             .eraseToAnyPublisher()        
     }
@@ -515,6 +514,7 @@ extension DittoService {
     private func createDefaultPublicRoom() {
         // Only create default Public room if user does not yet exist, i.e. first launch
         if privateStore.currentUserId != nil {
+//        if allPublicRooms.count > 0 {
             return
         }
         
@@ -524,7 +524,7 @@ extension DittoService {
                 dbIdKey: publicKey,
                 nameKey: publicRoomTitleKey,
                 collectionIdKey: publicRoomsCollectionId,
-                messagesIdKey: PUBLIC_MESSAGES_ID,
+                messagesIdKey: publicMessagesIdKey,//PUBLIC_MESSAGES_ID,
                 createdOnKey: DateFormatter.isoDate.string(from: Date()),
                 isPrivateKey: false
             ] as [String: Any?] )
