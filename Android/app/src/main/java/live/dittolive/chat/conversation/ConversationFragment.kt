@@ -76,11 +76,11 @@ class ConversationFragment : Fragment() {
                     .roomMessagesWithUsersFlow
                     .collectAsStateWithLifecycle(initialValue = emptyList())
 
-                val currentChannelName: Room? by activityViewModel
+                val currentChannel: Room? by activityViewModel
                     .currentRoom
                     .collectAsStateWithLifecycle(initialValue = null)
 
-                val currentUiState = currentChannelName?.let {
+                val currentUiState = currentChannel?.let {
                     ConversationUiState(
                         initialMessages = messagesWithUsers.asReversed(), // We reverse the list, b/c iOS list is reverse order of ours
                         channelName = it.name,

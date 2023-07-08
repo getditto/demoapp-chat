@@ -83,6 +83,7 @@ class MainViewModel @Inject constructor(
 
     fun setCurrentChatRoom(newChatRoom: Room) {
         _currentRoom.value = newChatRoom
+        setRoomMessagesWithUsers(newChatRoom)
     }
 
     /**
@@ -103,6 +104,11 @@ class MainViewModel @Inject constructor(
     val dittoSdkVersion: StateFlow<String> = _dittoSdkVersion.asStateFlow()
 
     val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
+
+    private fun setRoomMessagesWithUsers(chatRoom: Room) {
+        // updating a flow will automatically update flows that rely on it
+        repository.getAllMessagesForRoom(chatRoom)
+    }
 
     // messages for a particular chat room
     val roomMessagesWithUsersFlow: Flow<List<MessageUiModel>> = combine(
