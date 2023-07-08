@@ -177,14 +177,6 @@ class MainViewModel @Inject constructor(
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
     }
 
-    fun login() {
-        repository.login()
-    }
-
-    fun logout() {
-        repository.logout()
-    }
-
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
         viewModelScope.launch {
             repository.saveCurrentUser(firstName, lastName)
