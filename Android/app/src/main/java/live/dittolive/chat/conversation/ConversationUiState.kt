@@ -25,9 +25,8 @@
 
 package live.dittolive.chat.conversation
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.toMutableStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
@@ -35,15 +34,19 @@ import kotlinx.datetime.Instant
 import live.ditto.DittoAttachmentToken
 import live.ditto.DittoDocument
 import live.dittolive.chat.R
-import live.dittolive.chat.data.*
+import live.dittolive.chat.data.createdOnKey
+import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.toInstant
+import live.dittolive.chat.data.roomIdKey
+import live.dittolive.chat.data.textKey
+import live.dittolive.chat.data.thumbnailKey
+import live.dittolive.chat.data.userIdKey
 import live.dittolive.chat.viewmodel.MainViewModel
-import java.util.*
+import java.util.UUID
 
 class ConversationUiState(
     val channelName: String,
-    val channelMembers: Int,
     initialMessages: List<MessageUiModel>,
     val viewModel: MainViewModel
 ) {
@@ -54,7 +57,6 @@ class ConversationUiState(
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
 
     fun addMessage(msg: MessageUiModel) {
-        _messages.add(0, msg) // Add to the beginning of the list -> TODO: maybe append, if we reverse the display order. It seems iOS is reversed from us
         viewModel.onCreateNewMessageClick(msg.message)
     }
 }
@@ -69,9 +71,9 @@ data class Message(
     val roomId: String = "public", // "public" is the roomID for the default public chat room
     val text: String = "test",
     val userId: String = UUID.randomUUID().toString(),
-    val largeImageToken: DittoAttachmentToken? = null,
-    val thumbNailImageTOken: DittoAttachmentToken? = null,
-    val image: Int? = null,
+    val attachmentToken: DittoAttachmentToken?,
+    // local metadata, not part of the ditto document
+    val photoUri: Uri? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
     constructor(document: DittoDocument) :this(
@@ -79,6 +81,7 @@ data class Message(
         document[createdOnKey].stringValue.toInstant(),
         document[roomIdKey].stringValue,
         document[textKey].stringValue,
-        document[userIdKey].stringValue
+        document[userIdKey].stringValue,
+        document[thumbnailKey].attachmentToken
     )
 }

@@ -87,6 +87,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
+    //for rememberImagePainter and image loading functionality
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     // ViewModel utilities for Compose
