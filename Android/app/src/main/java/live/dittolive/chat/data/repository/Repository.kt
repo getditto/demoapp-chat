@@ -41,7 +41,6 @@ interface Repository {
     fun getAllPublicRooms(): Flow<List<Room>>
 
     // messages
-    fun getAllMessages(): Flow<List<Message>>
     fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
 
     suspend fun createMessageForRoom(message: Message, room: Room)
@@ -53,8 +52,6 @@ interface Repository {
     suspend fun addUser(user: User)
     fun getAllUsers(): Flow<List<User>>
     suspend fun saveCurrentUser(firstName: String, lastName: String)
-    fun getNumberOfUsers(): Flow<Int>
-
 
     // rooms
     suspend fun createRoom(name: String)

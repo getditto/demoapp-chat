@@ -152,9 +152,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    suspend fun getDefaultPublicRoom() : Room {
-        val defaultPublicRoom = repository.publicRoomForId(publicKey)
-        return defaultPublicRoom
+    private suspend fun getDefaultPublicRoom(): Room {
+        return repository.publicRoomForId(publicKey)
     }
 
     /**
@@ -183,21 +182,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getUserById(id: String): User? {
-        val user : User? = users.value?.find { user: User -> user.id == id }
-        return user
+    private fun getUserById(id: String): User? {
+        return users.value?.find { user: User -> user.id == id }
     }
 
-    fun getCurrentUser() : User? {
+    private fun getCurrentUser() : User? {
         return getUserById(currentUserId.value)
     }
 
-    fun getCurrentFirstName() : String {
+    private fun getCurrentFirstName() : String {
         val user = getCurrentUser()
         return user?.firstName ?: ""
     }
 
-    fun getCurrentLasttName() : String {
+    private fun getCurrentLasttName() : String {
         val user = getCurrentUser()
         return user?.lastName ?: ""
     }
