@@ -66,10 +66,6 @@ class RepositoryImpl @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : Repository {
 
-    private val allMessages: MutableStateFlow<List<Message>> by lazy {
-        MutableStateFlow(emptyList())
-    }
-
     private val allMessagesForRoom: MutableStateFlow<List<Message>> by lazy {
         MutableStateFlow(emptyList())
     }
@@ -81,8 +77,6 @@ class RepositoryImpl @Inject constructor(
     private val allUsers: MutableStateFlow<List<User>> by lazy {
         MutableStateFlow(emptyList())
     }
-
-    private var numberOfUsers: Flow<Int> = MutableStateFlow(0)
 
     /**
      * Messages
@@ -126,8 +120,6 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAllMessages(): Flow<List<Message>> = allMessages
-
     override fun getAllMessagesForRoom(room: Room): Flow<List<Message>> {
         getAllMessagesForRoomFromDitto(room)
 
@@ -135,8 +127,6 @@ class RepositoryImpl @Inject constructor(
     }
 
     override fun getAllUsers(): Flow<List<User>> = allUsers
-
-    override fun getNumberOfUsers(): Flow<Int> = numberOfUsers
 
     override fun getAllPublicRooms(): Flow<List<Room>> = allPublicRooms
 
@@ -228,33 +218,12 @@ class RepositoryImpl @Inject constructor(
     }
 
     private fun postInitActions() {
-        updateMesagesLiveData()
         updateUsersLiveData()
         getPublicRoomsFromDitto()
     }
 
-    private fun updateMesagesLiveData() {
-        getAllMessagesForDefaultPublicRoomFromDitto()
-    }
-
     private fun updateUsersLiveData() {
         getAllUsersFromDitto()
-    }
-
-    private fun getAllMessagesForDefaultPublicRoomFromDitto() {
-        ditto.let { ditto: Ditto ->
-            messagesCollection = ditto.store.collection(DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID)
-            messagesSubscription = messagesCollection.findAll().subscribe()
-            messagesLiveQuery = messagesCollection
-                .findAll()
-                .sort(createdOnKey, DittoSortDirection.Ascending)
-                .observeLocal { docs, _ ->
-
-                    this.messagesDocs = docs
-                    allMessages.value = docs.map { Message(it) }
-                }
-        }
-
     }
 
     private fun getAllMessagesForRoomFromDitto(room: Room) {
@@ -267,7 +236,6 @@ class RepositoryImpl @Inject constructor(
                 .observeLocal { docs, _ ->
                     this.messagesDocs = docs
                     allMessagesForRoom.value = docs.map { Message(it) }
-                    allMessages.value = docs.map { Message(it) } // DEBUG
                 }
         }
 
@@ -316,7 +284,6 @@ class RepositoryImpl @Inject constructor(
             usersLiveQuery = usersCollection.findAll().observeLocal { docs, _ ->
                 this.userssDocs = docs
                 allUsers.value = docs.map { User(it) }
-                numberOfUsers = MutableStateFlow(docs.size)
             }
         }
     }
