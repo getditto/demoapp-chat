@@ -38,7 +38,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
@@ -49,7 +48,6 @@ import androidx.navigation.findNavController
 import live.dittolive.chat.R
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.Room
-import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
 import live.dittolive.chat.viewmodel.MainViewModel
 
@@ -68,11 +66,7 @@ class ConversationFragment : Fragment() {
             CompositionLocalProvider(
                 LocalBackPressedDispatcher provides requireActivity().onBackPressedDispatcher
             ) {
-                val users : List<User> by activityViewModel
-                    .users
-                    .observeAsState(listOf())
-
-                val messagesWithUsers : List<MessageUiModel> by activityViewModel
+                val messagesWithUsers: List<MessageUiModel> by activityViewModel
                     .roomMessagesWithUsersFlow
                     .collectAsStateWithLifecycle(initialValue = emptyList())
 
@@ -84,7 +78,6 @@ class ConversationFragment : Fragment() {
                     ConversationUiState(
                         initialMessages = messagesWithUsers.asReversed(), // We reverse the list, b/c iOS list is reverse order of ours
                         channelName = it.name,
-                        channelMembers = users.count(),
                         viewModel = activityViewModel
                     )
                 }
@@ -101,9 +94,13 @@ class ConversationFragment : Fragment() {
                                     bundle
                                 )
                             },
+                            navigateToPresenceViewer = {
+                                findNavController().navigate(R.id.presenceViewerActivity)
+                            },
                             onNavIconPressed = {
                                 activityViewModel.openDrawer()
                             },
+                            viewModel = activityViewModel,
                             // Add padding so that we are inset from any navigation bars
                             modifier = Modifier.windowInsetsPadding(
                                 WindowInsets
