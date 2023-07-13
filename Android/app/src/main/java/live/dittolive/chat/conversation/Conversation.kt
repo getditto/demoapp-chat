@@ -43,6 +43,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -69,7 +71,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -82,6 +83,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -101,6 +103,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalDensity
@@ -115,19 +118,14 @@ import androidx.compose.ui.unit.dp
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import live.ditto.DittoAttachmentFetchEvent
-import live.dittolive.chat.DittoHandler
-import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
-import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
 import live.dittolive.chat.viewmodel.MainViewModel
 import java.io.ByteArrayInputStream
-import java.util.UUID
+import kotlin.math.floor
 
 /**
  * Entry point for a conversation screen.
@@ -147,12 +145,10 @@ fun ConversationContent(
     onNavIconPressed: () -> Unit = { },
     viewModel: MainViewModel
 ) {
-    val authorMe = stringResource(R.string.author_me)
     val scrollState = rememberLazyListState()
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     val scope = rememberCoroutineScope()
-    val currentMoment: Instant = Clock.System.now()
     val authorId = uiState.authorId.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = uiState.messages) {
@@ -538,9 +534,9 @@ fun ChatItemBubble(
     authorClicked: (String) -> Unit
 ) {
     val pressedState = remember { mutableStateOf(false) }
-    if (pressedState.value) {
-        // ViewLargeImage(message) { pressedState.value = false }
-    }
+//    if (pressedState.value) {
+//         ViewLargeImage(message) { pressedState.value = false }
+//    }
 
     val backgroundBubbleColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
@@ -553,11 +549,13 @@ fun ChatItemBubble(
             color = backgroundBubbleColor,
             shape = ChatBubbleShape
         ) {
-            ClickableMessage(
-                message = message,
-                isUserMe = isUserMe,
-                authorClicked = authorClicked
-            )
+            if (message.text.isNotEmpty()) {
+                ClickableMessage(
+                    message = message,
+                    isUserMe = isUserMe,
+                    authorClicked = authorClicked
+                )
+            }
         }
 
         if (progress != null && progress != 1.0) {
@@ -569,7 +567,6 @@ fun ChatItemBubble(
             }
         }
 
-        val modifier =
         image?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Surface(
@@ -577,9 +574,14 @@ fun ChatItemBubble(
                 shape = ChatBubbleShape
             ) {
                 Image(
-                    painter = painterResource(it),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(160.dp),
+                    bitmap = it,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                pressedState.value = true
+                            }
+                        )},
                     contentDescription = stringResource(id = R.string.attached_image)
                 )
             }
@@ -602,7 +604,7 @@ fun ProgressWithText(
         targetValue = progress,
         animationSpec = tween(
             durationMillis = animationDuration
-        )
+        ), label = "loading"
     )
     Box(
         modifier = Modifier
@@ -660,6 +662,21 @@ fun ProgressWithText(
 }
 
 @Composable
+private fun DisplayText(
+    animateNumber: State<Float>
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Text that shows the number inside the circle
+        Text(
+            text = floor(animateNumber.value * 100).toInt().toString() + "%"
+        )
+    }
+}
+
+@Composable
 fun ClickableMessage(
     message: Message,
     isUserMe: Boolean,
@@ -707,7 +724,6 @@ fun ClickableMessage(
 @Composable
 fun ChannelBarPrev() {
     DittochatTheme {
-        ChannelNameBar(channelName = "public", channelMembers = 52)
     }
 }
 
