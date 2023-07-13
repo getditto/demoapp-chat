@@ -35,6 +35,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import live.ditto.Ditto
+import live.ditto.DittoAttachment
 import live.ditto.DittoCollection
 import live.ditto.DittoDocument
 import live.ditto.DittoLiveQuery
@@ -55,6 +56,7 @@ import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.roomIdKey
 import live.dittolive.chat.data.roomsKey
 import live.dittolive.chat.data.textKey
+import live.dittolive.chat.data.thumbnailKey
 import live.dittolive.chat.data.userIdKey
 import live.dittolive.chat.data.usersKey
 import java.util.UUID
@@ -137,22 +139,21 @@ class RepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun createMessageForRoom(message: Message, room: Room) {
+    override suspend fun createMessageForRoom(message: Message, room: Room, attachment: DittoAttachment?) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
         val currentMoment: Instant = Clock.System.now()
         val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
         val dateString = datetimeInUtc.toIso8601String()
+        val collection = ditto.store.collection(room.messagesCollectionId)
+        val doc = mapOf(
+            createdOnKey to dateString,
+            roomIdKey to message.roomId,
+            textKey to message.text,
+            userIdKey to userID,
+            thumbnailKey to attachment
+        )
 
-        // TODO : fetch Room - for everything not the default public room
-        ditto.store.collection(room.messagesCollectionId)
-            .upsert(
-                mapOf(
-                    createdOnKey to dateString,
-                    roomIdKey to message.roomId,
-                    textKey to message.text,
-                    userIdKey to userID
-                )
-            )
+        collection.upsert(doc)
     }
 
     override suspend fun deleteMessage(id: Long) {

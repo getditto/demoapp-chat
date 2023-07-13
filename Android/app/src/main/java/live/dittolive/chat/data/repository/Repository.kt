@@ -26,6 +26,7 @@
 package live.dittolive.chat.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import live.ditto.DittoAttachment
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
@@ -42,8 +43,7 @@ interface Repository {
 
     // messages
     fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
-
-    suspend fun createMessageForRoom(message: Message, room: Room)
+    suspend fun createMessageForRoom(message: Message, room: Room, attachment: DittoAttachment?)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)
