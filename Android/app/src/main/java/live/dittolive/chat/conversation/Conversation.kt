@@ -27,6 +27,18 @@
 
 package live.dittolive.chat.conversation
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -50,6 +62,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -68,8 +81,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -77,6 +92,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
@@ -87,17 +110,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import live.ditto.DittoAttachmentFetchEvent
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.theme.DittochatTheme
+import live.dittolive.chat.viewmodel.MainViewModel
+import java.io.ByteArrayInputStream
 import java.util.UUID
 
 /**
@@ -113,17 +142,24 @@ import java.util.UUID
 fun ConversationContent(
     uiState: ConversationUiState,
     navigateToProfile: (String) -> Unit,
+    navigateToPresenceViewer: () -> Unit,
     modifier: Modifier = Modifier,
     onNavIconPressed: () -> Unit = { },
+    viewModel: MainViewModel
 ) {
     val authorMe = stringResource(R.string.author_me)
-
     val scrollState = rememberLazyListState()
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     val scope = rememberCoroutineScope()
     val currentMoment: Instant = Clock.System.now()
     val authorId = uiState.authorId.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = uiState.messages) {
+        scope.launch {
+            scrollState.scrollToItem(0)
+        }
+    }
 
     Surface(modifier = modifier) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -137,20 +173,13 @@ fun ConversationContent(
                     authorId = authorId.value,
                     navigateToProfile = navigateToProfile,
                     modifier = Modifier.weight(1f),
-                    scrollState = scrollState
+                    scrollState = scrollState,
+                    viewModel = viewModel
                 )
                 UserInput(
                     onMessageSent = { content ->
                         uiState.addMessage(
-                        MessageUiModel(
-                            Message(
-                                UUID.randomUUID().toString(),
-                                currentMoment,
-                                "public",
-                                content, authorMe
-                            ),
-                            User() // placeholder - don't need
-                        )
+                        content
                         )
                     },
                     resetScroll = {
@@ -168,9 +197,9 @@ fun ConversationContent(
             // Channel name bar floats above the messages
             ChannelNameBar(
                 channelName = uiState.channelName,
-                channelMembers = uiState.channelMembers,
                 onNavIconPressed = onNavIconPressed,
                 scrollBehavior = scrollBehavior,
+                navigateToPresenceViewer = navigateToPresenceViewer
             )
         }
     }
@@ -180,15 +209,11 @@ fun ConversationContent(
 @Composable
 fun ChannelNameBar(
     channelName: String,
-    channelMembers: Int,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    navigateToPresenceViewer: () -> Unit,
     onNavIconPressed: () -> Unit = { }
 ) {
-    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
-    if (functionalityNotAvailablePopupShown) {
-        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
-    }
     DittochatAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
@@ -200,31 +225,15 @@ fun ChannelNameBar(
                     text = channelName,
                     style = MaterialTheme.typography.titleMedium
                 )
-                // Number of members
-                Text(
-                    text = stringResource(R.string.members, channelMembers),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         },
         actions = {
-            // Search icon
-            Icon(
-                imageVector = Icons.Outlined.Search,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .clickable(onClick = { functionalityNotAvailablePopupShown = true })
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
-                    .height(24.dp),
-                contentDescription = stringResource(id = R.string.search)
-            )
             // Info icon
             Icon(
                 imageVector = Icons.Outlined.Info,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
-                    .clickable(onClick = { functionalityNotAvailablePopupShown = true })
+                    .clickable(onClick = { navigateToPresenceViewer() })
                     .padding(horizontal = 12.dp, vertical = 16.dp)
                     .height(24.dp),
                 contentDescription = stringResource(id = R.string.info)
@@ -241,7 +250,8 @@ fun Messages(
     authorId: String,
     navigateToProfile: (String) -> Unit,
     scrollState: LazyListState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
     val scope = rememberCoroutineScope()
     Box(modifier = modifier) {
@@ -257,35 +267,24 @@ fun Messages(
                 .testTag(ConversationTestTag)
                 .fillMaxSize()
         ) {
-            for (index in messages.indices) {
+            itemsIndexed(
+                items = messages,
+                key= { _, message -> message.id }
+            ) { index, content ->
                 val prevAuthor = messages.getOrNull(index - 1)?.message?.userId
                 val nextAuthor = messages.getOrNull(index + 1)?.message?.userId
                 val userId = messages.getOrNull(index)?.message?.userId
-                val content = messages[index]
                 val isFirstMessageByAuthor = prevAuthor != content.message.userId
                 val isLastMessageByAuthor = nextAuthor != content.message.userId
-
-                // Hardcode day dividers for simplicity
-                if (index == messages.size - 1) {
-                    item {
-                        DayHeader("20 Aug")
-                    }
-                } else if (index == 2) {
-                    item {
-                        DayHeader("Today")
-                    }
-                }
-
-                item {
-                    MessageUi(
-                        onAuthorClick = { name -> navigateToProfile(name) },
-                        msg = content,
-                        authorId = authorId,
-                        userId = userId ?: "",
-                        isFirstMessageByAuthor = isFirstMessageByAuthor,
-                        isLastMessageByAuthor = isLastMessageByAuthor
-                    )
-                }
+                MessageUi(
+                    onAuthorClick = { name -> navigateToProfile(name) },
+                    msg = content,
+                    authorId = authorId,
+                    userId = userId ?: "",
+                    isFirstMessageByAuthor = isFirstMessageByAuthor,
+                    isLastMessageByAuthor = isLastMessageByAuthor,
+                    viewModel = viewModel
+                )
             }
         }
         // Jump to bottom button shows up when user scrolls past a threshold.
@@ -323,10 +322,10 @@ fun MessageUi(
     authorId: String,
     userId: String,
     isFirstMessageByAuthor: Boolean,
-    isLastMessageByAuthor: Boolean
+    isLastMessageByAuthor: Boolean,
+    viewModel: MainViewModel
 ) {
     val isUserMe = authorId == userId
-
     val borderColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
     } else {
@@ -334,6 +333,60 @@ fun MessageUi(
     }
 
     val authorImageId: Int = if (isUserMe) R.drawable.profile_photo_android_developer else R.drawable.someone_else
+
+    var thumbnail: ImageBitmap? by remember { mutableStateOf(null) }
+    var fetchProgress by remember { mutableDoubleStateOf(1.0) }
+
+    LaunchedEffect(key1 = msg.message._id) {
+        viewModel.getAttachment(msg.message) { it ->
+            when (it) {
+                is DittoAttachmentFetchEvent.Completed -> {
+                    var rotatedBitmap: Bitmap? = null
+                    try {
+                        val byteArray = it.attachment.getInputStream().readBytes()
+                        val exifInterface =
+                            runCatching { ExifInterface(ByteArrayInputStream(byteArray)) }.getOrNull()
+                        val orientation = exifInterface?.getAttributeInt(
+                            ExifInterface.TAG_ORIENTATION,
+                            ExifInterface.ORIENTATION_UNDEFINED
+                        ) ?: ExifInterface.ORIENTATION_UNDEFINED
+
+                        val rotationDegrees = when (orientation) {
+                            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                            else -> 0
+                        }
+                        val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(byteArray))
+
+                        bitmap?.let {
+                            val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+                            rotatedBitmap =
+                                Bitmap.createBitmap(bitmap, 0, 0, it.width, it.height, matrix, true)
+                        }
+                    } catch (err: Error) {
+                        // TODO: catch error
+                    }
+                    rotatedBitmap?.let {
+                        thumbnail = rotatedBitmap?.asImageBitmap()
+                    }
+                    fetchProgress = 1.0
+                }
+
+                is DittoAttachmentFetchEvent.Progress -> {
+                    val percentage =
+                        it.downloadedBytes.toDouble() / it.totalBytes.toDouble()
+                    fetchProgress = percentage
+                }
+
+                is DittoAttachmentFetchEvent.Deleted -> {
+                    thumbnail = null
+                    fetchProgress = 1.0
+                }
+            }
+        }
+    }
+
 
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
@@ -362,6 +415,8 @@ fun MessageUi(
             isFirstMessageByAuthor = isFirstMessageByAuthor,
             isLastMessageByAuthor = isLastMessageByAuthor,
             authorClicked = onAuthorClick,
+            fetchProgress = fetchProgress,
+            thumbnail = thumbnail,
             modifier = Modifier
                 .padding(end = 16.dp)
                 .weight(1f)
@@ -376,13 +431,20 @@ fun AuthorAndTextMessage(
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean,
     authorClicked: (String) -> Unit,
+    fetchProgress: Double?,
+    thumbnail: ImageBitmap?,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         if (isLastMessageByAuthor) {
             AuthorNameTimestamp(msg, isUserMe)
         }
-        ChatItemBubble(msg.message, isUserMe, authorClicked = authorClicked)
+        ChatItemBubble(
+            msg.message,
+            isUserMe,
+            fetchProgress,
+            thumbnail,
+            authorClicked = authorClicked)
         if (isFirstMessageByAuthor) {
             // Last bubble before next author
             Spacer(modifier = Modifier.height(8.dp))
@@ -451,11 +513,34 @@ private fun RowScope.DayHeaderLine() {
 }
 
 @Composable
+fun ViewLargeImage (message: Message, dismiss: () -> Unit) {
+    AnimatedVisibility(
+        visibleState = remember { MutableTransitionState(false).apply { targetState = true } },
+        enter = expandHorizontally() + fadeIn(),
+        exit = shrinkHorizontally() + fadeOut()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        )
+        {
+            // TODO: fetch large attachment.
+            Text("hello world")
+        }
+    }
+}
+
+@Composable
 fun ChatItemBubble(
     message: Message,
     isUserMe: Boolean,
+    progress: Double?,
+    image: ImageBitmap?,
     authorClicked: (String) -> Unit
 ) {
+    val pressedState = remember { mutableStateOf(false) }
+    if (pressedState.value) {
+        // ViewLargeImage(message) { pressedState.value = false }
+    }
 
     val backgroundBubbleColor = if (isUserMe) {
         MaterialTheme.colorScheme.primary
@@ -475,7 +560,17 @@ fun ChatItemBubble(
             )
         }
 
-        message.image?.let {
+        if (progress != null && progress != 1.0) {
+            Surface(
+                color = backgroundBubbleColor,
+                shape = ChatBubbleShape
+            ) {
+                ProgressWithText(progress.toFloat())
+            }
+        }
+
+        val modifier =
+        image?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Surface(
                 color = backgroundBubbleColor,
@@ -489,6 +584,78 @@ fun ChatItemBubble(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ProgressWithText(
+    progress: Float,
+    size: Dp = 260.dp,
+    foregroundIndicatorColor: Color = Color(0xFF35898f),
+    shadowColor: Color = Color.LightGray,
+    indicatorThickness: Dp = 24.dp,
+    animationDuration: Int = 1000
+) {
+
+    // This is to animate the foreground indicator
+    val progressAnimate = animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(
+            durationMillis = animationDuration
+        )
+    )
+    Box(
+        modifier = Modifier
+            .size(size),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier
+                .size(size)
+        ) {
+            // For shadow
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(shadowColor, Color.White),
+                    center = Offset(x = this.size.width / 2, y = this.size.height / 2),
+                    radius = this.size.height / 2
+                ),
+                radius = this.size.height / 2,
+                center = Offset(x = this.size.width / 2, y = this.size.height / 2)
+            )
+
+            // This is the white circle that appears on the top of the shadow circle
+            drawCircle(
+                color = Color.White,
+                radius = (size / 2 - indicatorThickness).toPx(),
+                center = Offset(x = this.size.width / 2, y = this.size.height / 2)
+            )
+
+            // Convert the dataUsage to angle
+            val sweepAngle = (progress * 100) * 360 / 100
+
+            // Foreground indicator
+            drawArc(
+                color = foregroundIndicatorColor,
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                style = Stroke(width = indicatorThickness.toPx(), cap = StrokeCap.Round),
+                size = Size(
+                    width = (size - indicatorThickness).toPx(),
+                    height = (size - indicatorThickness).toPx()
+                ),
+                topLeft = Offset(
+                    x = (indicatorThickness / 2).toPx(),
+                    y = (indicatorThickness / 2).toPx()
+                )
+            )
+        }
+
+        // Display the data usage value
+        DisplayText(
+            animateNumber = progressAnimate
+        )
     }
 }
 

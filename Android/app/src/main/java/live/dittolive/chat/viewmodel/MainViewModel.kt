@@ -39,6 +39,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import live.ditto.DittoAttachmentFetcher
+import live.ditto.DittoAttachmentToken
+import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.colleagueUser
@@ -51,6 +55,7 @@ import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.repository.Repository
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
+import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -200,9 +205,28 @@ class MainViewModel @Inject constructor(
         return user?.lastName ?: ""
     }
 
-    fun onCreateNewMessageClick(message: Message) {
+    fun onCreateNewMessageClick(messageText: String) {
+        val currentMoment: Instant = Clock.System.now()
+        val message = Message(
+            UUID.randomUUID().toString(),
+            currentMoment,
+            currentRoom.value.id,
+            messageText,
+            "author_me",
+            null,
+            null
+        )
+
         viewModelScope.launch(Dispatchers.Default) {
             repository.createMessageForRoom(message, currentRoom.value)
+        }
+    }
+
+    fun getAttachment(message: Message, callback: (Any) -> Unit) {
+        val fetchers: MutableMap<DittoAttachmentToken, DittoAttachmentFetcher> = mutableMapOf()
+        message.attachmentToken?.let { token ->
+            fetchers[token] =
+                DittoHandler.ditto.store.collection(currentRoom.value.messagesCollectionId ).fetchAttachment(token, callback)
         }
     }
 
