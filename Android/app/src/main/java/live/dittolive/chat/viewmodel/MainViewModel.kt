@@ -289,7 +289,7 @@ class MainViewModel @Inject constructor(
         return tempFile
     }
 
-    fun onCreateNewMessageClick(messageText: String) {
+    fun onCreateNewMessageClick(messageText: String, photoUri: Uri?) {
         val currentMoment: Instant = Clock.System.now()
         val message = Message(
             UUID.randomUUID().toString(),
@@ -298,7 +298,7 @@ class MainViewModel @Inject constructor(
             messageText,
             "author_me",
             null,
-            null
+            photoUri
         )
 
         if (message.photoUri == null) {

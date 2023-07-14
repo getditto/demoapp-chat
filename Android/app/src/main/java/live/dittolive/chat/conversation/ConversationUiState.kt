@@ -57,7 +57,7 @@ class ConversationUiState(
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
 
     fun addMessage(msg: String) {
-        viewModel.onCreateNewMessageClick(msg)
+        viewModel.onCreateNewMessageClick(msg, null)
     }
 }
 

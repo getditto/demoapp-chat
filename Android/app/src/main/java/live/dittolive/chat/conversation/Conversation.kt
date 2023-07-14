@@ -173,7 +173,7 @@ fun ConversationContent(
                     viewModel = viewModel
                 )
                 UserInput(
-                    onMessageSent = { content ->
+                    onMessageSent = { content, photoUri ->
                         uiState.addMessage(
                         content
                         )
