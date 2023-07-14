@@ -24,6 +24,11 @@
  */
 package live.dittolive.chat.viewmodel
 
+import android.content.ContentResolver
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,7 +36,9 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +47,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import live.ditto.DittoAttachmentFetcher
 import live.ditto.DittoAttachmentToken
 import live.dittolive.chat.DittoHandler
@@ -47,14 +56,23 @@ import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.colleagueUser
 import live.dittolive.chat.data.meProfile
+import live.dittolive.chat.data.metadataFileformatKey
+import live.dittolive.chat.data.metadataFilenameKey
+import live.dittolive.chat.data.metadataFilesizeKey
+import live.dittolive.chat.data.metadataTimestampKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
+import live.dittolive.chat.data.model.toIso8601String
 import live.dittolive.chat.data.publicKey
 import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.repository.Repository
 import live.dittolive.chat.data.repository.UserPreferencesRepository
 import live.dittolive.chat.profile.ProfileFragment
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.util.UUID
 import javax.inject.Inject
 
@@ -65,6 +83,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val repository: Repository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
@@ -109,7 +128,7 @@ class MainViewModel @Inject constructor(
         emit(userPreferencesRepository.fetchInitialPreferences())
     }
 
-    val users: LiveData<List<User>> by lazy {
+    private val users: LiveData<List<User>> by lazy {
         repository.getAllUsers().asLiveData()
     }
 
@@ -205,6 +224,71 @@ class MainViewModel @Inject constructor(
         return user?.lastName ?: ""
     }
 
+    private fun downsampleImageFromUri(contentResolver: ContentResolver, uri: Uri, targetWidth: Int = 282, targetHeight: Int = 376): Bitmap? {
+        val inputStream = contentResolver.openInputStream(uri)
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+
+        inputStream?.use { BitmapFactory.decodeStream(it, null, options) }
+
+        options.inSampleSize = calculateInSampleSize(options, targetWidth, targetHeight)
+        options.inJustDecodeBounds = false
+
+        contentResolver.openInputStream(uri)?.use { inputStream2 ->
+            return BitmapFactory.decodeStream(inputStream2, null, options)
+        }
+
+        throw IllegalStateException("Unable to open input stream.")
+    }
+    private fun calculateInSampleSize(options: BitmapFactory.Options, targetWidth: Int, targetHeight: Int): Int {
+        val (width, height) = options.outWidth to options.outHeight
+        var inSampleSize = 1
+
+        if (height > targetHeight || width > targetWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+
+            while (halfHeight / inSampleSize >= targetHeight && halfWidth / inSampleSize >= targetWidth) {
+                inSampleSize *= 2
+            }
+        }
+
+        return inSampleSize
+    }
+
+    private fun uriToInputStream(uri: Uri): InputStream? {
+        val contentResolver: ContentResolver = appContext.contentResolver
+
+        return when (uri.scheme) {
+            ContentResolver.SCHEME_FILE -> {
+                uri.path?.let { path ->
+                    // Handle file scheme (e.g., "file://")
+                    val file = File(path)
+                    file.inputStream()
+                }
+            }
+            ContentResolver.SCHEME_CONTENT -> {
+                // Handle content scheme (e.g., "content://")
+                contentResolver.openInputStream(uri)
+            }
+            else -> null
+        }
+    }
+
+    @Throws(IOException::class)
+    fun saveBitmapToTempFile(context: Context, bitmap: Bitmap, quality: Int, extension: String = "jpg"): File {
+        val tempFile = File.createTempFile("temp_image", ".$extension", context.cacheDir).apply {
+            deleteOnExit()
+        }
+
+        FileOutputStream(tempFile).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        }
+
+        return tempFile
+    }
+
     fun onCreateNewMessageClick(messageText: String) {
         val currentMoment: Instant = Clock.System.now()
         val message = Message(
@@ -217,8 +301,44 @@ class MainViewModel @Inject constructor(
             null
         )
 
-        viewModelScope.launch(Dispatchers.Default) {
-            repository.createMessageForRoom(message, currentRoom.value)
+        if (message.photoUri == null) {
+            viewModelScope.launch(Dispatchers.Default) {
+                repository.createMessageForRoom(message, currentRoom.value, null)
+            }
+        } else {
+            GlobalScope.launch(Dispatchers.IO) {
+                val timestamp = currentMoment.toLocalDateTime(TimeZone.UTC).toIso8601String()
+                val contentResolver = appContext.contentResolver
+
+                val downsampledBitmap = downsampleImageFromUri(contentResolver, message.photoUri)
+                if (downsampledBitmap == null) {
+                    println("Failed to downsample attachment")
+                    repository.createMessageForRoom(message, currentRoom.value, null)
+                } else {
+                    // Save the downscaled image to a temporary file
+                    val quality = 100
+                    val tempFile: File?
+                    try {
+                        tempFile = saveBitmapToTempFile(appContext, downsampledBitmap, quality)
+                        val collectionId = currentRoom.value.collectionID ?: DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
+                        val collection = DittoHandler.ditto.store.collection(collectionId)
+                        val attachment = collection.newAttachment(
+                            tempFile.inputStream(), mapOf(
+                                metadataFilenameKey to message.userId + "_thumbnail_" + timestamp + ".jpg",
+                                metadataFileformatKey to ".jpg",
+                                metadataTimestampKey to timestamp,
+                                metadataFilesizeKey to tempFile.length().toString()
+                            )
+                        )
+                        repository.createMessageForRoom(message, currentRoom.value, attachment)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        // Handle the error appropriately
+                        println("Failed to save attachment to tempfile")
+                        repository.createMessageForRoom(message, currentRoom.value, null)
+                    }
+                }
+            }
         }
     }
 
