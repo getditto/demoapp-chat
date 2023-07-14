@@ -44,17 +44,22 @@ import live.ditto.DittoSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
+import live.dittolive.chat.data.collectionIdKey
+import live.dittolive.chat.data.createdByKey
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.firstNameKey
+import live.dittolive.chat.data.isPrivateKey
 import live.dittolive.chat.data.lastNameKey
+import live.dittolive.chat.data.messagesIdKey
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
+import live.dittolive.chat.data.nameKey
 import live.dittolive.chat.data.publicKey
 import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.roomIdKey
-import live.dittolive.chat.data.roomsKey
+import live.dittolive.chat.data.publicRoomsCollectionId
 import live.dittolive.chat.data.textKey
 import live.dittolive.chat.data.thumbnailKey
 import live.dittolive.chat.data.userIdKey
@@ -103,6 +108,16 @@ class RepositoryImpl @Inject constructor(
     private lateinit var usersCollection: DittoCollection
     private lateinit var usersLiveQuery: DittoLiveQuery
     private lateinit var usersSubscription: DittoSubscription
+
+    /**
+     * Private Rooms
+     */
+
+
+
+    // private in-memory stores of subscriptions for rooms and messages
+    private var privateRoomSubscriptions = listOf<>() [String: DittoSubscription]()
+    private var privateRoomMessagesSubscriptions = [String: DittoSubscription]()
 
     init {
         initDatabase(this::postInitActions)
@@ -176,13 +191,61 @@ class RepositoryImpl @Inject constructor(
             )
     }
 
-    override suspend fun createRoom(name: String) {
+    override suspend fun createRoom(name: String, isPrivate: Boolean, userId: String) {
         val roomId = UUID.randomUUID().toString()
         val messagesId = UUID.randomUUID().toString()
+        var collectionId: String = publicRoomsCollectionId
+        val currentMoment: Instant = Clock.System.now()
+        val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
+        val dateString = datetimeInUtc.toIso8601String()
+        if (isPrivate) {
+            collectionId = UUID.randomUUID().toString()
+        }
+
+        val room = Room(
+            id = roomId,
+            name = name,
+            messagesCollectionId = messagesId,
+            isPrivate = isPrivate,
+            collectionID = collectionId,
+            createdBy = userId,
+        )
+
+        val doc = mapOf(
+            dbIdKey to room.id,
+            nameKey to room.name,
+            messagesIdKey to room.messagesCollectionId,
+            isPrivateKey to room.isPrivate,
+            collectionIdKey to room.collectionID,
+            createdByKey to room.createdBy,
+            createdOnKey to dateString
+        )
+
+        addSubscriptionForRoom(room)
         ditto.let {
-            // TODO : Implement upsert
+            ditto.store[collectionId].upsert(doc)
 
         }
+    }
+
+    private fun addSubscriptionForRoom(room: Room) {
+        if (room.isPrivate) {
+            // TODO
+        } else {
+            val messageSubscription = ditto.store[room.messagesCollectionId].findAll().subscribe()
+            // TODO : for hide / unhide public room
+//            publicRoomMessagesSubscriptions[room.id] = messageSubscription
+        }
+    }
+
+    // This function without room param is for qrCode join private room, where there isn't yet a room
+    private fun addPrivateRoomSubscriptions(roomId: String, collectionId: String, messagesId: String) {
+        val roomSubscription  = ditto.store[collectionId].findAll().subscribe()
+        // privateRoomSubscriptions[roomId] = roomSubscription
+
+        val messagesSubscription = ditto.store[messagesId].findAll().subscribe()
+        // privateRoomMessagesSubscriptions[roomId] = messagesSubscription
+
     }
 
     override suspend fun archivePublicRoom(room: Room) {
@@ -193,16 +256,26 @@ class RepositoryImpl @Inject constructor(
         // TODO : implement
     }
 
-    override suspend fun createPrivateRoom(name: String) {
-        // TODO : implement
-    }
-
     override suspend fun joinPrivateRoom(qrCode: String) {
         // TODO : implement
+        val parts = qrCode.split("\n")
+        if (parts.count() != 3) {
+            println("DittoService: Error - expected 3 parts to QR code: $qrCode --> RETURN")
+            return
+        }
+
+        // parse qrCode for roomId, collectionId, messagesId
+        val roomId = parts[0]
+        val collectionId = parts[1]
+        val messagesId = parts[2]
+
+
+
     }
 
-    override suspend fun privateRoomForId(roomId: String, collectionId: String): Room? {
-        // TODO : implement
+    override suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String): Room? {
+        val roomSubscription = ditto.store[collectionId].findAll().subscribe()
+
         return null
     }
 
@@ -244,7 +317,7 @@ class RepositoryImpl @Inject constructor(
 
     private fun getPublicRoomsFromDitto() {
         ditto.let { ditto: Ditto ->
-            publicRoomsCollection = ditto.store.collection(roomsKey)
+            publicRoomsCollection = ditto.store.collection(publicRoomsCollectionId)
             publicRoomsSubscription = publicRoomsCollection.findAll().subscribe()
             publicRoomsLiveQuery = publicRoomsCollection
                 .findAll()
@@ -257,7 +330,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun publicRoomForId(roomId: String): Room {
-        val document = ditto.store.collection(roomsKey).findById(roomId).exec()
+        val document = ditto.store.collection(publicRoomsCollectionId).findById(roomId).exec()
         document?.let {
             val room = Room(document)
             return room

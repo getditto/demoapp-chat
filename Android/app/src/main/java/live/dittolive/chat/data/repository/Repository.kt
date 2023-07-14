@@ -54,15 +54,14 @@ interface Repository {
     suspend fun saveCurrentUser(firstName: String, lastName: String)
 
     // rooms
-    suspend fun createRoom(name: String)
+    suspend fun createRoom(name: String, isPrivate: Boolean = false, userId: String = "Ditto System")
     suspend fun publicRoomForId( roomId: String) : Room
     suspend fun archivePublicRoom(room: Room)
     suspend fun unarchivePublicRoom(room: Room)
 
     // private rooms
-    suspend fun createPrivateRoom(name: String)
     suspend fun joinPrivateRoom(qrCode: String)
-    suspend fun privateRoomForId(roomId: String, collectionId: String) : Room?
+    suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String) : Room?
     suspend fun archivePrivateRoom(room: Room)
     suspend fun unarchivePrivateRoom(room: Room)
     suspend fun deletePrivateRoom(room: Room)

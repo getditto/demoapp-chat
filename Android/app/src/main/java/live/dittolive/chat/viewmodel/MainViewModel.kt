@@ -381,6 +381,17 @@ class MainViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Private Rooms
+     */
+    fun joinPrivateRoom(qrCode:String) {
+        print(qrCode)
+        viewModelScope.launch(Dispatchers.Default) {
+            repository.joinPrivateRoom(qrCode)
+        }
+
+    }
+
 }
 
 data class EditProfileUiState(

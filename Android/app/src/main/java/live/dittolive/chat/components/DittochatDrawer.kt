@@ -126,7 +126,9 @@ fun DittochatDrawerContent(
                             .addOnSuccessListener { barcode ->
                                 // Task completed successfully
                                 val rawValue: String? = barcode.rawValue
-                                println(rawValue) // TODO - open chat room with the value
+                                rawValue?.let {
+                                    viewModel.joinPrivateRoom(it)
+                                }
                             }
                             .addOnCanceledListener {
                                 // Task canceled
@@ -157,6 +159,8 @@ fun DittochatDrawerContent(
 
         DividerItem()
         DrawerItemHeader(stringResource(R.string.private_rooms))
+        // private rooms 🚧
+
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
         ProfileItem(fullName, meProfile.photo) {
