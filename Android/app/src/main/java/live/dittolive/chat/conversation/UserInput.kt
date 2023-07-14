@@ -25,8 +25,11 @@
 
 package live.dittolive.chat.conversation
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -34,6 +37,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -89,6 +93,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
@@ -99,9 +104,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 
@@ -119,16 +125,16 @@ enum class EmojiStickerSelector {
     STICKER
 }
 
-@Preview
-@Composable
-fun UserInputPreview() {
-    UserInput(onMessageSent = {})
-}
+//@Preview
+//@Composable
+//fun UserInputPreview() {
+//    UserInput(onMessageSent = {})
+//}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserInput(
-    onMessageSent: (String) -> Unit,
+    onMessageSent: (String, Uri?) -> Unit,
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {},
 ) {
@@ -144,13 +150,16 @@ fun UserInput(
         mutableStateOf(TextFieldValue())
     }
 
+    var photoUri: Uri? by remember { mutableStateOf(null) }
+
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     fun handleKeyboardInputText(){
-        onMessageSent(textState.text)
+        onMessageSent(textState.text, photoUri)
         // Reset text field and close keyboard
         textState = TextFieldValue()
+        photoUri = null
         // Move scroll to bottom
         resetScroll()
         dismissKeyboard()
@@ -175,11 +184,12 @@ fun UserInput(
                 focusState = textFieldFocusState,
                 onMessageSent = {
                     handleKeyboardInputText()
-                }
+                },
+                photoUri = photoUri
             )
             UserInputSelector(
                 onSelectorChange = { currentInputSelector = it },
-                sendMessageEnabled = textState.text.isNotBlank(),
+                sendMessageEnabled = textState.text.isNotBlank() || photoUri != null,
                 onMessageSent = {
                     handleKeyboardInputText()
                 },
@@ -188,6 +198,12 @@ fun UserInput(
             SelectorExpanded(
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState = textState.addText(it) },
+                onImageAdded = {
+                    if (it != null) {
+                        photoUri = it
+                    }
+                    handleKeyboardInputText()
+                },
                 currentSelector = currentInputSelector
             )
         }
@@ -212,7 +228,8 @@ private fun TextFieldValue.addText(newString: String): TextFieldValue {
 private fun SelectorExpanded(
     currentSelector: InputSelector,
     onCloseRequested: () -> Unit,
-    onTextAdded: (String) -> Unit
+    onTextAdded: (String) -> Unit,
+    onImageAdded: (Uri?) -> Unit
 ) {
     if (currentSelector == InputSelector.NONE) return
 
@@ -228,11 +245,27 @@ private fun SelectorExpanded(
     Surface(tonalElevation = 8.dp) {
         when (currentSelector) {
             InputSelector.EMOJI -> EmojiSelector(onTextAdded, focusRequester)
-            InputSelector.DM -> NotAvailablePopup(onCloseRequested)
-            InputSelector.PICTURE -> FunctionalityNotAvailablePanel()
-            InputSelector.MAP -> FunctionalityNotAvailablePanel()
-            InputSelector.PHONE -> FunctionalityNotAvailablePanel()
+            InputSelector.PICTURE ->  PictureSelector(onImageAdded)
             else -> { throw NotImplementedError() }
+        }
+    }
+}
+
+@Composable
+fun PictureSelector(onImageAdded: (Uri?) -> Unit) {
+
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            onImageAdded(uri)
+        }
+
+    Column {
+        SideEffect {
+            launcher.launch(
+                PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
         }
     }
 }
@@ -364,7 +397,9 @@ private fun InputSelectorButton(
     }
     IconButton(
         onClick = onClick,
-        modifier = Modifier.size(56.dp).then(backgroundModifier)
+        modifier = Modifier
+            .size(56.dp)
+            .then(backgroundModifier)
     ) {
         val tint = if (selected) {
             MaterialTheme.colorScheme.onSecondary
@@ -394,6 +429,7 @@ private fun UserInputText(
     keyboardType: KeyboardType = KeyboardType.Text,
     onTextChanged: (TextFieldValue) -> Unit,
     textFieldValue: TextFieldValue,
+    photoUri: Uri?,
     keyboardShown: Boolean,
     onTextFieldFocused: (Boolean) -> Unit,
     focusState: Boolean,
@@ -418,6 +454,20 @@ private fun UserInputText(
                     .align(Alignment.Bottom)
             ) {
                 var lastFocusState by remember { mutableStateOf(false) }
+                if (photoUri != null) {
+                    //Use Coil to display the selected image
+                    val painter = rememberAsyncImagePainter(
+                        ImageRequest
+                            .Builder(LocalContext.current)
+                            .data(data = photoUri)
+                            .build()
+                    )
+
+                    Image(
+                        painter = painter,
+                        contentDescription = null
+                    )
+                }
                 BasicTextField(
                     value = textFieldValue,
                     onValueChange = { onTextChanged(it) },
