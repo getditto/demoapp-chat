@@ -176,7 +176,7 @@ fun ConversationContent(
                 UserInput(
                     onMessageSent = { content, photoUri ->
                         uiState.addMessage(
-                        content
+                        content, photoUri
                         )
                     },
                     resetScroll = {

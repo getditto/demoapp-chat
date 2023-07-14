@@ -56,8 +56,8 @@ class ConversationUiState(
     //author ID is set to the user ID - it's used to tell if the message is sent from this user (self) when rendering the UI
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
 
-    fun addMessage(msg: String) {
-        viewModel.onCreateNewMessageClick(msg, null)
+    fun addMessage(msg: String, photoUri: Uri?) {
+        viewModel.onCreateNewMessageClick(msg, photoUri)
     }
 }
 
