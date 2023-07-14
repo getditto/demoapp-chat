@@ -123,6 +123,7 @@ import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.theme.DittochatTheme
+import live.dittolive.chat.utilities.isoToTimeAgo
 import live.dittolive.chat.viewmodel.MainViewModel
 import java.io.ByteArrayInputStream
 import kotlin.math.floor
@@ -399,7 +400,7 @@ fun MessageUi(
                     .align(Alignment.Top),
                 painter = painterResource(id = authorImageId),
                 contentScale = ContentScale.Crop,
-                contentDescription = null,
+                contentDescription = null
             )
         } else {
             // Space under avatar
@@ -453,7 +454,6 @@ fun AuthorAndTextMessage(
 
 @Composable
 private fun AuthorNameTimestamp(msg: MessageUiModel, isUserMe: Boolean = false) {
-
     var userFullName: String = msg.user.fullName
     if (isUserMe) {
         userFullName = "me"
@@ -470,7 +470,7 @@ private fun AuthorNameTimestamp(msg: MessageUiModel, isUserMe: Boolean = false) 
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = msg.message.createdOn.toString(), // TODO : format for less verbose display
+            text = msg.message.createdOn.toString().isoToTimeAgo(),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.alignBy(LastBaseline),
             color = MaterialTheme.colorScheme.onSurfaceVariant
