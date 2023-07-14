@@ -51,6 +51,8 @@
     <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"
         android:usesPermissionFlags="neverForLocation"
         tools:targetApi="tiramisu" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:name=".app.DittoChatApp"
@@ -69,6 +71,7 @@
         <activity android:name=".presenceviewer.PresenceViewerActivity" />
         <activity android:name=".NavActivity" />
         <activity android:name=".SplashActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
