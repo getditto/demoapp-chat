@@ -26,6 +26,11 @@
 package live.dittolive.chat.data
 
 /**
+ * Local Database
+ */
+const val DATABASE_NAME = "chatroom_database"
+
+/**
  * collection name for default public room
  */
 const val DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef" //"Public Room Messages Colleciton ID"

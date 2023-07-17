@@ -26,6 +26,10 @@
 package live.dittolive.chat.data.model
 
 import androidx.compose.runtime.Immutable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import live.ditto.DittoDocument
@@ -38,12 +42,18 @@ import live.dittolive.chat.data.messagesIdKey
 import live.dittolive.chat.data.nameKey
 
 @Immutable
+@Entity(tableName = "chatroom",
+    indices = [Index("roomId")])
 data class Room(
+    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = "roomId")
     val id: String,
     val name: String,
     val createdOn: Instant? = Clock.System.now(),
+    @ColumnInfo(name = "messagesId")
     val messagesCollectionId: String,
     val isPrivate: Boolean = false,
+    @ColumnInfo(name = "collectionId")
     val collectionID : String?,
     val createdBy: String
 ){

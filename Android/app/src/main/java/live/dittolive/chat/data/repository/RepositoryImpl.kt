@@ -58,8 +58,8 @@ import live.dittolive.chat.data.model.toIso8601String
 import live.dittolive.chat.data.nameKey
 import live.dittolive.chat.data.publicKey
 import live.dittolive.chat.data.publicRoomTitleKey
-import live.dittolive.chat.data.roomIdKey
 import live.dittolive.chat.data.publicRoomsCollectionId
+import live.dittolive.chat.data.roomIdKey
 import live.dittolive.chat.data.textKey
 import live.dittolive.chat.data.thumbnailKey
 import live.dittolive.chat.data.userIdKey
@@ -116,8 +116,8 @@ class RepositoryImpl @Inject constructor(
 
 
     // private in-memory stores of subscriptions for rooms and messages
-    private var privateRoomSubscriptions = listOf<>() [String: DittoSubscription]()
-    private var privateRoomMessagesSubscriptions = [String: DittoSubscription]()
+//    private var privateRoomSubscriptions = listOf<>() [String: DittoSubscription]()
+//    private var privateRoomMessagesSubscriptions = [String: DittoSubscription]()
 
     init {
         initDatabase(this::postInitActions)
