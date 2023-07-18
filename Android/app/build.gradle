@@ -1,8 +1,7 @@
 plugins {
     id "com.android.application"
     id "org.jetbrains.kotlin.android"
-    id "com.google.devtools.ksp" version "1.9.0-1.0.11"
-    id "kotlin-kapt"
+    id "com.google.devtools.ksp"
     id "com.google.dagger.hilt.android"
     id "androidx.navigation.safeargs.kotlin"
 }
@@ -105,19 +104,6 @@ dependencies {
     // Preferences DataStore (SharedPreferences like APIs)
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
-    // Annotation processor
-    // alternately - if using Java8, use the following instead of lifecycle-compiler
-    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
-
-    // optional - helpers for implementing LifecycleOwner in a Service
-    implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
-
-    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
-    implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
-
-    // optional - ReactiveStreams support for LiveData
-    implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
-
     // optional - Test helpers for LiveData
     testImplementation("androidx.arch.core:core-testing:$arch_version")
 
@@ -132,7 +118,7 @@ dependencies {
 
     // Hilt DI
     implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt ("com.google.dagger:hilt-compiler:$hilt_version")
+    ksp("com.google.dagger:hilt-compiler:$hilt_version")
 
     // QR Code Scanning via Google code scanner |
     // Manifest MetaData tag causes Google Play services automatically download the scanner module to the device while app is installed from the Play Store
@@ -156,21 +142,7 @@ dependencies {
     // Room
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-
-    // To use Kotlin Symbol Processing (KSP)
     ksp "androidx.room:room-compiler:$room_version"
-
-    // optional - RxJava2 support for Room
-    implementation "androidx.room:room-rxjava2:$room_version"
-
-    // optional - RxJava3 support for Room
-    implementation "androidx.room:room-rxjava3:$room_version"
-
-    // optional - Guava support for Room, including Optional and ListenableFuture
-    implementation "androidx.room:room-guava:$room_version"
-
-    // optional - Test helpers
-    testImplementation "androidx.room:room-testing:$room_version"
 
     // Testing
     testImplementation "junit:junit:4.13.2"
@@ -179,9 +151,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
-}
-
-// Allow references to generated code
-kapt {
-    correctErrorTypes true
+    // Testing Room
+    testImplementation "androidx.room:room-testing:$room_version"
 }
