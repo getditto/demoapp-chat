@@ -29,13 +29,15 @@ import android.content.Context
 import android.content.res.Resources
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import live.dittolive.chat.data.DATABASE_NAME
 import live.dittolive.chat.data.model.Room
 
-@Database(entities = [Room::class], version = 1)
+@Database(entities = [Room::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class ChatDatabase : RoomDatabase() {
 
     abstract fun roomsDao(): ChatRoomDao
