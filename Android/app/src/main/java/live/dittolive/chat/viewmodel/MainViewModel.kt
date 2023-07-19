@@ -72,7 +72,6 @@ import live.dittolive.chat.profile.ProfileFragment
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.util.UUID
 import javax.inject.Inject
 
@@ -255,25 +254,6 @@ class MainViewModel @Inject constructor(
         }
 
         return inSampleSize
-    }
-
-    private fun uriToInputStream(uri: Uri): InputStream? {
-        val contentResolver: ContentResolver = appContext.contentResolver
-
-        return when (uri.scheme) {
-            ContentResolver.SCHEME_FILE -> {
-                uri.path?.let { path ->
-                    // Handle file scheme (e.g., "file://")
-                    val file = File(path)
-                    file.inputStream()
-                }
-            }
-            ContentResolver.SCHEME_CONTENT -> {
-                // Handle content scheme (e.g., "content://")
-                contentResolver.openInputStream(uri)
-            }
-            else -> null
-        }
     }
 
     @Throws(IOException::class)
