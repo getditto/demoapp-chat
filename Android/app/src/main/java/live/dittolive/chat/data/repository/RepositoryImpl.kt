@@ -47,6 +47,7 @@ import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.collectionIdKey
 import live.dittolive.chat.data.createdByKey
 import live.dittolive.chat.data.createdOnKey
+import live.dittolive.chat.data.db.ChatRoomDao
 import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.firstNameKey
 import live.dittolive.chat.data.isPrivateKey
@@ -70,7 +71,8 @@ import javax.inject.Inject
 // Constructor-injected, because Hilt needs to know how to
 // provide instances of RepositoryImpl, too.
 class RepositoryImpl @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val chatRoomDao: ChatRoomDao
 ) : Repository {
 
     private val allMessagesForRoom: MutableStateFlow<List<Message>> by lazy {
@@ -79,6 +81,10 @@ class RepositoryImpl @Inject constructor(
 
     private val allPublicRooms : MutableStateFlow<List<Room>> by  lazy {
         MutableStateFlow(emptyList())
+    }
+
+    private val allPrivateRooms : MutableStateFlow<List<Room>> by lazy {
+        MutableStateFlow(chatRoomDao.getAllPrivateRooms())
     }
 
     private val allUsers: MutableStateFlow<List<User>> by lazy {
@@ -115,6 +121,7 @@ class RepositoryImpl @Inject constructor(
 
 
 
+
     // private in-memory stores of subscriptions for rooms and messages
 //    private var privateRoomSubscriptions = listOf<>() [String: DittoSubscription]()
 //    private var privateRoomMessagesSubscriptions = [String: DittoSubscription]()
@@ -146,6 +153,7 @@ class RepositoryImpl @Inject constructor(
     override fun getAllUsers(): Flow<List<User>> = allUsers
 
     override fun getAllPublicRooms(): Flow<List<Room>> = allPublicRooms
+    override fun getAllPrivateRooms(): Flow<List<Room>> = allPrivateRooms
 
     override suspend fun saveCurrentUser(firstName: String, lastName: String) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
@@ -221,10 +229,12 @@ class RepositoryImpl @Inject constructor(
             createdOnKey to dateString
         )
 
-        addSubscriptionForRoom(room)
-        ditto.let {
-            ditto.store[collectionId].upsert(doc)
 
+        // TODO : possibly remove this - b/c we are using Flow to keep a live update of public rooms
+        addSubscriptionForRoom(room)
+
+        ditto.let {
+            ditto.store.collection(collectionId).upsert(doc)
         }
     }
 
@@ -240,12 +250,23 @@ class RepositoryImpl @Inject constructor(
 
     // This function without room param is for qrCode join private room, where there isn't yet a room
     private fun addPrivateRoomSubscriptions(roomId: String, collectionId: String, messagesId: String) {
-        val roomSubscription  = ditto.store[collectionId].findAll().subscribe()
-        // privateRoomSubscriptions[roomId] = roomSubscription
 
-        val messagesSubscription = ditto.store[messagesId].findAll().subscribe()
-        // privateRoomMessagesSubscriptions[roomId] = messagesSubscription
+        ditto.let { ditto: Ditto ->
+            val privateRoomCollection = ditto.store.collection(collectionId)
+            val roomSubscription = privateRoomCollection.findAll().subscribe()
+            val privateRoomLiveQuery: DittoLiveQuery = privateRoomCollection
+                .findAll()
+                .sort(createdOnKey, DittoSortDirection.Ascending)
+                .observeLocal { docs, _ ->
+                    val roomDocs = docs
+                    val privateRooms = docs.map {Room(it)}
+                    // TODO : insert to Room db
+                }
+            val messagesSubscription = ditto.store.collection(messagesId).findAll().subscribe()
 
+            //track private room details locally
+
+        }
     }
 
     override suspend fun archivePublicRoom(room: Room) {
@@ -269,8 +290,11 @@ class RepositoryImpl @Inject constructor(
         val collectionId = parts[1]
         val messagesId = parts[2]
 
-
-
+        addPrivateRoomSubscriptions(
+            roomId = roomId,
+            collectionId = collectionId,
+            messagesId = messagesId
+        )
     }
 
     override suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String): Room? {
@@ -289,6 +313,11 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun deletePrivateRoom(room: Room) {
         // TODO : implement
+    }
+
+    override suspend fun saveRoom(room: Room) {
+        chatRoomDao.insert(room)
+
     }
 
     private fun postInitActions() {

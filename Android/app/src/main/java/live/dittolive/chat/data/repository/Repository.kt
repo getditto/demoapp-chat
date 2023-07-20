@@ -65,4 +65,8 @@ interface Repository {
     suspend fun archivePrivateRoom(room: Room)
     suspend fun unarchivePrivateRoom(room: Room)
     suspend fun deletePrivateRoom(room: Room)
+
+    suspend fun saveRoom(room: Room)
+    fun getAllPrivateRooms(): Flow<List<Room>>
+
 }
