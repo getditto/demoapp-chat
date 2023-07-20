@@ -61,7 +61,7 @@ import live.dittolive.chat.data.metadataFilenameKey
 import live.dittolive.chat.data.metadataFilesizeKey
 import live.dittolive.chat.data.metadataTimestampKey
 import live.dittolive.chat.data.model.MessageUiModel
-import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.ChatRoom
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
 import live.dittolive.chat.data.publicKey
@@ -91,7 +91,7 @@ class MainViewModel @Inject constructor(
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
     var currentUserId = MutableStateFlow<String>(" ")
 
-    private val emptyRoom = Room(
+    private val emptyChatRoom = ChatRoom(
         id = publicKey,
         name = publicRoomTitleKey,
         createdOn = Clock.System.now(),
@@ -101,12 +101,12 @@ class MainViewModel @Inject constructor(
         createdBy = "Ditto System"
     )
 
-    private val _currentRoom = MutableStateFlow<Room>(emptyRoom)
-    val currentRoom = _currentRoom.asStateFlow()
+    private val _currentChatRoom = MutableStateFlow<ChatRoom>(emptyChatRoom)
+    val currentRoom = _currentChatRoom.asStateFlow()
 
-    fun setCurrentChatRoom(newChatRoom: Room) {
-        _currentRoom.value = newChatRoom
-        setRoomMessagesWithUsers(newChatRoom)
+    fun setCurrentChatRoom(newChatChatRoom: ChatRoom) {
+        _currentChatRoom.value = newChatChatRoom
+        setRoomMessagesWithUsers(newChatChatRoom)
     }
 
     /**
@@ -134,9 +134,9 @@ class MainViewModel @Inject constructor(
     private val _dittoSdkVersion = MutableStateFlow(" ")
     val dittoSdkVersion: StateFlow<String> = _dittoSdkVersion.asStateFlow()
 
-    val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
+    val allPublicRoomsFLow: Flow<List<ChatRoom>> = repository.getAllPublicRooms()
 
-    private fun setRoomMessagesWithUsers(chatRoom: Room) {
+    private fun setRoomMessagesWithUsers(chatRoom: ChatRoom) {
         // updating a flow will automatically update flows that rely on it
         repository.getAllMessagesForRoom(chatRoom)
     }
@@ -175,7 +175,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getDefaultPublicRoom(): Room {
+    private suspend fun getDefaultPublicRoom(): ChatRoom {
         return repository.publicRoomForId(publicKey)
     }
 
@@ -185,7 +185,7 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
-            _currentRoom.value = getDefaultPublicRoom()
+            _currentChatRoom.value = getDefaultPublicRoom()
         }
 
         val user = getCurrentUser()

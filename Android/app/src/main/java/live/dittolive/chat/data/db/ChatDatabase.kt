@@ -34,9 +34,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import live.dittolive.chat.data.DATABASE_NAME
-import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.ChatRoom
 
-@Database(entities = [Room::class], version = 1, exportSchema = false)
+@Database(entities = [ChatRoom::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ChatDatabase : RoomDatabase() {
 

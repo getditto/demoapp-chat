@@ -71,7 +71,7 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import live.dittolive.chat.R
 import live.dittolive.chat.data.meProfile
-import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.ChatRoom
 import live.dittolive.chat.viewmodel.MainViewModel
 
 
@@ -82,7 +82,7 @@ import live.dittolive.chat.viewmodel.MainViewModel
 @Composable
 fun DittochatDrawerContent(
     onProfileClicked: (String) -> Unit,
-    onChatClicked: (Room) -> Unit,
+    onChatClicked: (ChatRoom) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     sdkVersion : String,
     viewModel: MainViewModel
@@ -182,17 +182,17 @@ fun DittochatDrawerContent(
 @Composable
 fun PublicRoomsList(
     viewModel: MainViewModel,
-    onChatClicked: (Room) -> Unit,
+    onChatClicked: (ChatRoom) -> Unit,
 ) {
 
-    val publicRooms : List<Room> by viewModel
+    val publicChatRooms : List<ChatRoom> by viewModel
         .allPublicRoomsFLow
         .collectAsStateWithLifecycle(
         initialValue = emptyList()
     )
 
     LazyColumn {
-        items(publicRooms) { publicRoom ->
+        items(publicChatRooms) { publicRoom ->
             ChatItem(publicRoom.name, true) { onChatClicked(publicRoom) }
         }
     }

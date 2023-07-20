@@ -47,7 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.findNavController
 import live.dittolive.chat.R
 import live.dittolive.chat.data.model.MessageUiModel
-import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.ChatRoom
 import live.dittolive.chat.theme.DittochatTheme
 import live.dittolive.chat.viewmodel.MainViewModel
 
@@ -70,7 +70,7 @@ class ConversationFragment : Fragment() {
                     .roomMessagesWithUsersFlow
                     .collectAsStateWithLifecycle(initialValue = emptyList())
 
-                val currentChannel: Room? by activityViewModel
+                val currentChannel: ChatRoom? by activityViewModel
                     .currentRoom
                     .collectAsStateWithLifecycle(initialValue = null)
 

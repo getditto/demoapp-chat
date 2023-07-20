@@ -44,7 +44,7 @@ import live.dittolive.chat.data.nameKey
 @Immutable
 @Entity(tableName = "chatroom",
     indices = [Index("roomId")])
-data class Room(
+data class ChatRoom(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "roomId")
     val id: String,

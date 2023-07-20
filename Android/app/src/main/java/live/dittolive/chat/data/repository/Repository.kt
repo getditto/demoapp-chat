@@ -28,7 +28,7 @@ package live.dittolive.chat.data.repository
 import kotlinx.coroutines.flow.Flow
 import live.ditto.DittoAttachment
 import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.ChatRoom
 import live.dittolive.chat.data.model.User
 
 /**
@@ -39,11 +39,11 @@ interface Repository {
     fun getDittoSdkVersion(): String
 
     // rooms
-    fun getAllPublicRooms(): Flow<List<Room>>
+    fun getAllPublicRooms(): Flow<List<ChatRoom>>
 
     // messages
-    fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
-    suspend fun createMessageForRoom(message: Message, room: Room, attachment: DittoAttachment?)
+    fun getAllMessagesForRoom(chatRoom: ChatRoom): Flow<List<Message>>
+    suspend fun createMessageForRoom(message: Message, chatRoom: ChatRoom, attachment: DittoAttachment?)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)
@@ -55,18 +55,18 @@ interface Repository {
 
     // rooms
     suspend fun createRoom(name: String, isPrivate: Boolean = false, userId: String = "Ditto System")
-    suspend fun publicRoomForId( roomId: String) : Room
-    suspend fun archivePublicRoom(room: Room)
-    suspend fun unarchivePublicRoom(room: Room)
+    suspend fun publicRoomForId( roomId: String) : ChatRoom
+    suspend fun archivePublicRoom(chatRoom: ChatRoom)
+    suspend fun unarchivePublicRoom(chatRoom: ChatRoom)
 
     // private rooms
     suspend fun joinPrivateRoom(qrCode: String)
-    suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String) : Room?
-    suspend fun archivePrivateRoom(room: Room)
-    suspend fun unarchivePrivateRoom(room: Room)
-    suspend fun deletePrivateRoom(room: Room)
+    suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String) : ChatRoom?
+    suspend fun archivePrivateRoom(chatRoom: ChatRoom)
+    suspend fun unarchivePrivateRoom(chatRoom: ChatRoom)
+    suspend fun deletePrivateRoom(chatRoom: ChatRoom)
 
-    suspend fun saveRoom(room: Room)
-    fun getAllPrivateRooms(): Flow<List<Room>>
+    suspend fun saveRoom(chatRoom: ChatRoom)
+    fun getAllPrivateRooms(): Flow<List<ChatRoom>>
 
 }

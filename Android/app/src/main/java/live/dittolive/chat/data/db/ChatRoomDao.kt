@@ -29,14 +29,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import live.dittolive.chat.data.model.Room
+import live.dittolive.chat.data.model.ChatRoom
 
 @Dao
 interface ChatRoomDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(room: Room)
+    fun insert(chatRoom: ChatRoom)
 
     @Query("SELECT * FROM chatroom WHERE isPrivate = 1")
-    fun getAllPrivateRooms(): List<Room> // Static list is fine - we just use this to track list of Private Room subscriptions
+    fun getAllPrivateRooms(): List<ChatRoom> // Static list is fine - we just use this to track list of Private Room subscriptions
 }
