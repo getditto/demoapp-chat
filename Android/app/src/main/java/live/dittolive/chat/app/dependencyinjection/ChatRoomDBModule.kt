@@ -34,11 +34,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import live.dittolive.chat.data.DATABASE_NAME
 import live.dittolive.chat.data.db.ChatDatabase
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ChatRoomDBModule {
 
+    @Singleton
     @Provides
     fun provideChatRoomDatabase(
         @ApplicationContext context: Context
@@ -48,5 +50,9 @@ object ChatRoomDBModule {
             ChatDatabase::class.java,
             DATABASE_NAME
         ).build()
+
+    @Singleton
+    @Provides
+    fun provideChatRoomDao(database: ChatDatabase) = database.roomsDao()
 
 }
