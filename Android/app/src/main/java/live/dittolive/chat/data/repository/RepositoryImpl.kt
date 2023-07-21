@@ -297,10 +297,48 @@ class RepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String): ChatRoom? {
-        val roomSubscription = ditto.store[collectionId].findAll().subscribe()
-
-        return null
+    /**
+     * Searches Ditto Mesh for a Private Room and returns it if found
+     * If not found, returns a new private chat room with the supplied arguments
+     * @param roomId unique ID of the chat room, also used as the primary key in Room databse
+     * @param collectionId unique collection ID for this collection of a single private chat room
+     * @param messagesId handle used to retrieve messages for this private chat room
+     */
+    override suspend fun privateRoomForId(
+        roomId: String,
+        collectionId: String,
+        messagesId: String
+    ): ChatRoom {
+        val document = ditto.store.collection(collectionId).findById(roomId).exec()
+        document?.let {
+            val chatRoom = ChatRoom(document)
+            /*
+            ok, so we found the room in the mesh,
+            but is it tracked locally, yet?
+            if not, add it to local Room database to keep track of it
+             */
+            val localChatRoom = chatRoomDao.getPrivateChatRoom(chatRoom.id)
+            localChatRoom?.let {
+                return chatRoom
+            }
+            chatRoomDao.insert(chatRoom)
+            return chatRoom
+        }
+        /*
+        if we reached this point, that means Ditto Mesh does not have a private room matching the supplied params
+        so we create a new chat room, store it locally, and return it
+         */
+        val emptyChatRoom = ChatRoom(
+            id = roomId,
+            name = "some private room",
+            createdOn = Clock.System.now(),
+            messagesCollectionId = messagesId,
+            isPrivate = true,
+            collectionID = collectionId,
+            createdBy = "Ditto System"
+        )
+        chatRoomDao.insert(emptyChatRoom)
+        return emptyChatRoom
     }
 
     override suspend fun archivePrivateRoom(chatRoom: ChatRoom) {

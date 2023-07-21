@@ -61,7 +61,7 @@ interface Repository {
 
     // private rooms
     suspend fun joinPrivateRoom(qrCode: String)
-    suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String) : ChatRoom?
+    suspend fun privateRoomForId(roomId: String, collectionId: String, messagesId: String) : ChatRoom
     suspend fun archivePrivateRoom(chatRoom: ChatRoom)
     suspend fun unarchivePrivateRoom(chatRoom: ChatRoom)
     suspend fun deletePrivateRoom(chatRoom: ChatRoom)
