@@ -277,12 +277,11 @@ class RepositoryImpl @Inject constructor(
         // TODO : implement
     }
 
-    override suspend fun joinPrivateRoom(qrCode: String) {
-        // TODO : implement
+    override suspend fun joinPrivateRoom(qrCode: String): ChatRoom? {
         val parts = qrCode.split("\n")
         if (parts.count() != 3) {
             println("DittoService: Error - expected 3 parts to QR code: $qrCode --> RETURN")
-            return
+            return null
         }
 
         // parse qrCode for roomId, collectionId, messagesId
@@ -290,11 +289,7 @@ class RepositoryImpl @Inject constructor(
         val collectionId = parts[1]
         val messagesId = parts[2]
 
-        addPrivateRoomSubscriptions(
-            roomId = roomId,
-            collectionId = collectionId,
-            messagesId = messagesId
-        )
+        return privateRoomForId(roomId, collectionId, messagesId)
     }
 
     /**

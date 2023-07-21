@@ -60,8 +60,8 @@ import live.dittolive.chat.data.metadataFileformatKey
 import live.dittolive.chat.data.metadataFilenameKey
 import live.dittolive.chat.data.metadataFilesizeKey
 import live.dittolive.chat.data.metadataTimestampKey
-import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.ChatRoom
+import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
 import live.dittolive.chat.data.publicKey
@@ -367,7 +367,8 @@ class MainViewModel @Inject constructor(
     fun joinPrivateRoom(qrCode:String) {
         print(qrCode)
         viewModelScope.launch(Dispatchers.Default) {
-            repository.joinPrivateRoom(qrCode)
+            val privateChatRoom = repository.joinPrivateRoom(qrCode)
+
         }
 
     }
