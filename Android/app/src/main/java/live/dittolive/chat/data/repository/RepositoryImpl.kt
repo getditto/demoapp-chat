@@ -83,9 +83,7 @@ class RepositoryImpl @Inject constructor(
         MutableStateFlow(emptyList())
     }
 
-    private val allPrivateRooms : MutableStateFlow<List<ChatRoom>> by lazy {
-        MutableStateFlow(chatRoomDao.getAllPrivateRooms())
-    }
+
 
     private val allUsers: MutableStateFlow<List<User>> by lazy {
         MutableStateFlow(emptyList())
@@ -118,7 +116,9 @@ class RepositoryImpl @Inject constructor(
     /**
      * Private Rooms
      */
-
+    override val allPrivateRooms : MutableStateFlow<List<ChatRoom>> by lazy {
+        MutableStateFlow(chatRoomDao.getAllPrivateRooms())
+    }
 
 
 
@@ -153,7 +153,6 @@ class RepositoryImpl @Inject constructor(
     override fun getAllUsers(): Flow<List<User>> = allUsers
 
     override fun getAllPublicRooms(): Flow<List<ChatRoom>> = allPublicRooms
-    override fun getAllPrivateRooms(): Flow<List<ChatRoom>> = allPrivateRooms
 
     override suspend fun saveCurrentUser(firstName: String, lastName: String) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId

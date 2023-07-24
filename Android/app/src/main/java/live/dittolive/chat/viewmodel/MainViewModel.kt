@@ -133,6 +133,9 @@ class MainViewModel @Inject constructor(
 
     private val _dittoSdkVersion = MutableStateFlow(" ")
     val dittoSdkVersion: StateFlow<String> = _dittoSdkVersion.asStateFlow()
+    
+    private val _allPrivateRoomsFLow: MutableStateFlow<List<ChatRoom>> = MutableStateFlow(value = emptyList())
+    val allPrivateRoomsFlow: StateFlow<List<ChatRoom>> = _allPrivateRoomsFLow.asStateFlow()
 
     val allPublicRoomsFLow: Flow<List<ChatRoom>> = repository.getAllPublicRooms()
 
@@ -186,6 +189,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
             _currentChatRoom.value = getDefaultPublicRoom()
+            repository.allPrivateRooms
+                .collect {chatRooms ->
+                    _allPrivateRoomsFLow.value = chatRooms
+
+                }
         }
 
         val user = getCurrentUser()

@@ -49,7 +49,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -160,6 +159,8 @@ fun DittochatDrawerContent(
         DividerItem()
         DrawerItemHeader(stringResource(R.string.private_rooms))
         // private rooms 🚧
+        PrivateRoomsList(viewModel = viewModel, onChatClicked = onChatClicked)
+
 
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
@@ -178,7 +179,6 @@ fun DittochatDrawerContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PublicRoomsList(
     viewModel: MainViewModel,
@@ -197,6 +197,27 @@ fun PublicRoomsList(
         }
     }
 }
+
+
+@Composable
+fun PrivateRoomsList(
+    viewModel: MainViewModel,
+    onChatClicked: (ChatRoom) -> Unit,
+) {
+
+    val privateChatRooms : List<ChatRoom> by viewModel
+        .allPrivateRoomsFlow
+        .collectAsStateWithLifecycle(
+            initialValue = emptyList()
+        )
+
+    LazyColumn {
+        items(privateChatRooms) { publicRoom ->
+            ChatItem(publicRoom.name, true) { onChatClicked(publicRoom) }
+        }
+    }
+}
+
 
 @Composable
 private fun DrawerHeader() {
