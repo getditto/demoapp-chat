@@ -205,6 +205,13 @@ fun PrivateRoomsList(
     onChatClicked: (ChatRoom) -> Unit,
 ) {
 
+    val isPrivateChatRoomExist : Boolean by viewModel
+        .isAnyPrivateRoomInitialized
+        .collectAsStateWithLifecycle()
+
+    //don't try to access list of private rooms if they don't exist
+    if (!isPrivateChatRoomExist){ return }
+
     val privateChatRooms : List<ChatRoom> by viewModel
         .allPrivateRoomsFlow
         .collectAsStateWithLifecycle(

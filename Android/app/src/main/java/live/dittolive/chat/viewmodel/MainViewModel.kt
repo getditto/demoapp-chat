@@ -123,6 +123,9 @@ class MainViewModel @Inject constructor(
     private val _isUserLoggedIn = MutableStateFlow(true)
     val isUserLoggedIn = _isUserLoggedIn.asStateFlow()
 
+    private val _isAnyPrivateRoomInitialized = MutableStateFlow(value = false)
+    val isAnyPrivateRoomInitialized = _isAnyPrivateRoomInitialized.asStateFlow()
+
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
     }
@@ -189,11 +192,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             currentUserId.value =  userPreferencesRepository.fetchInitialPreferences().currentUserId
             _currentChatRoom.value = getDefaultPublicRoom()
-            repository.allPrivateRooms
-                .collect {chatRooms ->
-                    _allPrivateRoomsFLow.value = chatRooms
-
-                }
         }
 
         val user = getCurrentUser()
@@ -205,6 +203,15 @@ class MainViewModel @Inject constructor(
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
+    }
+
+    fun getPrivateChatRooms() {
+        viewModelScope.launch {
+            repository.getAllPrivateRooms()
+                .collect {chatRooms ->
+                    _allPrivateRoomsFLow.value = chatRooms
+                }
+        }
     }
 
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
@@ -376,6 +383,8 @@ class MainViewModel @Inject constructor(
         print(qrCode)
         viewModelScope.launch(Dispatchers.Default) {
             val privateChatRoom = repository.joinPrivateRoom(qrCode)
+            getPrivateChatRooms()
+            _isAnyPrivateRoomInitialized.value = true
 
         }
 

@@ -116,10 +116,9 @@ class RepositoryImpl @Inject constructor(
     /**
      * Private Rooms
      */
-    override val allPrivateRooms : MutableStateFlow<List<ChatRoom>> by lazy {
-        MutableStateFlow(chatRoomDao.getAllPrivateRooms())
+    override suspend fun getAllPrivateRooms(): Flow<List<ChatRoom>> {
+        return MutableStateFlow(chatRoomDao.getAllPrivateRooms())
     }
-
 
 
     // private in-memory stores of subscriptions for rooms and messages

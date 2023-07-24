@@ -26,7 +26,6 @@
 package live.dittolive.chat.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import live.ditto.DittoAttachment
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.ChatRoom
@@ -36,8 +35,6 @@ import live.dittolive.chat.data.model.User
  * Interface for communication with Ditto Layer
  */
 interface Repository {
-
-    val allPrivateRooms : MutableStateFlow<List<ChatRoom>>
 
     fun getDittoSdkVersion(): String
 
@@ -71,4 +68,5 @@ interface Repository {
 
     suspend fun saveRoom(chatRoom: ChatRoom)
 
+    suspend fun getAllPrivateRooms(): Flow<List<ChatRoom>>
 }
