@@ -115,16 +115,6 @@ class MainViewModel @Inject constructor(
     private val _isUserMe = MutableStateFlow(false)
     val isUserMe = _isUserMe.asStateFlow()
 
-    /**
-     * Flag for whether the user is logged in or not
-     * Because in this demo app we are automatically logging in via token on launch, this is
-     * initially set to true
-     */
-    private val _isUserLoggedIn = MutableStateFlow(true)
-
-    private val _isAnyPrivateRoomInitialized = MutableStateFlow(value = false)
-    val isAnyPrivateRoomInitialized = _isAnyPrivateRoomInitialized.asStateFlow()
-
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
     }
@@ -202,6 +192,7 @@ class MainViewModel @Inject constructor(
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
+        getPrivateChatRooms()
     }
 
     private fun getPrivateChatRooms() {
@@ -382,8 +373,11 @@ class MainViewModel @Inject constructor(
         print(qrCode)
         viewModelScope.launch(Dispatchers.Default) {
             val privateChatRoom = repository.joinPrivateRoom(qrCode)
+            privateChatRoom?.let {
+                _currentChatRoom.value = privateChatRoom
+            }
+
             getPrivateChatRooms()
-            _isAnyPrivateRoomInitialized.value = true
 
         }
 

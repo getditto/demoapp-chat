@@ -302,26 +302,8 @@ class RepositoryImpl @Inject constructor(
         collectionId: String,
         messagesId: String
     ): ChatRoom {
-        val document = ditto.store.collection(collectionId).findById(roomId).exec()
-        document?.let {
-            val chatRoom = ChatRoom(document)
-            /*
-            ok, so we found the room in the mesh,
-            but is it tracked locally, yet?
-            if not, add it to local Room database to keep track of it
-             */
-            val localChatRoom = chatRoomDao.getPrivateChatRoom(chatRoom.id)
-            localChatRoom?.let {
-                return chatRoom
-            }
-            chatRoomDao.insert(chatRoom)
-            return chatRoom
-        }
-        /*
-        if we reached this point, that means Ditto Mesh does not have a private room matching the supplied params
-        so we create a new chat room, store it locally, and return it
-         */
-        val emptyChatRoom = ChatRoom(
+
+        var emptyChatRoom = ChatRoom(
             id = roomId,
             name = "some private room",
             createdOn = Clock.System.now(),
@@ -330,6 +312,28 @@ class RepositoryImpl @Inject constructor(
             collectionID = collectionId,
             createdBy = "Ditto System"
         )
+
+        val privateRoomCollection = ditto.store.collection(collectionId)
+        val privateRoomSubscription = privateRoomCollection.findAll().subscribe()
+        val privateRoomLiveQuery = privateRoomCollection
+            .findById(roomId)
+            .observeLocal { document, _ ->
+                document?.let {
+                    emptyChatRoom = ChatRoom(document)
+                }
+            }
+
+        /*
+          ok, so we found the room in the mesh,
+          but is it tracked locally, yet?
+          if not, add it to local Room database to keep track of it
+        */
+        val localChatRoom = chatRoomDao.getPrivateChatRoom(emptyChatRoom.id)
+        localChatRoom?.let {
+            // we found the chatroom already in the local room DB
+            return emptyChatRoom
+        }
+        // we didn't find the chat room in the local Room DB...
         chatRoomDao.insert(emptyChatRoom)
         return emptyChatRoom
     }
