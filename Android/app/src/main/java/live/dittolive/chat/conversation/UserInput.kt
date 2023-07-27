@@ -97,15 +97,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
+import live.dittolive.chat.utilities.FunctionalityNotAvailablePopup
 
 enum class InputSelector {
     NONE,
-    MAP,
-    DM,
     EMOJI,
-    PHONE,
     PICTURE
 }
 

@@ -26,7 +26,6 @@
 package live.dittolive.chat.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -35,20 +34,16 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import live.dittolive.chat.R
 
-@OptIn(ExperimentalTextApi::class)
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-@OptIn(ExperimentalTextApi::class)
 val MontserratFont = GoogleFont(name = "Montserrat")
 
-@OptIn(ExperimentalTextApi::class)
 val KarlaFont = GoogleFont(name = "Karla")
 
-@OptIn(ExperimentalTextApi::class)
 val MontserratFontFamily = FontFamily(
     Font(resId = R.font.montserrat_regular),
     Font(resId = R.font.montserrat_light, weight = FontWeight.Light),
@@ -56,7 +51,6 @@ val MontserratFontFamily = FontFamily(
     Font(resId = R.font.montserrat_semibold, weight = FontWeight.SemiBold),
 )
 
-@OptIn(ExperimentalTextApi::class)
 val KarlaFontFamily = FontFamily(
     Font(resId = R.font.karla_regular),
     Font(resId = R.font.karla_bold, weight = FontWeight.Bold),

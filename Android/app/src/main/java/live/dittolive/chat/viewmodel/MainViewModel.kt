@@ -89,7 +89,7 @@ class MainViewModel @Inject constructor(
 
     private val _drawerShouldBeOpened = MutableStateFlow(false)
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
-    var currentUserId = MutableStateFlow<String>(" ")
+    var currentUserId = MutableStateFlow(" ")
 
     private val emptyChatRoom = ChatRoom(
         id = publicKey,
@@ -101,7 +101,7 @@ class MainViewModel @Inject constructor(
         createdBy = "Ditto System"
     )
 
-    private val _currentChatRoom = MutableStateFlow<ChatRoom>(emptyChatRoom)
+    private val _currentChatRoom = MutableStateFlow(emptyChatRoom)
     val currentRoom = _currentChatRoom.asStateFlow()
 
     fun setCurrentChatRoom(newChatChatRoom: ChatRoom) {
@@ -121,7 +121,6 @@ class MainViewModel @Inject constructor(
      * initially set to true
      */
     private val _isUserLoggedIn = MutableStateFlow(true)
-    val isUserLoggedIn = _isUserLoggedIn.asStateFlow()
 
     private val _isAnyPrivateRoomInitialized = MutableStateFlow(value = false)
     val isAnyPrivateRoomInitialized = _isAnyPrivateRoomInitialized.asStateFlow()
@@ -205,7 +204,7 @@ class MainViewModel @Inject constructor(
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
     }
 
-    fun getPrivateChatRooms() {
+    private fun getPrivateChatRooms() {
         viewModelScope.launch {
             repository.getAllPrivateRooms()
                 .collect {chatRooms ->

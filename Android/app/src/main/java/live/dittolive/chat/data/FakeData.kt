@@ -25,13 +25,9 @@
 
 package live.dittolive.chat.data
 
-import kotlinx.datetime.Clock
 import live.dittolive.chat.R
-import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.profile.ProfileScreenState
-import java.util.UUID
 
 
 //val exampleUiState = ConversationUiState(

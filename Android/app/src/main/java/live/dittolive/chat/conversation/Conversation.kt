@@ -719,7 +719,6 @@ fun ClickableMessage(
 //    }
 //}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun ChannelBarPrev() {

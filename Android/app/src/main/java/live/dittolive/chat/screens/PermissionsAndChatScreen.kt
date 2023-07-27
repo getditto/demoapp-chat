@@ -25,28 +25,8 @@
 
 package live.dittolive.chat.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.map
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
-import live.dittolive.chat.viewmodel.MainViewModel
-import live.dittolive.chat.conversation.ConversationContent
-import live.dittolive.chat.conversation.ConversationUiState
-import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.model.MessageUiModel
-import live.dittolive.chat.data.model.User
-import live.dittolive.chat.presenceviewer.PresenceViewerDisplay
-import live.dittolive.chat.theme.DittochatTheme
-import live.ditto.dittopresenceviewer.PresenceViewModel
 
 
 @OptIn(ExperimentalPermissionsApi::class)

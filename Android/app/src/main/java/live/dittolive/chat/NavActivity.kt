@@ -29,7 +29,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -47,7 +46,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import live.ditto.transports.DittoSyncPermissions
@@ -67,7 +65,6 @@ class NavActivity: AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(
@@ -152,7 +149,6 @@ class NavActivity: AppCompatActivity() {
         return navHostFragment.navController
     }
 
-    @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     private fun RequestPermission() {
         val lifecycle = LocalLifecycleOwner.current.lifecycle

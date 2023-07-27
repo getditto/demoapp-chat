@@ -25,12 +25,6 @@
 
 package live.dittolive.chat.profile
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import live.dittolive.chat.data.colleagueProfile
-import live.dittolive.chat.data.meProfile
-import live.dittolive.chat.theme.DittochatTheme
-
 //@Preview(widthDp = 340, name = "340 width - Me")
 //@Composable
 //fun ProfilePreview340() {

@@ -44,7 +44,7 @@ abstract class ChatDatabase : RoomDatabase() {
 
     private class ChatroomDatabaseCallback(
         private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
+    ) : Callback() {
 
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)

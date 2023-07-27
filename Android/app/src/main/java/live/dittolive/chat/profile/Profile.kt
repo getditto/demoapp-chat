@@ -74,11 +74,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.AnimatingFabContent
 import live.dittolive.chat.components.baselineHeight
 import live.dittolive.chat.theme.DittochatTheme
+import live.dittolive.chat.utilities.FunctionalityNotAvailablePopup
 import live.dittolive.chat.viewmodel.MainViewModel
 
 @Composable
@@ -282,13 +282,13 @@ fun ProfileFab(
     modifier: Modifier = Modifier,
     onFabClicked: () -> Unit = { }
 ) {
-    var id : Int = if (isEditMode) {
+    val id : Int = if (isEditMode) {
         R.string.save_profile
     } else {
         if (userIsMe) R.string.edit_profile else R.string.message
     }
 
-    var imageVector : ImageVector = if (isEditMode) {
+    val imageVector : ImageVector = if (isEditMode) {
         Icons.Outlined.Save
     } else {
         if (userIsMe) Icons.Outlined.Create else Icons.Outlined.Chat

@@ -41,7 +41,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -66,8 +65,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.components.baselineHeight
+import live.dittolive.chat.utilities.FunctionalityNotAvailablePopup
 import live.dittolive.chat.viewmodel.MainViewModel
 
 @Composable
@@ -201,7 +200,6 @@ private fun EditNameAndPosition(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditName(modifier: Modifier = Modifier, userViewModel: MainViewModel) {
     val mainUiState by userViewModel.uiState.collectAsStateWithLifecycle()
@@ -222,7 +220,6 @@ private fun EditName(modifier: Modifier = Modifier, userViewModel: MainViewModel
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileProperty(label: String, value: String, isLink: Boolean = false) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {

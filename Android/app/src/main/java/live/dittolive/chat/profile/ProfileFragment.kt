@@ -52,7 +52,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import live.dittolive.chat.FunctionalityNotAvailablePopup
+import live.dittolive.chat.utilities.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.theme.DittochatTheme

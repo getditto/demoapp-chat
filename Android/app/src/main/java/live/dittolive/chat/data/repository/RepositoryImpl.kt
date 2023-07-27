@@ -392,10 +392,9 @@ class RepositoryImpl @Inject constructor(
     override suspend fun publicRoomForId(roomId: String): ChatRoom {
         val document = ditto.store.collection(publicRoomsCollectionId).findById(roomId).exec()
         document?.let {
-            val chatRoom = ChatRoom(document)
-            return chatRoom
+            return ChatRoom(document)
         }
-        val emptyChatRoom = ChatRoom(
+        return ChatRoom(
             id = publicKey,
             name = publicRoomTitleKey,
             createdOn = Clock.System.now(),
@@ -404,7 +403,6 @@ class RepositoryImpl @Inject constructor(
             collectionID = publicKey,
             createdBy = "Ditto System"
         )
-        return emptyChatRoom
     }
 
     override fun getDittoSdkVersion(): String {
@@ -420,13 +418,5 @@ class RepositoryImpl @Inject constructor(
                 allUsers.value = docs.map { User(it) }
             }
         }
-    }
-
-    /**
-     * Only create default Public room if user does not yet exist, i.e. first launch
-     */
-    private fun createDefaultPublicRoom() {
-        // TODO: Implement once moving beyond single default public room
-
     }
 }

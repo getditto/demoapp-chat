@@ -25,25 +25,16 @@
 
 package live.dittolive.chat.presenceviewer
 
-import android.app.Application
 import android.util.Log
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import live.dittolive.chat.DittoHandler.Companion.ditto
-import live.dittolive.chat.R
-import live.dittolive.chat.databinding.ActivityPresenceViewerBinding
-import live.dittolive.chat.viewmodel.MainViewModel
 import live.ditto.dittopresenceviewer.PresenceViewModel
-import live.ditto.dittopresenceviewer.PresenceViewerFragment
 import live.ditto.dittopresenceviewer.databinding.FragmentPresenceViewerBinding
+import live.dittolive.chat.DittoHandler.Companion.ditto
+import live.dittolive.chat.viewmodel.MainViewModel
 
 //class PresenceViewerComposable: ComponentActivity() {
 //

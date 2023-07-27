@@ -27,7 +27,6 @@ package live.dittolive.chat.components
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue.Closed
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
@@ -36,7 +35,6 @@ import live.dittolive.chat.data.model.ChatRoom
 import live.dittolive.chat.theme.DittochatTheme
 import live.dittolive.chat.viewmodel.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DittochatDrawer(
     drawerState: DrawerState = rememberDrawerState(initialValue = Closed),
@@ -47,7 +45,7 @@ fun DittochatDrawer(
     viewModel: MainViewModel,
     content: @Composable () -> Unit
 ) {
-    DittochatTheme() {
+    DittochatTheme {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {

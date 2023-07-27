@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package live.dittolive.chat
+package live.dittolive.chat.utilities
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
