@@ -31,18 +31,19 @@ import androidx.compose.runtime.toMutableStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import live.ditto.DittoAttachmentFetchEvent
-import live.ditto.DittoAttachmentFetcher
 import live.ditto.DittoAttachmentToken
 import live.ditto.DittoDocument
-import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.R
-import live.dittolive.chat.data.*
+import live.dittolive.chat.data.createdOnKey
+import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.toInstant
+import live.dittolive.chat.data.roomIdKey
+import live.dittolive.chat.data.textKey
+import live.dittolive.chat.data.thumbnailKey
+import live.dittolive.chat.data.userIdKey
 import live.dittolive.chat.viewmodel.MainViewModel
-import java.io.InputStream
-import java.util.*
+import java.util.UUID
 
 class ConversationUiState(
     val channelName: String,
@@ -50,11 +51,13 @@ class ConversationUiState(
     val viewModel: MainViewModel
 ) {
     private val _messages: MutableList<MessageUiModel> = initialMessages.toMutableStateList()
+
     val messages: List<MessageUiModel> = _messages
     //author ID is set to the user ID - it's used to tell if the message is sent from this user (self) when rendering the UI
     val authorId: MutableStateFlow<String> = viewModel.currentUserId
-    fun addMessage(msg: MessageUiModel) {
-        viewModel.onCreateNewMessageClick(msg.message)
+
+    fun addMessage(msg: String, photoUri: Uri?) {
+        viewModel.onCreateNewMessageClick(msg, photoUri)
     }
 }
 
@@ -69,17 +72,16 @@ data class Message(
     val text: String = "test",
     val userId: String = UUID.randomUUID().toString(),
     val attachmentToken: DittoAttachmentToken?,
-    // this below is local metadata, not part of the ditto document.
+    // local metadata, not part of the ditto document
     val photoUri: Uri? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
-    constructor(document: DittoDocument) : this(
-            document[dbIdKey].stringValue,
-            document[createdOnKey].stringValue.toInstant(), // this is causing a crash when trying to map from Ditto Documenent
-            document[roomIdKey].stringValue,
-            document[textKey].stringValue,
-            document[userIdKey].stringValue,
-            document[thumbnailKey].attachmentToken
-
+    constructor(document: DittoDocument) :this(
+        document[dbIdKey].stringValue,
+        document[createdOnKey].stringValue.toInstant(),
+        document[roomIdKey].stringValue,
+        document[textKey].stringValue,
+        document[userIdKey].stringValue,
+        document[thumbnailKey].attachmentToken
     )
 }

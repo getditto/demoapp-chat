@@ -25,13 +25,11 @@
 
 package live.dittolive.chat.data.repository
 
-import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import live.ditto.DittoAttachment
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
-import java.io.InputStream
 
 /**
  * Interface for communication with Ditto Layer
@@ -40,10 +38,12 @@ interface Repository {
 
     fun getDittoSdkVersion(): String
 
-    // messages
-    fun getAllMessages() : Flow<List<Message>>
+    // rooms
+    fun getAllPublicRooms(): Flow<List<Room>>
 
-    suspend fun createMessage(message: Message, attachment: DittoAttachment?)
+    // messages
+    fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
+    suspend fun createMessageForRoom(message: Message, room: Room, attachment: DittoAttachment?)
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)
@@ -52,12 +52,10 @@ interface Repository {
     suspend fun addUser(user: User)
     fun getAllUsers(): Flow<List<User>>
     suspend fun saveCurrentUser(firstName: String, lastName: String)
-    fun getNumberOfUsers(): Flow<Int>
-
 
     // rooms
     suspend fun createRoom(name: String)
-    suspend fun roomForId( roomId: String) : Room?
+    suspend fun publicRoomForId( roomId: String) : Room
     suspend fun archivePublicRoom(room: Room)
     suspend fun unarchivePublicRoom(room: Room)
 
@@ -68,6 +66,4 @@ interface Repository {
     suspend fun archivePrivateRoom(room: Room)
     suspend fun unarchivePrivateRoom(room: Room)
     suspend fun deletePrivateRoom(room: Room)
-
-
 }

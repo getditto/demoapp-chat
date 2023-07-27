@@ -30,8 +30,6 @@ android {
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
-            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
-            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
         release {
             minifyEnabled false
@@ -41,8 +39,6 @@ android {
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
             buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
-            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
-            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
     }
     compileOptions {
@@ -57,7 +53,7 @@ android {
         viewBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.4.3"
+        kotlinCompilerExtensionVersion "1.4.7"
     }
     packagingOptions {
         resources {
@@ -86,13 +82,9 @@ dependencies {
     implementation("androidx.activity:activity-ktx:$activity_version")
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-    //For PickVisualMedia contract
-    implementation 'androidx.activity:activity-ktx:1.7.2'
+
     //for rememberImagePainter and image loading functionality
-    implementation("io.coil-kt:coil-compose:2.2.2")
-    //For rememberLauncherForActivityResult()
-    implementation 'androidx.activity:activity-compose:1.7.2'
-    implementation "androidx.exifinterface:exifinterface:1.3.3"
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
@@ -137,8 +129,12 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt ("com.google.dagger:hilt-compiler:$hilt_version")
 
+    // QR Code Scanning via Google code scanner |
+    // Manifest MetaData tag causes Google Play services automatically download the scanner module to the device while app is installed from the Play Store
+    implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
+
     // Ditto
-    implementation('live.ditto:ditto:4.1.1')
+    implementation("live.ditto:ditto:4.2.3")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file

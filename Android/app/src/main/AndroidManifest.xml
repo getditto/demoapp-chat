@@ -64,6 +64,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Jetchat.NoActionBar"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"
+            />
         <activity android:name=".presenceviewer.PresenceViewerActivity" />
         <activity android:name=".NavActivity" />
         <activity android:name=".SplashActivity"

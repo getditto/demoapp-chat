@@ -31,7 +31,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -44,12 +50,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import live.ditto.transports.DittoSyncPermissions
 import live.dittolive.chat.components.DittochatDrawer
 import live.dittolive.chat.conversation.BackPressHandler
 import live.dittolive.chat.conversation.LocalBackPressedDispatcher
 import live.dittolive.chat.databinding.NavHostBinding
 import live.dittolive.chat.viewmodel.MainViewModel
-import live.ditto.transports.DittoSyncPermissions
 
 
 /**
@@ -74,7 +80,7 @@ class NavActivity: AppCompatActivity() {
                             ) {
                                 val dittoSdkVersion : String by viewModel
                                     .dittoSdkVersion
-                                    .collectAsState(initial = " ")
+                                    .collectAsStateWithLifecycle()
 
                                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                                 val drawerOpen by viewModel.drawerShouldBeOpened
@@ -102,9 +108,11 @@ class NavActivity: AppCompatActivity() {
                                     }
                                 }
 
-                                DittochatDrawer(
+                                 DittochatDrawer(
                                     drawerState = drawerState,
                                     onChatClicked = {
+                                        println(it) // it is the selected room
+                                        viewModel.setCurrentChatRoom(it)
                                         findNavController().popBackStack(R.id.nav_home, false)
                                         scope.launch {
                                             drawerState.close()

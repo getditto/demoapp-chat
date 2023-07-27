@@ -25,22 +25,10 @@
 
 package live.dittolive.chat
 
-import live.ditto.*
-import live.dittolive.chat.conversation.Message
-import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM
-import live.dittolive.chat.data.model.MessageUiModel
+import live.ditto.Ditto
 
 class DittoHandler {
     companion object {
         lateinit var ditto: Ditto
-        private val fetchers: MutableMap<DittoAttachmentToken, DittoAttachmentFetcher> = mutableMapOf()
-
-        fun getAttachment(message: Message, callback: (Any) -> Unit) {
-            message.attachmentToken?.let { token ->
-                fetchers[token] =
-                    ditto.store.collection(DEFAULT_PUBLIC_ROOM  ).fetchAttachment(token, callback)
-            }
-        }
     }
-
 }

@@ -27,13 +27,19 @@ package live.dittolive.chat.data
 
 import kotlinx.datetime.Clock
 import live.dittolive.chat.R
-import live.dittolive.chat.conversation.ConversationUiState
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.profile.ProfileScreenState
-import java.util.*
+import java.util.UUID
 
+
+//val exampleUiState = ConversationUiState(
+//    initialMessages = initialUiMessages,
+//    channelName = "#public",
+//    channelMembers = 42,
+//    viewModel = null
+//)
 
 /**
  * Example colleague profile

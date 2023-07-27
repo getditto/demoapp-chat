@@ -25,9 +25,7 @@
 
 package live.dittolive.chat.data.model
 
-import android.graphics.Bitmap
 import live.dittolive.chat.conversation.Message
-import java.io.InputStream
 
 /**
  * a [Message] with additional user information

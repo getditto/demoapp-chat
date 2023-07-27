@@ -25,17 +25,10 @@
 
 package live.dittolive.chat.conversation
 
-import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -50,7 +43,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -90,7 +82,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
@@ -102,16 +93,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import live.dittolive.chat.FunctionalityNotAvailablePopup
 import live.dittolive.chat.R
-import android.content.pm.PackageManager
 
 enum class InputSelector {
     NONE,
@@ -126,6 +113,12 @@ enum class EmojiStickerSelector {
     EMOJI,
     STICKER
 }
+
+//@Preview
+//@Composable
+//fun UserInputPreview() {
+//    UserInput(onMessageSent = {})
+//}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -241,7 +234,7 @@ private fun SelectorExpanded(
     Surface(tonalElevation = 8.dp) {
         when (currentSelector) {
             InputSelector.EMOJI -> EmojiSelector(onTextAdded, focusRequester)
-            InputSelector.PICTURE -> PictureSelector(onImageAdded)
+            InputSelector.PICTURE ->  PictureSelector(onImageAdded)
             else -> { throw NotImplementedError() }
         }
     }
@@ -256,13 +249,13 @@ fun PictureSelector(onImageAdded: (Uri?) -> Unit) {
         }
 
     Column {
-            SideEffect {
-                launcher.launch(
-                    PickVisualMediaRequest(
-                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
+        SideEffect {
+            launcher.launch(
+                PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                 )
-            }
+            )
+        }
     }
 }
 
