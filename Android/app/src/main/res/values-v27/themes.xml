@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2023 DittoLive.
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,37 +23,13 @@
   ~ THE SOFTWARE.
   -->
 
-<!--<resources>-->
-
-<!--    <style name="Theme.Chat" parent="android:Theme.Material.Light.NoActionBar">-->
-<!--        <item name="android:statusBarColor">@color/purple_700</item>-->
-<!--    </style>-->
-<!--</resources>-->
-
-
 <resources>
 
-    <!-- Allows us to override platform level specific attributes in their
-         respective values-vXX folder. -->
     <style name="Platform.Theme.Jetchat" parent="Theme.Material3.DayNight">
-        <item name="android:statusBarColor">@color/black30</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">?attr/isLightTheme</item>
     </style>
-
-    <!-- The actual theme we use. This varies for light theme (here),
-         and values-night for dark theme. -->
-    <style name="Theme.Jetchat" parent="Platform.Theme.Jetchat">
-        <item name="colorPrimary">@color/blue500</item>
-        <item name="colorPrimaryDark">@color/blue800</item>
-        <item name="colorAccent">@color/yellow700</item>
-    </style>
-
-    <style name="Theme.Jetchat.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.Jetchat.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
-
-    <style name="Theme.Jetchat.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
 </resources>
