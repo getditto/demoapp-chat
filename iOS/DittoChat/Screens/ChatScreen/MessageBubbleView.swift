@@ -252,6 +252,7 @@ struct MessageBubbleView: View {
     private func canDisplayLargeImage() -> Bool {
         guard !isEditing else { return false }
         guard isImageMessage else { return false }
+        guard let _ = message.largeImageToken else { return false }
         return isSelfUser || largeImageAvailable
     }
 
