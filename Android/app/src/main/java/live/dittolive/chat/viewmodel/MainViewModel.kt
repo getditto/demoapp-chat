@@ -129,7 +129,9 @@ class MainViewModel @Inject constructor(
     private val _allPrivateRoomsFLow: MutableStateFlow<List<ChatRoom>> = MutableStateFlow(value = emptyList())
     val allPrivateRoomsFlow: StateFlow<List<ChatRoom>> = _allPrivateRoomsFLow.asStateFlow()
 
-    val allPublicRoomsFLow: Flow<List<ChatRoom>> = repository.getAllPublicRooms()
+
+    private val _allPublicRoomsFLow: MutableStateFlow<List<ChatRoom>> = MutableStateFlow(value = emptyList())
+    val allPublicRoomsFLow: Flow<List<ChatRoom>> = _allPublicRoomsFLow.asStateFlow()
 
     private fun setRoomMessagesWithUsers(chatRoom: ChatRoom) {
         // updating a flow will automatically update flows that rely on it
@@ -192,16 +194,27 @@ class MainViewModel @Inject constructor(
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
+        getPublicRooms()
         getPrivateChatRooms()
     }
 
     private fun getPrivateChatRooms() {
         viewModelScope.launch {
             repository.getAllPrivateRooms()
-                .collect {chatRooms ->
+                .collect { chatRooms ->
                     _allPrivateRoomsFLow.value = chatRooms
                 }
         }
+    }
+
+    private fun getPublicRooms() {
+        viewModelScope.launch {
+            repository.getAllPublicRooms()
+                .collect { chatRooms ->
+                    _allPublicRoomsFLow.value = chatRooms
+                }
+        }
+
     }
 
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
