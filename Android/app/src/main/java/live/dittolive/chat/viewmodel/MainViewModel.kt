@@ -51,7 +51,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import live.ditto.DittoAttachmentFetcher
 import live.ditto.DittoAttachmentToken
-import live.dittolive.chat.DittoHandler
+import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
 import live.dittolive.chat.data.colleagueUser
@@ -319,7 +319,7 @@ class MainViewModel @Inject constructor(
                     try {
                         tempFile = saveBitmapToTempFile(appContext, downsampledBitmap, quality)
                         val collectionId = currentRoom.value.collectionID ?: DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
-                        val collection = DittoHandler.ditto.store.collection(collectionId)
+                        val collection = ditto.store.collection(collectionId)
                         val attachment = collection.newAttachment(
                             tempFile.inputStream(), mapOf(
                                 metadataFilenameKey to message.userId + "_thumbnail_" + timestamp + ".jpg",
@@ -344,7 +344,7 @@ class MainViewModel @Inject constructor(
         val fetchers: MutableMap<DittoAttachmentToken, DittoAttachmentFetcher> = mutableMapOf()
         message.attachmentToken?.let { token ->
             fetchers[token] =
-                DittoHandler.ditto.store.collection(currentRoom.value.messagesCollectionId ).fetchAttachment(token, callback)
+                ditto.store.collection(currentRoom.value.messagesCollectionId ).fetchAttachment(token, callback)
         }
     }
 
