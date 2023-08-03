@@ -388,7 +388,9 @@ class RepositoryImpl @Inject constructor(
                 .findAll()
                 .observeLocal { docs, _ ->
                     this.publicRoomsDocs = docs
-                    allPublicRooms.value = docs.map { ChatRoom(it) }
+                    allPublicRooms.value = docs.map { document ->
+                        ChatRoom(document)
+                    }
                 }
 
         }
