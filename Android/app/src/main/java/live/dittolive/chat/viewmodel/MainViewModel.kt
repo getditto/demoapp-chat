@@ -194,7 +194,6 @@ class MainViewModel @Inject constructor(
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
-        getPublicRooms()
         getPrivateChatRooms()
     }
 
@@ -205,16 +204,6 @@ class MainViewModel @Inject constructor(
                     _allPrivateRoomsFLow.value = chatRooms
                 }
         }
-    }
-
-    private fun getPublicRooms() {
-        viewModelScope.launch {
-            repository.getAllPublicRooms()
-                .collect { chatRooms ->
-                    _allPublicRoomsFLow.value = chatRooms
-                }
-        }
-
     }
 
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {

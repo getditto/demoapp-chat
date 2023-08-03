@@ -134,10 +134,8 @@ class RepositoryImpl @Inject constructor(
      */
     private fun initDatabase(postInitAction: suspend () -> Unit) {
         GlobalScope.launch {
-            // Prepopulate messasges
-            // TODO : Implement
+            // Prepopulate messages
             // TODO : pre-pend dummy data
-
             postInitAction.invoke()
         }
     }
@@ -197,8 +195,6 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun createRoom(name: String, isPrivate: Boolean, userId: String) {
-
-        // TODO : Implement
         val roomId = UUID.randomUUID().toString()
         val messagesId = UUID.randomUUID().toString()
         var collectionId: String = publicRoomsCollectionId
@@ -382,18 +378,6 @@ class RepositoryImpl @Inject constructor(
 
     private fun getPublicRoomsFromDitto() {
         // TODO : Implement
-        ditto.let { ditto: Ditto ->
-            publicRoomsCollection = ditto.store.collection(publicRoomsCollectionId)
-            publicRoomsSubscription = publicRoomsCollection.findAll().subscribe()
-            publicRoomsLiveQuery = publicRoomsCollection
-                .findAll()
-                .observeLocal { docs, _ ->
-                    allPublicRooms.value = docs.map { document ->
-                        ChatRoom(document)
-                    }
-                }
-
-        }
     }
 
     override suspend fun publicRoomForId(roomId: String): ChatRoom {

@@ -185,17 +185,7 @@ fun PublicRoomsList(
     onChatClicked: (ChatRoom) -> Unit,
 ) {
     // TODO : Implement
-    val publicChatRooms : List<ChatRoom> by viewModel
-        .allPublicRoomsFLow
-        .collectAsStateWithLifecycle(
-            initialValue = emptyList()
-        )
 
-    LazyColumn {
-        items(publicChatRooms) { publicRoom ->
-            ChatItem(publicRoom.name, true) { onChatClicked(publicRoom) }
-        }
-    }
 }
 
 
