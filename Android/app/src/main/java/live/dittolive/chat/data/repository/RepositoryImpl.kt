@@ -197,6 +197,8 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun createRoom(name: String, isPrivate: Boolean, userId: String) {
+
+        // TODO : Implement
         val roomId = UUID.randomUUID().toString()
         val messagesId = UUID.randomUUID().toString()
         var collectionId: String = publicRoomsCollectionId
