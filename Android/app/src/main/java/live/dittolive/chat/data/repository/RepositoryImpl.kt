@@ -380,6 +380,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     private fun getPublicRoomsFromDitto() {
+        // TODO : Implement
         ditto.let { ditto: Ditto ->
             publicRoomsCollection = ditto.store.collection(publicRoomsCollectionId)
             publicRoomsSubscription = publicRoomsCollection.findAll().subscribe()
