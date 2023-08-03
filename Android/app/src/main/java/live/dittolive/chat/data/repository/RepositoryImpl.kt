@@ -103,7 +103,6 @@ class RepositoryImpl @Inject constructor(
     private lateinit var publicRoomsCollection: DittoCollection
     private lateinit var publicRoomsSubscription: DittoSubscription
     private lateinit var publicRoomsLiveQuery: DittoLiveQuery
-    private var publicRoomsDocs = listOf<DittoDocument>()
 
     /**
      * Users
@@ -387,7 +386,6 @@ class RepositoryImpl @Inject constructor(
             publicRoomsLiveQuery = publicRoomsCollection
                 .findAll()
                 .observeLocal { docs, _ ->
-                    this.publicRoomsDocs = docs
                     allPublicRooms.value = docs.map { document ->
                         ChatRoom(document)
                     }
