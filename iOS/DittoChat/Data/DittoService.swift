@@ -10,8 +10,6 @@ import Combine
 import DittoSwift
 import SwiftUI
 
-//------------------------------------------------------------------------------------------
-// TEST SDK v4.2.1 on portal-stg.ditto.live BP v1.9.0
 class AuthDelegate: DittoAuthenticationDelegate {
     func authenticationRequired(authenticator: DittoAuthenticator) {
         authenticator.login(
@@ -31,61 +29,33 @@ class AuthDelegate: DittoAuthenticationDelegate {
         }
     }
 }
-//------------------------------------------------------------------------------------------
-
 
 class DittoInstance {
     static var shared = DittoInstance()
     let ditto: Ditto
 
-    init(enableLogging loggingEnabled: Bool = true) {
-        /*
-        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
-        
-        try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
-        */
-
-        if loggingEnabled {
-            // make sure log level is set _before_ starting ditto
-            DittoLogger.minimumLogLevel = .debug
-            if let logFileURL = LogManager.shared.logFileURL {
-                DittoLogger.setLogFileURL(logFileURL)
-            }
+    init() {
+        // make sure log level is set _before_ starting ditto
+        DittoLogger.minimumLogLevel = .debug
+        if let logFileURL = LogManager.shared.logFileURL {
+            DittoLogger.setLogFileURL(logFileURL)
         }
 
-        //------------------------------------------------------------------------------------------
-        // TEST SDK v4.2.1 on portal-stg.ditto.live BP v1.9.0
         let authDelegate = AuthDelegate()
         
         ditto = Ditto(identity:
             .onlineWithAuthentication(
                 appID: Env.DITTO_APP_ID,
-                authenticationDelegate: authDelegate,
-                enableDittoCloudSync: false,
-                customAuthURL: URL(string: "https://\(Env.DITTO_APP_ID).cloud-stg.ditto.live")
+                authenticationDelegate: authDelegate
             ),
                       persistenceDirectory: self.appDirectory
         )
         
-        var config = DittoTransportConfig()
-        config.connect.webSocketURLs.insert("wss://\(Env.DITTO_APP_ID).cloud-stg.ditto.live")
-        config.enableAllPeerToPeer()
-        ditto.transportConfig = config
-        //------------------------------------------------------------------------------------------
-        // update to v4 AddWins
         do {
             try ditto.disableSyncWithV3()
         } catch let error {
             print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
         }
-        
-//        if loggingEnabled {
-//            // make sure log level is set _before_ starting ditto
-//            DittoLogger.minimumLogLevel = .debug
-//            if let logFileURL = LogManager.shared.logFileURL {
-//                DittoLogger.setLogFileURL(logFileURL)
-//            }
-//        }
         
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
         let isPreview: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
