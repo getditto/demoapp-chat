@@ -29,7 +29,7 @@ android {
             def prop = new Properties()
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
-            buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
         }
         release {
             minifyEnabled false
@@ -38,7 +38,7 @@ android {
             def prop = new Properties()
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
-            buildConfigField('String', 'DITTO_LICENSE_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_TOKEN', prop['DITTO_LICENSE_TOKEN'])
         }
     }
     compileOptions {
