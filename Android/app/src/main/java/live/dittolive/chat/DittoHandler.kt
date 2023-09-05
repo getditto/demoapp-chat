@@ -25,10 +25,75 @@
 
 package live.dittolive.chat
 
+import android.content.Context
 import live.ditto.Ditto
+import live.ditto.DittoIdentity
+import live.ditto.DittoLogLevel
+import live.ditto.DittoLogger
+import live.ditto.android.DefaultAndroidDittoDependencies
 
 class DittoHandler {
     companion object {
         lateinit var ditto: Ditto
+
+        /**
+         * Configures Ditto and starts the sync process
+         *
+         * @param onInitialized: Invoke when Ditto is initialized
+         * @param onError: Invoke on any error during initialization
+         */
+        fun setupAndStartSync(
+            applicationContext: Context,
+            onInitialized: () -> Unit,
+            onError: (error: Throwable) -> Unit,
+        ) {
+            if (::ditto.isInitialized) return onInitialized()
+
+            try {
+                setupAndStartSync(applicationContext)
+            } catch (e: Throwable) {
+                return onError(e)
+            }
+
+            onInitialized()
+        }
     }
+}
+
+private fun setupAndStartSync(applicationContext: Context) {
+    DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
+
+    val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
+
+    DittoHandler.ditto = Ditto(
+        dependencies = androidDependencies,
+        identity = resolveIdentity(androidDependencies)
+    ).apply {
+        setOfflineOnlyLicenseToken()
+        disableSyncWithV3()
+        startSync()
+    }
+}
+
+/**
+ * Returns [DittoIdentity.OnlinePlayground] for Debug builds,
+ * [DittoIdentity.OfflinePlayground] otherwise.
+ */
+private fun resolveIdentity(androidDependencies: DefaultAndroidDittoDependencies): DittoIdentity {
+    if (BuildConfig.DEBUG) return DittoIdentity.OnlinePlayground(
+        dependencies = androidDependencies,
+        appId = BuildConfig.DITTO_APP_ID,
+        token = BuildConfig.DITTO_PLAYGROUND_TOKEN
+    )
+
+    return DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
+}
+
+/**
+ * Sets license token only on release build.
+ */
+private fun Ditto.setOfflineOnlyLicenseToken() {
+    if (BuildConfig.DEBUG) return
+
+    setOfflineOnlyLicenseToken(BuildConfig.DITTO_OFFLINE_TOKEN)
 }
