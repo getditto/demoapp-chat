@@ -25,20 +25,20 @@ android {
 
     buildTypes {
         debug{
-            def credsFile = rootProject.file("secure\\debug_creds.properties")
+            def credsFile = rootProject.file("secure\\creds.properties")
             def prop = new Properties()
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
-            buildConfigField('String', 'DITTO_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
+            buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            def credsFile = rootProject.file("secure\\release_creds.properties")
+            def credsFile = rootProject.file("secure\\creds.properties")
             def prop = new Properties()
             prop.load(new FileInputStream(credsFile))
             buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
-            buildConfigField('String', 'DITTO_TOKEN', prop['DITTO_LICENSE_TOKEN'])
+            buildConfigField('String', 'DITTO_OFFLINE_TOKEN', prop['DITTO_OFFLINE_TOKEN'])
         }
     }
     compileOptions {
