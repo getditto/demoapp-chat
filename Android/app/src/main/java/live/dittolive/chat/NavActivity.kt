@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.os.bundleOf
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,6 +70,22 @@ class NavActivity: AppCompatActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val installSplashScreen = installSplashScreen()
+        var isDittoInitialized = false
+
+        installSplashScreen.setKeepOnScreenCondition {
+            return@setKeepOnScreenCondition !isDittoInitialized
+        }
+
+        DittoHandler.setupAndStartSync(
+            applicationContext = applicationContext,
+            onInitialized = { isDittoInitialized = true },
+            onError = { error ->
+                // Maybe we want to communicate this error instead of crashing
+                throw error
+            }
+        )
+
         super.onCreate(savedInstanceState)
         setContentView(
             ComposeView(this).apply {
