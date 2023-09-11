@@ -39,6 +39,7 @@ class DittoHandler {
         /**
          * Configures Ditto and starts the sync process
          *
+         * @param applicationContext: The application context
          * @param onInitialized: Invoke when Ditto is initialized
          * @param onError: Invoke on any error during initialization
          */
@@ -50,28 +51,24 @@ class DittoHandler {
             if (::ditto.isInitialized) return onInitialized()
 
             try {
-                setupAndStartSync(applicationContext)
+                DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
+
+                val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
+
+                ditto = Ditto(
+                    dependencies = androidDependencies,
+                    identity = resolveIdentity(androidDependencies)
+                ).apply {
+                    setOfflineOnlyLicenseToken()
+                    disableSyncWithV3()
+                    startSync()
+                }
             } catch (e: Throwable) {
                 return onError(e)
             }
 
             onInitialized()
         }
-    }
-}
-
-private fun setupAndStartSync(applicationContext: Context) {
-    DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
-
-    val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
-
-    DittoHandler.ditto = Ditto(
-        dependencies = androidDependencies,
-        identity = resolveIdentity(androidDependencies)
-    ).apply {
-        setOfflineOnlyLicenseToken()
-        disableSyncWithV3()
-        startSync()
     }
 }
 
