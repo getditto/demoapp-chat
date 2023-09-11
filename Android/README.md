@@ -20,7 +20,7 @@ You need to setup some environment variables in order to build this project:
 
 1. In your project root, create a directory called **secure**
 2. Add a file to that directory called **creds.properties**, for the build variants as defined in the app **build.gradle** file.
-2. Add the following environment variables to the credential file, substituting your own values:
+Add the following environment variables to the credential file, substituting your own values:
 ```
     # Environment Variables  
     
@@ -36,7 +36,6 @@ You need to setup some environment variables in order to build this project:
 * `DITTO_OFFLINE_TOKEN` is the offline-only playground token. This is used when using the offline playground identity type. Note this feature will be discontinued in the future.
 * `DITTO_AUTH_PROVIDER` is the authentication provider name. This is used when using the online with authentication identity type.
 * `DITTO_AUTH_PASSWORD` is the authentication password. This is used when using the online with authentication identity type.
-
 
  ## Copyright
 Copyright (c) 2022 DittoLive
