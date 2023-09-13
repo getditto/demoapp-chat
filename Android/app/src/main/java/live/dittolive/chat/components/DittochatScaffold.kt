@@ -42,6 +42,7 @@ fun DittochatDrawer(
     drawerState: DrawerState = rememberDrawerState(initialValue = Closed),
     onProfileClicked: (String) -> Unit,
     onChatClicked: (Room) -> Unit,
+    onScanSucceeded: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     dittoSdkVersion: String,
     viewModel: MainViewModel,
@@ -55,6 +56,7 @@ fun DittochatDrawer(
                     DittochatDrawerContent(
                         onProfileClicked = onProfileClicked,
                         onChatClicked = onChatClicked,
+                        onScanSucceeded = onScanSucceeded,
                         onPresenceViewerClicked = onPresenceViewerClicked,
                         sdkVersion = dittoSdkVersion,
                         viewModel = viewModel
