@@ -49,6 +49,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.android.gms.common.moduleinstall.ModuleInstall
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import live.ditto.transports.DittoSyncPermissions
@@ -87,6 +90,9 @@ class NavActivity: AppCompatActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        ensureGmsBarcodeScanningApiAvailability()
+
         setContentView(
             ComposeView(this).apply {
                         setContent {
@@ -158,6 +164,29 @@ class NavActivity: AppCompatActivity() {
                         }
             }
         )
+    }
+
+    /**
+     * Ensuring API availability with ModuleInstallClient by requesting an urgent
+     * install request to the Play Services
+     *
+     * sources:
+     * - https://developers.google.com/android/guides/module-install-apis#send_an_urgent_module_install_request
+     * - https://developers.google.com/android/guides/module-install-apis
+     *
+     * Reasoning: To conserve storage and memory across the entire fleet of devices,
+     * some services are installed on-demand when it is clear that a specific device
+     * requires the relevant functionality. For example, ML Kit provides this option
+     * when using models in Google Play services.
+     */
+    private fun ensureGmsBarcodeScanningApiAvailability() {
+        ModuleInstall
+            .getClient(this)
+            .installModules(
+                ModuleInstallRequest.newBuilder()
+                    .addApi(GmsBarcodeScanning.getClient(this))
+                    .build()
+            )
     }
 
     /**
