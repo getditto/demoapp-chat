@@ -41,6 +41,8 @@ interface Repository {
     // rooms
     fun getAllPublicRooms(): Flow<List<Room>>
 
+    fun getAllPrivateRooms(): Flow<List<Room>>
+
     // messages
     fun getAllMessagesForRoom(room: Room): Flow<List<Message>>
     suspend fun createMessageForRoom(message: Message, room: Room, attachment: DittoAttachment?)
@@ -66,4 +68,6 @@ interface Repository {
     suspend fun archivePrivateRoom(room: Room)
     suspend fun unarchivePrivateRoom(room: Room)
     suspend fun deletePrivateRoom(room: Room)
+
+    fun onCleared()
 }

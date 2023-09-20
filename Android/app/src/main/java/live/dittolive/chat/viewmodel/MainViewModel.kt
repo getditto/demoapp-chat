@@ -137,6 +137,8 @@ class MainViewModel @Inject constructor(
 
     val allPublicRoomsFLow: Flow<List<Room>> = repository.getAllPublicRooms()
 
+    val allPrivateRoomsFLow: Flow<List<Room>> = repository.getAllPrivateRooms()
+
     private fun setRoomMessagesWithUsers(chatRoom: Room) {
         // updating a flow will automatically update flows that rely on it
         repository.getAllMessagesForRoom(chatRoom)
@@ -381,6 +383,15 @@ class MainViewModel @Inject constructor(
         )
     }
 
+    fun onScanSucceeded(qrCode: String) {
+        viewModelScope.launch {
+            repository.joinPrivateRoom(qrCode)
+        }
+    }
+
+    override fun onCleared() {
+        repository.onCleared()
+    }
 }
 
 data class EditProfileUiState(

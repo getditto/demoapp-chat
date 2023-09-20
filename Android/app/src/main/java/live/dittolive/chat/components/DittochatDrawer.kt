@@ -83,6 +83,7 @@ import live.dittolive.chat.viewmodel.MainViewModel
 fun DittochatDrawerContent(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (Room) -> Unit,
+    onScanSucceeded: (String) -> Unit,
     onPresenceViewerClicked: (String) -> Unit,
     sdkVersion : String,
     viewModel: MainViewModel
@@ -124,9 +125,8 @@ fun DittochatDrawerContent(
                         scanner
                             .startScan()
                             .addOnSuccessListener { barcode ->
-                                // Task completed successfully
-                                val rawValue: String? = barcode.rawValue
-                                println(rawValue) // TODO - open chat room with the value
+                                val rawValue = barcode.rawValue ?: return@addOnSuccessListener
+                                onScanSucceeded(rawValue)
                             }
                             .addOnCanceledListener {
                                 // Task canceled
@@ -157,6 +157,8 @@ fun DittochatDrawerContent(
 
         DividerItem()
         DrawerItemHeader(stringResource(R.string.private_rooms))
+        PrivateRoomsList(viewModel, onChatClicked)
+
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
         ProfileItem(fullName, meProfile.photo) {
@@ -190,6 +192,25 @@ fun PublicRoomsList(
     LazyColumn {
         items(publicRooms) { publicRoom ->
             ChatItem(publicRoom.name, true) { onChatClicked(publicRoom) }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PrivateRoomsList(
+    viewModel: MainViewModel,
+    onChatClicked: (Room) -> Unit,
+) {
+    val privateRooms : List<Room> by viewModel
+        .allPrivateRoomsFLow
+        .collectAsStateWithLifecycle(
+            initialValue = emptyList()
+        )
+
+    LazyColumn {
+        items(privateRooms) { privateRoom ->
+            ChatItem(privateRoom.name, false) { onChatClicked(privateRoom) }
         }
     }
 }

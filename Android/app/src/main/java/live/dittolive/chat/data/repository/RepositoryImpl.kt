@@ -44,6 +44,7 @@ import live.ditto.DittoSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
+import live.dittolive.chat.data.collectionIdKey
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.firstNameKey
@@ -51,6 +52,7 @@ import live.dittolive.chat.data.lastNameKey
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
 import live.dittolive.chat.data.model.toIso8601String
+import live.dittolive.chat.data.privateRoomsKey
 import live.dittolive.chat.data.publicKey
 import live.dittolive.chat.data.publicRoomTitleKey
 import live.dittolive.chat.data.roomIdKey
@@ -59,6 +61,8 @@ import live.dittolive.chat.data.textKey
 import live.dittolive.chat.data.thumbnailKey
 import live.dittolive.chat.data.userIdKey
 import live.dittolive.chat.data.usersKey
+import live.dittolive.chat.utilities.parsePrivateRoomQrCode
+import live.dittolive.chat.utilities.toMap
 import java.util.UUID
 import javax.inject.Inject
 
@@ -76,6 +80,10 @@ class RepositoryImpl @Inject constructor(
         MutableStateFlow(emptyList())
     }
 
+    private val allPrivateRooms : MutableStateFlow<List<Room>> by  lazy {
+        MutableStateFlow(emptyList())
+    }
+
     private val allUsers: MutableStateFlow<List<User>> by lazy {
         MutableStateFlow(emptyList())
     }
@@ -89,12 +97,19 @@ class RepositoryImpl @Inject constructor(
     private lateinit var messagesSubscription: DittoSubscription
 
     /**
-     * Rooms
+     * Public Rooms
      */
     private lateinit var publicRoomsCollection: DittoCollection
     private lateinit var publicRoomsSubscription: DittoSubscription
     private lateinit var publicRoomsLiveQuery: DittoLiveQuery
     private var publicRoomsDocs = listOf<DittoDocument>()
+
+    /**
+     * Private Rooms
+     */
+    private var privateRoomsLiveQuery: DittoLiveQuery? = null
+    private val privateRoomsSubscriptions: MutableList<DittoSubscription> = mutableListOf()
+    private val privateRoomsSubscriptionsLiveQueries: MutableList<DittoLiveQuery> = mutableListOf()
 
     /**
      * Users
@@ -131,6 +146,8 @@ class RepositoryImpl @Inject constructor(
     override fun getAllUsers(): Flow<List<User>> = allUsers
 
     override fun getAllPublicRooms(): Flow<List<Room>> = allPublicRooms
+
+    override fun getAllPrivateRooms(): Flow<List<Room>> = allPrivateRooms
 
     override suspend fun saveCurrentUser(firstName: String, lastName: String) {
         val userID = userPreferencesRepository.fetchInitialPreferences().currentUserId
@@ -198,7 +215,18 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun joinPrivateRoom(qrCode: String) {
-        // TODO : implement
+        val privateRoomQrCode = parsePrivateRoomQrCode(qrCode) ?: return
+
+        val collection = ditto.store[privateRoomQrCode.collectionId]
+        privateRoomsSubscriptions.add(collection.findAll().subscribe())
+
+        privateRoomsSubscriptionsLiveQueries.add(
+            collection.findById(privateRoomQrCode.roomId).observeLocal { _, _ ->
+                getPrivateRoomsFromDitto()
+            }
+        )
+
+        ditto.store.collection(privateRoomsKey).upsert(privateRoomQrCode.toMap())
     }
 
     override suspend fun privateRoomForId(roomId: String, collectionId: String): Room? {
@@ -218,9 +246,18 @@ class RepositoryImpl @Inject constructor(
         // TODO : implement
     }
 
+    override fun onCleared() {
+        privateRoomsLiveQuery?.close()
+        privateRoomsSubscriptions.forEach { it.close() }
+        privateRoomsSubscriptions.clear()
+        privateRoomsSubscriptionsLiveQueries.forEach { it.close() }
+        privateRoomsSubscriptionsLiveQueries.clear()
+    }
+
     private fun postInitActions() {
         updateUsersLiveData()
         getPublicRoomsFromDitto()
+        getPrivateRoomsFromDitto()
     }
 
     private fun updateUsersLiveData() {
@@ -253,6 +290,23 @@ class RepositoryImpl @Inject constructor(
                     allPublicRooms.value = docs.map { Room(it) }
                 }
 
+        }
+    }
+
+    private fun getPrivateRoomsFromDitto() {
+        ditto.let { ditto: Ditto ->
+            privateRoomsLiveQuery?.close()
+            privateRoomsLiveQuery = ditto.store.collection(privateRoomsKey)
+                .findAll()
+                .observeLocal { docs, _ ->
+                    val roomsList: List<List<Room>> = docs.map { doc ->
+                        val collectionId = doc[collectionIdKey].stringValue
+
+                        ditto.store[collectionId].findAll().exec().map { Room(it) }
+                    }
+
+                    allPrivateRooms.value = roomsList.flatten()
+                }
         }
     }
 
