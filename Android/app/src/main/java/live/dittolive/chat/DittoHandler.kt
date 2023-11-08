@@ -30,6 +30,7 @@ import live.ditto.Ditto
 import live.ditto.DittoIdentity
 import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
+import live.ditto.DittoSmallPeerInfoSyncScope
 import live.ditto.android.DefaultAndroidDittoDependencies
 
 class DittoHandler {
@@ -66,6 +67,10 @@ class DittoHandler {
             } catch (e: Throwable) {
                 return onError(e)
             }
+
+            // Sync Small Peer Info to Big Peer
+            ditto.smallPeerInfo.isEnabled = true
+            ditto.smallPeerInfo.syncScope = DittoSmallPeerInfoSyncScope.BigPeerOnly
 
             onInitialized()
         }
