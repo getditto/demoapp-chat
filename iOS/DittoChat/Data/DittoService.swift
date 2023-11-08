@@ -34,7 +34,11 @@ class DittoInstance {
                 DittoLogger.setLogFileURL(logFileURL)
             }
         }
-        
+
+        // Sync small peer info to Big Peer
+        ditto.smallPeerInfo.isEnabled = true
+        ditto.smallPeerInfo.syncScope = .bigPeerOnly
+
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
         let isPreview: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
         if !isPreview {
