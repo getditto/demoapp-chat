@@ -14,7 +14,7 @@ android {
         applicationId "live.dittolive.chat"
         minSdk 29
         targetSdk 33
-        versionCode 24
+        versionCode 27
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -129,7 +129,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.2.3")
+    implementation("live.ditto:ditto:4.4.4")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file
