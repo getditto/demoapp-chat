@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		142B278E2A39290700C09751 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142B278D2A39290700C09751 /* Env.swift */; };
-		145662BE296E1E0900E1C148 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145662BD296E1E0900E1C148 /* LogManager.swift */; };
 		1493FF6A2978763500397DAB /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF682978763500397DAB /* ScannerView.swift */; };
 		1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF692978763500397DAB /* QRCodeView.swift */; };
 		14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */; };
@@ -84,7 +83,6 @@
 
 /* Begin PBXFileReference section */
 		142B278D2A39290700C09751 /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
-		145662BD296E1E0900E1C148 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		1493FF692978763500397DAB /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -325,7 +323,6 @@
 			isa = PBXGroup;
 			children = (
 				14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */,
-				145662BD296E1E0900E1C148 /* LogManager.swift */,
 				14D902E82954DFC8006B54E3 /* StringKeys.swift */,
 				14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */,
 				14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */,
@@ -570,7 +567,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */,
-				145662BE296E1E0900E1C148 /* LogManager.swift in Sources */,
 				14E834C32953C7A30027D750 /* ChatScreenVM.swift in Sources */,
 				14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */,
 				14BF945F297868ED001F672D /* Room.swift in Sources */,
@@ -969,7 +965,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
+				minimumVersion = 4.5.0;
 			};
 		};
 		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {
