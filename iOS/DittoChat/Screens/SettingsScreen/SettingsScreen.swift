@@ -6,18 +6,23 @@
 //
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
+import DittoDataBrowser
+import DittoDiskUsage
+import DittoExportData
+import DittoExportLogs
+import DittoPeersList
+import DittoPresenceViewer
+import DittoSwift
 import SwiftUI
 
 struct SettingsScreen: View {
-    @StateObject var viewModel: SettingsScreenVM
-    @State var acceptLargeImages: Bool
-    @State var advancedFeaturesEnabled: Bool
-    
-    init() {
-        self._viewModel = StateObject(wrappedValue: SettingsScreenVM())
-        self.acceptLargeImages = DataManager.shared.acceptLargeImages
-        self.advancedFeaturesEnabled = !DataManager.shared.basicChat
-    }
+    @Environment(\.colorScheme) private var colorScheme
+    @StateObject var vm = SettingsScreenVM()
+    @ObservedObject var dittoInstance = DittoInstance.shared
+    @State var acceptLargeImages: Bool = DataManager.shared.acceptLargeImages
+    @State var advancedFeaturesEnabled: Bool = !DataManager.shared.basicChat
+        
+    private var textColor: Color { colorScheme == .dark ? .white : .black }
     
     var body: some View {
         NavigationView {
@@ -27,14 +32,14 @@ struct SettingsScreen: View {
                         
                         Toggle("Enable Advanced Features", isOn: $advancedFeaturesEnabled)
                             .onChange(of: advancedFeaturesEnabled) { shouldEnable in
-                                viewModel.enableAdvancedFeatures(useAdvanced: shouldEnable)
+                                vm.enableAdvancedFeatures(useAdvanced: shouldEnable)
                             }
 
                         Divider()
                         
                         Toggle("Enable Large Images", isOn: $acceptLargeImages)
                             .onChange(of: acceptLargeImages) { accept in
-                                viewModel.setLargeImagesPrefs(accept)
+                                vm.setLargeImagesPrefs(accept)
                             }
                         Text("Large image sync should only be enabled if all peers are known to be using WiFi.")
                             .font(.subheadline)
@@ -43,57 +48,81 @@ struct SettingsScreen: View {
                 }
                 // DittoSwiftTools
                 Section {
-                    NavigationLink {
-                        PresenceViewer()
-                    } label: {
-                        Text(presenceViewerTitleKey)
+                    NavigationLink(destination: DataBrowser(ditto: dittoInstance.ditto)) {
+                        DittoToolsListItem(title: "Data Browser", systemImage: "photo", color: .orange)
                     }
                     
-                    NavigationLink {
-                        DataBrowserView()
-                    } label: {
-                        Text(dataBrowserTitleKey)
-                    }
-                     
-                    NavigationLink {
-                        DiskUsageViewer()
-                    } label: {
-                        Text(diskUsageTitleKey)
+                    NavigationLink(destination: PeersListView(ditto: dittoInstance.ditto)) {
+                        DittoToolsListItem(title: "Peers List", systemImage: "network", color: .blue)
                     }
                     
-                    Text(exportLogsTitleKey)
-                        .onTapGesture {
-                            viewModel.showExportLogsSheet = true
+                    NavigationLink(destination: PresenceView(ditto: dittoInstance.ditto)) {
+                        DittoToolsListItem(title: "Presence Viewer", systemImage: "network", color: .pink)
+                    }
+                    
+                    NavigationLink(destination: DittoDiskUsageView(ditto: dittoInstance.ditto)) {
+                        DittoToolsListItem(title: "Disk Usage", systemImage: "opticaldiscdrive", color: .secondary)
+                    }
+
+                    NavigationLink(destination: LoggingDetailsView(loggingOption: $dittoInstance.loggingOption)) {
+                        DittoToolsListItem(title: "Logging", systemImage: "square.split.1x2", color: .green)
+                    }
+
+                    // Export Ditto db Directory
+                    // N.B. The export Logs feature is in DittoSwiftTools pkg, DittoExportLogs module,
+                    // exposed in LoggingDetailsView ^^
+                    Button(action: {
+                        vm.presentExportDataAlert.toggle()
+                    }) {
+                        HStack {
+                            DittoToolsListItem(title: "Export Data Directory", systemImage: "square.and.arrow.up", color: .green)
+                            Spacer()
+                            Image(systemName: "square.and.arrow.up")
                         }
+                    }
+                    .foregroundColor(textColor)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .sheet(isPresented: $vm.presentExportDataShare) {
+                        ExportData(ditto: dittoInstance.ditto)
+                    }
                 } header: {
                     Text(dittoToolsKey)
                 } footer: {
                     HStack {
                         Spacer()
-                        Text(viewModel.versionFooter)
+                        Text(vm.versionFooter)
                         Spacer()
                     }
                 }
-                .sheet(isPresented: $viewModel.showExportLogsSheet) {
+                .sheet(isPresented: $vm.showExportLogsSheet) {
                     ExportLogsView()
-                }                
+                }
+                .alert("Export Ditto Directory", isPresented: $vm.presentExportDataAlert) {
+                    Button("Export") {
+                        vm.presentExportDataShare = true
+                    }
+                    Button("Cancel", role: .cancel) {}
+
+                    } message: {
+                        Text("Compressing log data may take a while.")
+                    }
                 
                 // Public Rooms
-                if viewModel.archivedPublicRooms.count > 0 {
+                if vm.archivedPublicRooms.count > 0 {
                     Section(archivedPublicRoomsTitleKey) {
                         // public rooms contains Room instances fetched from Ditto
-                        ForEach(viewModel.archivedPublicRooms) { room in
+                        ForEach(vm.archivedPublicRooms) { room in
                             NavigationLink {
                                 RoomView(
-                                    room: viewModel.roomForId(room.id)!,
-                                    viewModel: viewModel
+                                    room: vm.roomForId(room.id)!,
+                                    viewModel: vm
                                 )
                             } label: {
                                 Label(room.name, systemImage: messageFillKey)
                             }
                             .swipeActions(edge: .trailing) {
                                 Button(restoreTitleKey) {
-                                    viewModel.unarchiveRoom(room)
+                                    vm.unarchiveRoom(room)
                                 }
                             }
                             .tint(.green)
@@ -101,7 +130,7 @@ struct SettingsScreen: View {
                     }
                 }
 
-                if viewModel.unReplicatedPublicRooms.count > 0 {
+                if vm.unReplicatedPublicRooms.count > 0 {
                     Section(unreplicatedPublicRoomsTitleKey) {
                         /* This "unreplicated"/Archived public rooms section contains "placeholder"
                          public room instances from localStore archive (not Ditto) for which the
@@ -114,15 +143,15 @@ struct SettingsScreen: View {
                          this case, "restoring" the room actually deletes it, since the room data
                          has already been evicted from the db.
                         */
-                        ForEach(viewModel.unReplicatedPublicRooms) { room in
+                        ForEach(vm.unReplicatedPublicRooms) { room in
                             NavigationLink {
-                                RoomView(room: room, viewModel: viewModel)
+                                RoomView(room: room, viewModel: vm)
                             } label: {
                                 Label(room.name, systemImage: messageFillKey)
                             }
                             .swipeActions(edge: .trailing) {
                                 Button(restoreTitleKey) {
-                                    viewModel.unarchiveRoom(room)
+                                    vm.unarchiveRoom(room)
                                 }
                             }
                             .tint(.green)
@@ -131,17 +160,17 @@ struct SettingsScreen: View {
                 }
 
                 // Private Rooms
-                if viewModel.archivedPrivateRooms.count > 0 {
+                if vm.archivedPrivateRooms.count > 0 {
                     Section(archivedPrivateRoomsTitleKey) {
-                        ForEach(viewModel.archivedPrivateRooms) { privRoom in
+                        ForEach(vm.archivedPrivateRooms) { privRoom in
                             NavigationLink {
-                                RoomView(room: privRoom, viewModel: viewModel)
+                                RoomView(room: privRoom, viewModel: vm)
                             } label: {
                                 Label(privRoom.name, systemImage: messageFillKey)
                             }
                             .swipeActions(edge: .trailing) {
                                 Button(restoreTitleKey) {
-                                    viewModel.unarchiveRoom(privRoom)
+                                    vm.unarchiveRoom(privRoom)
                                 }
                             }
                             .tint(.green)
@@ -149,7 +178,7 @@ struct SettingsScreen: View {
                     }
                 }
 
-                if viewModel.unReplicatedPrivateRooms.count > 0 {
+                if vm.unReplicatedPrivateRooms.count > 0 {
                     Section {
                         /* This "unreplicated/evicted" rooms section contains placeholder archived
                          rooms (stored as JSON in UserDefaults) for which messages have been evicted
@@ -180,21 +209,21 @@ struct SettingsScreen: View {
                          on the dittoDB, however the user may be invited to join the private room
                          again by a member user/device via qrCode.
                          */
-                        ForEach(viewModel.unReplicatedPrivateRooms) { privRoom in
+                        ForEach(vm.unReplicatedPrivateRooms) { privRoom in
                             NavigationLink {
-                                RoomView(room: privRoom, viewModel: viewModel)
+                                RoomView(room: privRoom, viewModel: vm)
                             } label: {
                                 Label(privRoom.name, systemImage: messageFillKey)
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                 Button(settingsDeleteTitleKey) {
-                                    viewModel.deleteRoom(privRoom)
+                                    vm.deleteRoom(privRoom)
                                 }
                             }
                             .tint(.red)
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(restoreTitleKey) {
-                                    viewModel.unarchiveRoom(privRoom)
+                                    vm.unarchiveRoom(privRoom)
                                 }
                             }
                             .tint(.green)
@@ -211,7 +240,7 @@ struct SettingsScreen: View {
                     }
                     .font(.body)
                 }
-            }
+            }// end List
             .listStyle(.insetGrouped)
             .navigationBarTitle(settingsTitleKey)
             .navigationBarTitleDisplayMode(.inline)

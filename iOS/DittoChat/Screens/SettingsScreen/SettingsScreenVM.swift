@@ -7,7 +7,7 @@
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import Combine
-import Foundation
+import SwiftUI
 
 class SettingsScreenVM: ObservableObject {
     @Published var archivedPublicRooms: [Room] = []
@@ -15,6 +15,8 @@ class SettingsScreenVM: ObservableObject {
     @Published var archivedPrivateRooms: [Room] = []
     @Published var unReplicatedPrivateRooms: [Room] = []
     @Published var showExportLogsSheet = false
+    @Published var presentExportDataShare: Bool = false
+    @Published var presentExportDataAlert: Bool = false
     @Published var users: [User] = []
     @Published var acceptLargeImages = DataManager.shared.acceptLargeImages
     private var cancellables = Set<AnyCancellable>()

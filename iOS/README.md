@@ -11,7 +11,8 @@ settings to your Apple developer account credentials to provision building to yo
 APP_ID=a01b2c34-5d6e-7fgh-ijkl-8mno9p0q12r3
 DITTO_OFFLINE_TOKEN=a01b2c34-5d6e-7fgh-ijkl-8mno9p0q12r3
 ```
-5. Clean (**Command + Shift + K**), then build (**Command + B**). This will generate `Env.swift`  
+5. Clean (**Command + Shift + K**), then build (**Command + B**). This will generate `Env.swift` in
+the project directory  
 6. Build to two iOS devices and sign in with distinct user names in the first screen  
 7. Exchange messages in chat rooms between devices  
 
