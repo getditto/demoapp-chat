@@ -7,6 +7,7 @@
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import Combine
+import DittoExportLogs
 import DittoSwift
 import SwiftUI
 
@@ -15,24 +16,22 @@ class DittoInstance {
     static var shared = DittoInstance()
     let ditto: Ditto
 
-    init(enableLogging loggingEnabled: Bool = false) {
+    init() {
         ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
         
         try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
+        
+        // make sure log level is set _before_ starting ditto
+        DittoLogger.minimumLogLevel = .debug
+        if let logFileURL = DittoLogManager.shared.logFileURL {
+            DittoLogger.setLogFileURL(logFileURL)
+        }
         
         // update to v4 AddWins
         do {
             try ditto.disableSyncWithV3()
         } catch let error {
             print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
-        }
-        
-        if loggingEnabled {
-            // make sure log level is set _before_ starting ditto
-            DittoLogger.minimumLogLevel = .debug
-            if let logFileURL = LogManager.shared.logFileURL {
-                DittoLogger.setLogFileURL(logFileURL)
-            }
         }
         
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
