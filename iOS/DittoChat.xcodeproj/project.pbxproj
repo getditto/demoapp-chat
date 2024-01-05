@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		142B278E2A39290700C09751 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142B278D2A39290700C09751 /* Env.swift */; };
+		143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */; };
+		143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */ = {isa = PBXBuildFile; productRef = 143FFCC32B20F4840085A2EF /* DittoExportData */; };
+		143FFCC62B20F4840085A2EF /* DittoPeersList in Frameworks */ = {isa = PBXBuildFile; productRef = 143FFCC52B20F4840085A2EF /* DittoPeersList */; };
 		1493FF6A2978763500397DAB /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF682978763500397DAB /* ScannerView.swift */; };
 		1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF692978763500397DAB /* QRCodeView.swift */; };
 		14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */; };
@@ -83,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		142B278D2A39290700C09751 /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
+		143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoToolsListItem.swift; sourceTree = "<group>"; };
 		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		1493FF692978763500397DAB /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -145,10 +149,12 @@
 				14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */,
 				14BF945D29786731001F672D /* CodeScanner in Frameworks */,
 				14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */,
+				143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */,
 				14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */,
 				14CADB60293FF00700BED068 /* Fakery in Frameworks */,
 				14A2B74A298987D400E0FF86 /* DittoPresenceViewer in Frameworks */,
 				14A2B744298987D300E0FF86 /* DittoDataBrowser in Frameworks */,
+				143FFCC62B20F4840085A2EF /* DittoPeersList in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +256,7 @@
 			children = (
 				14B98AAC297C774F00509E57 /* SettingsScreen.swift */,
 				14B98AAA297C774300509E57 /* SettingsScreenVM.swift */,
+				143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */,
 			);
 			path = SettingsScreen;
 			sourceTree = "<group>";
@@ -421,6 +428,8 @@
 				14A2B745298987D300E0FF86 /* DittoDiskUsage */,
 				14A2B747298987D300E0FF86 /* DittoExportLogs */,
 				14A2B749298987D400E0FF86 /* DittoPresenceViewer */,
+				143FFCC32B20F4840085A2EF /* DittoExportData */,
+				143FFCC52B20F4840085A2EF /* DittoPeersList */,
 			);
 			productName = DittoChat;
 			productReference = 14CADB2A293FEBD500BED068 /* DittoChat.app */;
@@ -470,7 +479,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = "DittoLive Incorporated";
 				TargetAttributes = {
 					14CADB29293FEBD500BED068 = {
@@ -597,6 +606,7 @@
 				14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */,
 				14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */,
 				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
+				143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */,
 				142B278E2A39290700C09751 /* Env.swift in Sources */,
 				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
 				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
@@ -648,6 +658,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -680,6 +691,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -708,6 +720,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -740,6 +753,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -979,6 +993,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		143FFCC32B20F4840085A2EF /* DittoExportData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoExportData;
+		};
+		143FFCC52B20F4840085A2EF /* DittoPeersList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoPeersList;
+		};
 		14A2B743298987D300E0FF86 /* DittoDataBrowser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
