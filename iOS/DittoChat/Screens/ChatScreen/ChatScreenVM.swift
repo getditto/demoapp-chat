@@ -172,8 +172,11 @@ class ChatScreenVM: ObservableObject {
     // private room
     func shareQRCode() -> String? {
         if let collectionId = room.collectionId {
-            return "\(room.id)\n\(collectionId)\n\(room.messagesId)"
+            return "\(room.id)\n\(collectionId)\n\(room.messagesId)\n\(room.name)\n\(room.isPrivate)\n\(room.createdBy)\n\(room.createdOn)"
         }
         return nil
     }
 }
+
+
+
