@@ -542,20 +542,15 @@ extension DittoService {
         let roomName = String(parts[3])
         let isPrivate = Bool(String(parts[4])) ?? true
         let createdBy = String(parts[5])
-        let createdOnString = String(parts[6])
+        let createdOn = DateFormatter.isoDate.date(from: String(parts[6]))
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-
-        let createdOnDate = dateFormatter.date(from: createdOnString)
-
         addPrivateRoomSubscriptions(
             roomId: roomId,
             collectionId: collectionId,
             messagesId: messagesId
         )
         
-        let room = Room(id: roomId, name: roomName, messagesId: messagesId, isPrivate: isPrivate, collectionId: collectionId, createdBy: createdBy, createdOn: createdOnDate)
+        let room = Room(id: roomId, name: roomName, messagesId: messagesId, isPrivate: isPrivate, collectionId: collectionId, createdBy: createdBy, createdOn: createdOn)
         
         self.privateStore.addPrivateRoom(room)
         
