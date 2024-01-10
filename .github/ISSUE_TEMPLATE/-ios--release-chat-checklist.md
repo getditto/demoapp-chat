@@ -16,7 +16,7 @@ assignees: ''
 ## Checklist:
 1. - [ ] Assign yourself on this issue.
 1. - [ ] Run `bundle exec fastlane install_certificate` on [demo-apps](https://github.com/getditto/demo-apps) to install the latest iOS Certificate on Mac. (See [How to Set Up Your Mac for Publishing Demo Apps](https://www.notion.so/getditto/How-to-Set-Up-Your-Mac-for-Publishing-Demo-Apps-aa53e4a74f1c44d3a1f8c26e708bd904))
-1. - [ ] Make sure your `.env` vars are the same as the ones listed in [Environment Variables](https://www.notion.so/getditto/Environment-Variables-78261e05a2b44a299ee388f06e9ff86a?pvs=4#da3ac437bd0a4198bc8080b513b06ec2); otherwise the app won't sync with the existing versions.
+1. - [ ] Make sure both of your `.env` and `Env.swift` vars are the same as the ones listed in [Environment Variables](https://www.notion.so/getditto/Environment-Variables-78261e05a2b44a299ee388f06e9ff86a?pvs=4#da3ac437bd0a4198bc8080b513b06ec2); otherwise the app won't sync with the existing versions.
 1. - [ ] Make sure your branch is up to date (`git pull`).
 1. - [ ] Test the iOS Chat by syncing on multiple devices, opening PresenceViewer, etc.
 1. - [ ] Test the cross-platform sync with [the Android Chat](https://github.com/getditto/demoapp-chat/tree/main/Android).
