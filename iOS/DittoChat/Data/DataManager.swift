@@ -37,7 +37,7 @@ protocol LocalDataInterface {
 protocol ReplicatingDataInterface {
     var publicRoomsPublisher: CurrentValueSubject<[Room], Never> { get }
 
-    func room(for room: Room) -> Room?
+    func room(for room: Room) async -> Room?
     func createRoom(name: String, isPrivate: Bool)
     func joinPrivateRoom(qrCode: String)
     func roomPublisher(for room: Room) -> AnyPublisher<Room?, Never>
@@ -46,7 +46,7 @@ protocol ReplicatingDataInterface {
     func unarchiveRoom(_ room: Room)
     func deleteRoom(_ room: Room)
 
-    func createMessage(for rooom: Room, text: String)
+    func createMessage(for rooom: Room, text: String) async
     func saveEditedTextMessage(_ message: Message, in room: Room)
     func saveDeletedImageMessage(_ message: Message, in room: Room)
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws
@@ -82,8 +82,11 @@ extension DataManager {
     
     //MARK: Ditto Public Rooms
         
-    func room(for room: Room) -> Room? {
-        p2pStore.room(for: room)
+    func room(for room: Room, completion: @escaping (Room?) -> Void) {
+        Task {
+            let result = await p2pStore.room(for: room)
+            completion(result)
+        }
     }
 
     func createRoom(name: String, isPrivate: Bool) {
@@ -122,8 +125,8 @@ extension DataManager {
 extension DataManager {
     //MARK: Messages
     
-    func createMessage(for room: Room, text: String) {
-        p2pStore.createMessage(for: room, text: text)
+    func createMessage(for room: Room, text: String) async {
+        await p2pStore.createMessage(for: room, text: text)
     }
     
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {

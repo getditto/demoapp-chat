@@ -99,9 +99,9 @@ class DittoService: ReplicatingDataInterface {
     private var cancellables = Set<AnyCancellable>()
     
     // private in-memory stores of subscriptions for rooms and messages
-    private var privateRoomSubscriptions = [String: DittoSubscription]()
-    private var privateRoomMessagesSubscriptions = [String: DittoSubscription]()
-    private var publicRoomMessagesSubscriptions = [String: DittoSubscription]()
+    private var privateRoomSubscriptions = [String: DittoSyncSubscription]()
+    private var privateRoomMessagesSubscriptions = [String: DittoSyncSubscription]()
+    private var publicRoomMessagesSubscriptions = [String: DittoSyncSubscription]()
 
     private let ditto = DittoInstance.shared.ditto
     private var privateStore: LocalDataInterface
@@ -194,8 +194,14 @@ extension DittoService {
         if room.isPrivate {
             addPrivateRoomSubscriptions(roomId: room.id, collectionId: room.collectionId!, messagesId: room.messagesId)
         } else {
-            let mSub = ditto.store[room.messagesId].findAll().subscribe()
-            publicRoomMessagesSubscriptions[room.id] = mSub
+            
+            do {
+                let mSub = try ditto.sync.registerSubscription(query: "SELECT * FROM \"\(room.messagesId)\"")
+                publicRoomMessagesSubscriptions[room.id] = mSub
+
+            } catch {
+                print("Error \(error)")
+            }
         }
     }
     
@@ -226,11 +232,18 @@ extension DittoService {
 
     // This function without room param is for qrCode join private room, where there isn't yet a room
     func addPrivateRoomSubscriptions(roomId: String, collectionId: String, messagesId: String) {
-        let rSub = ditto.store[collectionId].findAll().subscribe()
-        privateRoomSubscriptions[roomId] = rSub
+        
+        do {
+            let rSub = try ditto.sync.registerSubscription(query: "SELECT * FROM \"\(collectionId)\"")
+            privateRoomSubscriptions[roomId] = rSub
+            
+            let mSub = try ditto.sync.registerSubscription(query: "SELECT * FROM \"\(messagesId)\"")
+            privateRoomMessagesSubscriptions[roomId] = mSub
 
-        let mSub = ditto.store[messagesId].findAll().subscribe()
-        privateRoomMessagesSubscriptions[roomId] = mSub
+
+        } catch {
+            print("Error \(error)")
+        }
     }
 }
     
@@ -243,27 +256,41 @@ extension DittoService {
                 guard let userId = userId else {
                     return Just<User?>(nil).eraseToAnyPublisher()
                 }
-                return self.ditto.store.collection(usersKey)
-                    .findByID(userId)
-                    .singleDocumentLiveQueryPublisher()
-                    .compactMap { doc, _ in return doc }
-                    .map { User(document: $0) }
+
+                return self.ditto.store.observePublisher(query: "SELECT * FROM \"\(usersKey)\" WHERE _id = :id", arguments: ["id":userId], mapTo: User.self, onlyFirst: true)
+                    .catch { error in
+                        assertionFailure("ERROR with \(#function)" + error.localizedDescription)
+                        return Empty<User?, Never>()
+                    }
+                    .removeDuplicates()
+                    .compactMap { $0 } // Remove nil values
                     .eraseToAnyPublisher()
+                
+                
             }
             .switchToLatest()
             .eraseToAnyPublisher()
     }
 
     func addUser(_ usr: User) {
-        _ = try? ditto.store.collection(usersKey)
-            .upsert(usr.docDictionary())
+        
+        Task {
+            do {
+                try await ditto.store.execute(query: "INSERT INTO \(usersKey) DOCUMENTS (:newUser) ON ID CONFLICT DO UPDATE", arguments: ["newUser": usr.docDictionary()])
+            } catch {
+                print("Error \(error)")
+            }
+        }
     }
 
     func allUsersPublisher() -> AnyPublisher<[User], Never>  {
-        return ditto.store.collection(usersKey).findAll().liveQueryPublisher()
-            .map { docs, _ in
-                docs.map { User(document: $0) }
+
+        return ditto.store.observePublisher(query: "SELECT * FROM \"\(usersKey)\"", mapTo: User.self)
+            .catch { error in
+                assertionFailure("ERROR with \(#function)" + error.localizedDescription)
+                return Empty<[User], Never>()
             }
+            .removeDuplicates()
             .eraseToAnyPublisher()
     }
 }
@@ -271,63 +298,94 @@ extension DittoService {
 //MARK: Messages
 extension DittoService {
     
-    func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {        
-        return ditto.store.collection(collectionId)
-            .findByID(msgId)
-            .singleDocumentLiveQueryPublisher()
-            .compactMap { doc, _ in return doc }
-            .map { Message(document: $0) }
+    func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {
+        
+        let query = "SELECT * FROM COLLECTION \"\(collectionId)\" (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) WHERE _id = :id"
+        
+        let args = ["id": msgId]
+        
+        return ditto.store.observePublisher(query: query, arguments: args, mapTo: Message.self, onlyFirst: true)
+            .catch { error in
+                assertionFailure("ERROR with \(#function)" + error.localizedDescription)
+                return Empty<Message?, Never>()
+            }
+            .removeDuplicates()
+            .compactMap { $0 } // Remove nil values
             .eraseToAnyPublisher()
     }
 
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never> {
-        return ditto.store.collection(room.messagesId)
-            .findAll()
-            .sort(createdOnKey, direction: .ascending)
-            .liveQueryPublisher()
-            .map { docs, _ in
-                docs.map { Message(document: $0) }                
+
+        return ditto.store.observePublisher(query: "SELECT * FROM COLLECTION \"\(room.messagesId)\" (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) ORDER BY \(createdOnKey) ASC", mapTo: Message.self)
+            .catch { error in
+                assertionFailure("ERROR with \(#function)" + error.localizedDescription)
+                return Empty<[Message], Never>()
             }
-            .eraseToAnyPublisher()        
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
     
-    func createMessage(for room: Room, text: String) {
+    func createMessage(for room: Room, text: String) async {
         guard let userId = privateStore.currentUserId else {
             return
         }
         
-        guard let room = self.room(for: room) else {
+        guard let room = await self.room(for: room) else {
             return
         }
         
-        try! ditto.store.collection(room.messagesId)
-            .upsert([
-                createdOnKey: DateFormatter.isoDate.string(from: Date()),
-                roomIdKey: room.id,
-                textKey: text,
-                userIdKey: userId
-            ] as [String: Any?] )
+        Task {
+            do {
+                let doc = [
+                    createdOnKey: DateFormatter.isoDate.string(from: Date()),
+                    roomIdKey: room.id,
+                    textKey: text,
+                    userIdKey: userId
+                ];
+                
+                try await ditto.store.execute(query: "INSERT INTO \"\(room.messagesId)\" DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": doc])
+
+            } catch {
+                print("Error \(error)")
+            }
+            
+        }
     }
     
     func saveEditedTextMessage(_ message: Message, in room: Room) {
-        let _ = ditto.store[room.messagesId].findByID(message.id).update { mutableDoc in
-            mutableDoc?[textKey].set(message.text)
+        Task {
+            do {
+                try await ditto.store.execute(query: "UPDATE \"\(room.messagesId)\" SET \(textKey) = \'\(message.text)\' WHERE _id = :id", arguments: ["id": message.id])
+            } catch {
+                print("Error \(error)")
+            }
         }
     }
 
     func saveDeletedImageMessage(_ message: Message, in room: Room) {
-        let _ = ditto.store[room.messagesId].findByID(message.id).update { mutableDoc in
-            mutableDoc?[thumbnailImageTokenKey] = nil
-            mutableDoc?[largeImageTokenKey] = nil
-            mutableDoc?[textKey].set(message.text)
+
+        Task {
+            do {
+                let query = "UPDATE COLLECTION \"\(room.messagesId)\" (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) SET \(thumbnailImageTokenKey) -> tombstone(), \(largeImageTokenKey) -> tombstone(), \(textKey) = :text WHERE _id = :id"
+                
+                let args = [
+                    "id": message.id,
+                    "text": message.text
+                ]
+                
+                try await ditto.store.execute(query: query, arguments: args)
+            } catch {
+                print("Error \(error)")
+            }
         }
+        
     }
 
     // image param expected to be native image size/resolution, from which downsampled thumbnail will be derived
     func createImageMessage(for room: Room, image: UIImage, text: String?) async throws {
         let userId = privateStore.currentUserId ?? createdByUnknownKey
         var nowDate = DateFormatter.isoDate.string(from: Date())
-        var fname = attachmentFilename(for: user(for: userId), type: .thumbnailImage, timestamp: nowDate)
+        var fname = await attachmentFilename(for: user(for: userId), type: .thumbnailImage, timestamp: nowDate)
 
         //------------------------------------- Thumbnail ------------------------------------------
         guard let thumbnailImg = await image.attachmentThumbnail() else {
@@ -345,7 +403,7 @@ extension DittoService {
             throw AttachmentError.tmpStorageWriteFail
         }
         
-        guard let thumbAttachment = ditto.store[room.messagesId].newAttachment(
+        guard let thumbAttachment = await ditto.store[room.messagesId].newAttachment(
             path: tmpStorage.fileURL.path,
             metadata: metadata(for: image, fname: fname, timestamp: nowDate)
         ) else {
@@ -355,24 +413,32 @@ extension DittoService {
         
         // create new message doc with thumbnail attachment
         let docId = UUID().uuidString
-        do {
-            try ditto.store[room.messagesId].upsert([
-                dbIdKey: docId,
-                createdOnKey: nowDate,
-                roomIdKey: room.id,
-                userIdKey: userId,
-                thumbnailImageTokenKey: thumbAttachment
-            ])
-            
-            try await cleanupTmpStorage(tmpStorage.deleteDirectory)
-        } catch {
-            throw error
+
+        let capturedNowDate = nowDate
+
+        Task {
+            do {
+                let doc: [String: Any?] = [
+                    dbIdKey: docId,
+                    createdOnKey: capturedNowDate,
+                    roomIdKey: room.id,
+                    userIdKey: userId,
+                    thumbnailImageTokenKey: thumbAttachment
+                ];
+                
+                try await ditto.store.execute(query: "INSERT INTO COLLECTION \"\(room.messagesId)\" (\(thumbnailImageTokenKey) ATTACHMENT) DOCUMENTS (:newDoc)", arguments: ["newDoc": doc, "\(thumbnailImageTokenKey)": thumbAttachment])
+   
+                try await cleanupTmpStorage(tmpStorage.deleteDirectory)
+            } catch {
+                print("Error \(error)")
+                throw error
+            }
         }
         //------------------------------------------------------------------------------------------
         
         //------------------------------------- Large Image  ---------------------------------------
         nowDate = DateFormatter.isoDate.string(from: Date())
-        fname = attachmentFilename(for: user(for: userId), type: .largeImage, timestamp: nowDate)
+        fname = await attachmentFilename(for: user(for: userId), type: .largeImage, timestamp: nowDate)
 
         guard let tmpStorage = try? TemporaryFile(creatingTempDirectoryForFilename: "largeImage.jpg") else {
             print("DittoService.\(#function): Error creating TMP storage directory")
@@ -384,17 +450,29 @@ extension DittoService {
             throw AttachmentError.tmpStorageWriteFail
         }
         
-        guard let largeAttachment = ditto.store[room.messagesId].newAttachment(
+        guard let largeAttachment = await ditto.store[room.messagesId].newAttachment(
             path: tmpStorage.fileURL.path,
             metadata: metadata(for: image, fname: fname, timestamp: nowDate)
         ) else {
             print("Error creating Ditto image attachment from large jpg data --> Throw")
             throw AttachmentError.createFail
         }
-
-        let _ = ditto.store[room.messagesId].findByID(docId).update { mutableDoc in
-            mutableDoc?[largeImageTokenKey].set(largeAttachment)
+        
+        Task {
+            do {
+                let query = "UPDATE COLLECTION \"\(room.messagesId)\" (\(largeImageTokenKey) ATTACHMENT) SET \(largeImageTokenKey) = :largeAttachment WHERE _id = :id"
+                
+                let args = [
+                    "id": docId,
+                    "largeAttachment": largeAttachment
+                ]
+                
+                let _ = try await ditto.store.execute(query: query, arguments: args)
+            } catch {
+                print("Error \(error)")
+            }
         }
+        
         
         do {
             try await cleanupTmpStorage(tmpStorage.deleteDirectory)
@@ -403,8 +481,8 @@ extension DittoService {
         }
     }
 
-    private func metadata(for image:UIImage, fname: String, timestamp: String) -> [String: String] {
-        [
+    private func metadata(for image:UIImage, fname: String, timestamp: String) async -> [String: String] {
+        await [
             /*
              Note: "filename" in the metadata is used when displaying a large image attachment in
              a QLPreviewController, and will be the filename if the image is shared from there.
@@ -438,8 +516,8 @@ extension DittoService {
         type: AttachmentType,
         timestamp: String,
         ext: String = jpgExtKey
-    ) -> String {
-        var fname = self.user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey
+    ) async -> String {
+        var fname = await self.user(for: privateStore.currentUserId ?? "")?.fullName ?? unknownUserNameKey
         fname = fname.replacingOccurrences(of: " ", with: "-")
         let tmstamp = timestamp.replacingOccurrences(of: ":", with: "-")
         fname += "_\(type.description)" + "_\(tmstamp)" + ext
@@ -447,12 +525,19 @@ extension DittoService {
         return fname
     }
     
-    private func user(for userId: String) -> User? {
-        if let doc = ditto.store[usersKey].findByID(userId).exec() {
-            return User(document: doc)
-        }
-        return nil
-    }
+    private func user(for userId: String) async -> User? {
+       
+       do {
+           let result = try await ditto.store.execute(query: "SELECT * FROM \(usersKey) WHERE _id = :id", arguments: ["id": userId])
+           if let userValue = result.items.first?.value {
+               return User(value: userValue)
+           }
+       } catch {
+           print("Error \(error)")
+       }
+       
+       return nil
+   }
     //  --------------------------------------------------------------------------------------------
     
     
@@ -469,40 +554,54 @@ extension DittoService {
     //MARK: Rooms
     
     private func updateAllPublicRooms() {
-        allPublicRoomsCancellable = ditto.store.collection(publicRoomsCollectionId)
-            .findAll()
-            .sort(createdOnKey, direction: .ascending)
-            .liveQueryPublisher()
-            .receive(on: DispatchQueue.main)
-            .map { docs, _ in
-                docs.map { Room(document: $0) }                
+        
+        allPublicRoomsCancellable = ditto.store.observePublisher(query: "SELECT * FROM \(publicRoomsCollectionId) ORDER BY \(createdOnKey) ASC", mapTo: Room.self)
+            .catch { error in
+                assertionFailure("ERROR with \(#function)" + error.localizedDescription)
+                return Empty<[Room], Never>()
             }
             .assign(to: \.allPublicRooms, on: self)
+
     }
     
     func roomPublisher(for room: Room) -> AnyPublisher<Room?, Never> {
-        ditto.store.collection( room.isPrivate ? room.collectionId! : publicRoomsCollectionId )
-            .findByID(room.id)
-            .singleDocumentLiveQueryPublisher()
-            .compactMap { doc, _ in return doc }
-            .map { Room(document: $0) }
+
+        ditto.store.observePublisher(query: "SELECT * FROM \"\(room.isPrivate ? room.collectionId! : publicRoomsCollectionId)\" WHERE _id = :id", arguments: ["id":room.id], mapTo: Room.self, onlyFirst: true)
+            .catch { error in
+                assertionFailure("ERROR with \(#function)" + error.localizedDescription)
+                return Empty<Room?, Never>()
+            }
+            .removeDuplicates()
+            .compactMap { $0 } // Remove nil values
             .eraseToAnyPublisher()
     }
     
     /// This function returns a room from the Ditto db for the given room. The room argument will be passed from the UI, where
     /// placeholder Room instances are used to display, e.g., archived rooms. In other cases, they are rooms from a publisher of
     /// Room instances,
-    func room(for room: Room) -> Room? {
+    func room(for room: Room) async -> Room? {
         let collectionId = room.collectionId ?? publicRoomsCollectionId
         
-        guard let doc = ditto.store[collectionId].findByID(room.id).exec() else {
-            print("DittoService.\(#function): WARNING (except for archived private rooms)" +
-                  " - expected non-nil room room.id: \(room.id)"
-            )
-            return nil
+        do {
+            let result = try await ditto.store.execute(query: "SELECT * FROM \"\(collectionId)\" WHERE _id = :id", arguments: ["id": room.id])
+            
+            if result.items.isEmpty {
+                print("DittoService.\(#function): WARNING (except for archived private rooms)" +
+                      " - expected non-nil room room.id: \(room.id)"
+                )
+                return nil
+            }
+            
+            if let itemValue = result.items.first?.value {
+                return Room(value: itemValue)
+            }
+            
+        } catch {
+            print("Error \(error)")
         }
-        let room = Room(document: doc)
-        return room
+        
+        return nil
+
     }
 
     func createRoom(name: String, isPrivate: Bool) {
@@ -520,10 +619,14 @@ extension DittoService {
         
         addSubscriptions(for: room)
         
-        try! ditto.store[collectionId].upsert(
-            room.docDictionary()
-        )
-
+        Task {
+            do {
+                try await ditto.store.execute(query: "INSERT INTO \"\(collectionId)\" DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": room.docDictionary()])
+            } catch {
+                print("Error \(error)")
+            }
+        }
+        
         if isPrivate {
             privateStore.addPrivateRoom(room)
         }
@@ -564,15 +667,25 @@ extension DittoService {
         }
         
         // Create default Public room with pre-configured id, messagesId
-        try! ditto.store.collection(publicRoomsCollectionId)
-            .upsert([
-                dbIdKey: publicKey,
-                nameKey: publicRoomTitleKey,
-                collectionIdKey: publicRoomsCollectionId,
-                messagesIdKey: publicMessagesIdKey,//PUBLIC_MESSAGES_ID,
-                createdOnKey: DateFormatter.isoDate.string(from: Date()),
-                isPrivateKey: false
-            ] as [String: Any?] )
+        
+        Task {
+            do {
+                let newDoc: [String: Any?] = [
+                    dbIdKey: publicKey,
+                    nameKey: publicRoomTitleKey,
+                    collectionIdKey: publicRoomsCollectionId,
+                    messagesIdKey: publicMessagesIdKey,//PUBLIC_MESSAGES_ID,
+                    createdOnKey: DateFormatter.isoDate.string(from: Date()),
+                    isPrivateKey: false
+                ]
+                
+                try await ditto.store.execute(query: "INSERT INTO \(publicRoomsCollectionId) DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+            } catch {
+                print("Error \(error)")
+            }
+        }
+        
+        
     }
 }
 
@@ -635,10 +748,17 @@ extension DittoService {
     func unarchivePublicRoom(_ room: Room) {
         privateStore.unarchivePublicRoom(room)
         
-        guard let _ = ditto.store[publicRoomsCollectionId].findByID(room.id).exec() else {
-            print("DittoService.\(#function): ERROR - expected non-nil public room for roomId: \(room.id)")
-            return
+        Task {
+            do {
+                guard let _ = try await ditto.store.execute(query: "SELECT * FROM \(publicRoomsCollectionId) WHERE _id = :id", arguments: ["id": room.id]).items.first else {
+                    print("DittoService.\(#function): ERROR - expected non-nil public room for roomId: \(room.id)")
+                    return
+                }
+            } catch {
+                print("Error \(error)")
+            }
         }
+        
         
         addSubscriptions(for: room)
         
@@ -665,10 +785,11 @@ extension DittoService {
         removeSubscriptions(for: room)
         evictPrivateRoom(room)
         
+        //Deleting data (remove) is not supported in DQL
         // additionally remove roomDoc, message collection, and collection itself from DB
-        ditto.store[collectionId].findByID(room.id).remove()
-        ditto.store[collectionsKey].findByID(room.messagesId).remove()
-        ditto.store[collectionsKey].findByID(collectionId).remove()
+//        ditto.store[collectionId].findByID(room.id).remove()
+//        ditto.store[collectionsKey].findByID(room.messagesId).remove()
+//        ditto.store[collectionsKey].findByID(collectionId).remove()
 
         privateStore.deleteArchivedPrivateRoom(roomId: room.id)
     }
@@ -687,20 +808,36 @@ extension DittoService {
             return
         }
         
-        // evict all messages in collection
-        ditto.store[room.messagesId].findAll().evict()
-        ditto.store[collectionsKey].findByID(room.messagesId).evict()
-        
-        // evict room from collection
-        ditto.store[collectionId].findByID(room.id).evict()
+        Task {
+            do {
+                // evict all messages in collection
+                try await ditto.store.execute(query: "EVICT FROM \"\(room.messagesId)\"")
+                try await ditto.store.execute(query: "EVICT FROM \(collectionsKey) WHERE _id = :id", arguments: ["id": room.messagesId])
+                
+                // evict room from collection
+                try await ditto.store.execute(query: "EVICT FROM \"\(collectionId)\" WHERE _id = :id", arguments: ["id": room.id])
+
+
+            } catch {
+                print("Error \(error)")
+            }
+        }
     }
     
     private func evictPublicRoom(_ room: Room) {
-        // evict all messages in collection
-        ditto.store[room.messagesId].findAll().evict()
-        
-        // evict the messages collection
-        ditto.store[collectionsKey].findByID(room.messagesId).evict()
+
+        Task {
+            do {
+                // evict all messages in collection
+                try await ditto.store.execute(query: "EVICT FROM \"\(room.messagesId)\"")
+                
+                // evict the messages collection
+                try await ditto.store.execute(query: "EVICT FROM \(collectionsKey) WHERE _id = :id", arguments: ["id": room.messagesId])
+                
+            } catch {
+                print("Error \(error)")
+            }
+        }
 
         // We don't need to evict a public room because it will replicate automatically anyway,
         // but room documents are very light-weight.

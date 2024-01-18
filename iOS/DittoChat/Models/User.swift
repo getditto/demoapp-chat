@@ -17,11 +17,12 @@ struct User: Identifiable, Hashable, Equatable {
     }
 }
 
-extension User {
-    init(document: DittoDocument) {
-        self.id = document[dbIdKey].stringValue
-        self.firstName = document[firstNameKey].stringValue
-        self.lastName = document[lastNameKey].stringValue
+extension User: DittoDecodable {
+    init(value: [String: Any?]) {
+        
+        self.id = value[dbIdKey] as? String ?? ""
+        self.firstName = value[firstNameKey] as? String ?? ""
+        self.lastName = value[lastNameKey] as? String ?? ""
     }
 }
 
@@ -44,3 +45,11 @@ extension User {
         ]
     }
 }
+
+//extension User: DittoDecodable {
+//    init(value: [String: Any?]) {
+//        self.id = value[dbIdKey] as? String ?? ""
+//        self.firstName = value[firstNameKey] as? String ?? ""
+//        self.lastName = value[lastNameKey] as? String ?? ""
+//    }
+//}
