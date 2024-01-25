@@ -49,6 +49,13 @@ class DittoInstance: ObservableObject {
         if !isPreview {
             try! ditto.startSync()
         }
+        
+        do {
+            try ditto.sync.registerSubscription(query: "SELECT * FROM \(usersKey)")
+        } catch {
+            print("Error \(error)")
+        }
+
     }
 }
 extension DittoInstance {
@@ -257,7 +264,7 @@ extension DittoService {
                     return Just<User?>(nil).eraseToAnyPublisher()
                 }
 
-                return self.ditto.store.observePublisher(query: "SELECT * FROM \"\(usersKey)\" WHERE _id = :id", arguments: ["id":userId], mapTo: User.self, onlyFirst: true)
+                return self.ditto.store.observePublisher(query: "SELECT * FROM \(usersKey) WHERE _id = :id", arguments: ["id":userId], mapTo: User.self, onlyFirst: true)
                     .catch { error in
                         assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                         return Empty<User?, Never>()
@@ -285,7 +292,7 @@ extension DittoService {
 
     func allUsersPublisher() -> AnyPublisher<[User], Never>  {
 
-        return ditto.store.observePublisher(query: "SELECT * FROM \"\(usersKey)\"", mapTo: User.self)
+        return ditto.store.observePublisher(query: "SELECT * FROM \(usersKey)", mapTo: User.self)
             .catch { error in
                 assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                 return Empty<[User], Never>()
@@ -312,6 +319,7 @@ extension DittoService {
             .removeDuplicates()
             .compactMap { $0 } // Remove nil values
             .eraseToAnyPublisher()
+        
     }
 
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never> {
@@ -323,6 +331,7 @@ extension DittoService {
             }
             .removeDuplicates()
             .eraseToAnyPublisher()
+        
     }
     
     func createMessage(for room: Room, text: String) async {
@@ -561,7 +570,6 @@ extension DittoService {
                 return Empty<[Room], Never>()
             }
             .assign(to: \.allPublicRooms, on: self)
-
     }
     
     func roomPublisher(for room: Room) -> AnyPublisher<Room?, Never> {
