@@ -34,7 +34,7 @@ class LocalStoreService: LocalDataInterface {
     }
     
     var basicChat: Bool {
-        get { defaults.basicChat }
+        get { false }//defaults.basicChat }
         set { defaults.basicChat = newValue }
     }
     

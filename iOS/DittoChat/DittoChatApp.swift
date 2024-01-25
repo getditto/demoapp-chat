@@ -24,12 +24,13 @@ struct DittoChatApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                if vm.basicChatAsRootView {
-                    ChatScreen(room: Room.basicChatDummy)
-                        .withErrorHandling()
-                } else {
-                    RoomsListScreen()
-                }
+//                if vm.basicChatAsRootView {
+//                    ChatScreen(room: Room.basicChatDummy)
+//                        .withErrorHandling()
+//                } else {
+//                    RoomsListScreen()
+                    SessionsListView()
+//                }
             }
         }
     }
