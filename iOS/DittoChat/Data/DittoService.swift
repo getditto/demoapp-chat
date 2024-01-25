@@ -11,6 +11,25 @@ import DittoExportLogs
 import DittoSwift
 import SwiftUI
 
+class AuthDelegate: DittoAuthenticationDelegate {
+    func authenticationRequired(authenticator: DittoAuthenticator) {
+        authenticator.login(
+            token: Env.DITTO_AUTH_PASSWORD,
+            provider: Env.DITTO_AUTH_PROVIDER
+        )  { clientInfo, err in
+            print("Login request completed \(err == nil ? "successfully!" : "with error: \(err.debugDescription)")")
+        }
+    }
+
+    func authenticationExpiringSoon(authenticator: DittoAuthenticator, secondsRemaining: Int64) {
+        authenticator.login(
+            token: Env.DITTO_AUTH_PASSWORD,
+            provider: Env.DITTO_AUTH_PROVIDER
+        )  { clientInfo, err in
+            print("Login request completed \(err == nil ? "successfully!" : "with error: \(err.debugDescription)")")
+        }
+    }
+}
 
 class DittoInstance: ObservableObject {
     @Published var loggingOption: DittoLogger.LoggingOptions
@@ -21,9 +40,15 @@ class DittoInstance: ObservableObject {
     let ditto: Ditto
 
     init() {
-        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
+        let authDelegate = AuthDelegate()
         
-        try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
+        ditto = Ditto(
+            identity: .onlineWithAuthentication(
+                appID: Env.DITTO_APP_ID,
+                authenticationDelegate: authDelegate
+            ),
+            persistenceDirectory: self.appDirectory
+        )
         
         // make sure our log level is set _before_ starting ditto.
         self.loggingOption = Self.storedLoggingOption()
@@ -50,6 +75,11 @@ class DittoInstance: ObservableObject {
             try! ditto.startSync()
         }
     }
+    
+    var appDirectory: URL! = {
+        let directory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return directory.appendingPathComponent(Env.DITTO_APP_ID, isDirectory: true)
+    }()
 }
 extension DittoInstance {
     enum UserDefaultsKeys: String {

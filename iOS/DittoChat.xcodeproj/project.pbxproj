@@ -39,6 +39,17 @@
 		14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAC297C774F00509E57 /* SettingsScreen.swift */; };
 		14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */; };
 		14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BB526329A010790072C4AD /* RoomsListRowItem.swift */; };
+		14BEC7462B61D043007D2840 /* DittoSessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7452B61D043007D2840 /* DittoSessions.swift */; };
+		14BEC7482B61D06E007D2840 /* DataManagerSessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7472B61D06E007D2840 /* DataManagerSessions.swift */; };
+		14BEC74A2B61D0A4007D2840 /* LocalStoreSessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7492B61D0A4007D2840 /* LocalStoreSessions.swift */; };
+		14BEC74E2B61D0E8007D2840 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC74D2B61D0E8007D2840 /* Session.swift */; };
+		14BEC7502B61D0F6007D2840 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC74F2B61D0F6007D2840 /* Note.swift */; };
+		14BEC7522B61D372007D2840 /* SessionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7512B61D372007D2840 /* SessionsListView.swift */; };
+		14BEC7542B61D385007D2840 /* SessionEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7532B61D385007D2840 /* SessionEditView.swift */; };
+		14BEC7562B61E94F007D2840 /* SessionUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7552B61E94F007D2840 /* SessionUser.swift */; };
+		14BEC7582B61F913007D2840 /* SessionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7572B61F913007D2840 /* SessionKeys.swift */; };
+		14BEC75A2B6225AD007D2840 /* SessionsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7592B6225AD007D2840 /* SessionsListRowItem.swift */; };
+		14BEC75C2B62265E007D2840 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC75B2B62265E007D2840 /* SessionView.swift */; };
 		14BF945D29786731001F672D /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 14BF945C29786731001F672D /* CodeScanner */; };
 		14BF945F297868ED001F672D /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BF945E297868ED001F672D /* Room.swift */; };
 		14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB2D293FEBD500BED068 /* DittoChatApp.swift */; };
@@ -111,6 +122,17 @@
 		14B98AAC297C774F00509E57 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
 		14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomDetailsView.swift; sourceTree = "<group>"; };
 		14BB526329A010790072C4AD /* RoomsListRowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsListRowItem.swift; sourceTree = "<group>"; };
+		14BEC7452B61D043007D2840 /* DittoSessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoSessions.swift; sourceTree = "<group>"; };
+		14BEC7472B61D06E007D2840 /* DataManagerSessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerSessions.swift; sourceTree = "<group>"; };
+		14BEC7492B61D0A4007D2840 /* LocalStoreSessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreSessions.swift; sourceTree = "<group>"; };
+		14BEC74D2B61D0E8007D2840 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		14BEC74F2B61D0F6007D2840 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		14BEC7512B61D372007D2840 /* SessionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsListView.swift; sourceTree = "<group>"; };
+		14BEC7532B61D385007D2840 /* SessionEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEditView.swift; sourceTree = "<group>"; };
+		14BEC7552B61E94F007D2840 /* SessionUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionUser.swift; sourceTree = "<group>"; };
+		14BEC7572B61F913007D2840 /* SessionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionKeys.swift; sourceTree = "<group>"; };
+		14BEC7592B6225AD007D2840 /* SessionsListRowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsListRowItem.swift; sourceTree = "<group>"; };
+		14BEC75B2B62265E007D2840 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
 		14BF945E297868ED001F672D /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		14CADB2A293FEBD500BED068 /* DittoChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DittoChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14CADB2D293FEBD500BED068 /* DittoChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatApp.swift; sourceTree = "<group>"; };
@@ -261,10 +283,45 @@
 			path = SettingsScreen;
 			sourceTree = "<group>";
 		};
+		14BEC7442B61D01D007D2840 /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				14BEC74B2B61D0C8007D2840 /* Models */,
+				14BEC74C2B61D0D5007D2840 /* Views */,
+				14BEC7452B61D043007D2840 /* DittoSessions.swift */,
+				14BEC7472B61D06E007D2840 /* DataManagerSessions.swift */,
+				14BEC7492B61D0A4007D2840 /* LocalStoreSessions.swift */,
+				14BEC7572B61F913007D2840 /* SessionKeys.swift */,
+			);
+			path = Sessions;
+			sourceTree = "<group>";
+		};
+		14BEC74B2B61D0C8007D2840 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				14BEC74F2B61D0F6007D2840 /* Note.swift */,
+				14BEC74D2B61D0E8007D2840 /* Session.swift */,
+				14BEC7552B61E94F007D2840 /* SessionUser.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		14BEC74C2B61D0D5007D2840 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				14BEC7512B61D372007D2840 /* SessionsListView.swift */,
+				14BEC7592B6225AD007D2840 /* SessionsListRowItem.swift */,
+				14BEC7532B61D385007D2840 /* SessionEditView.swift */,
+				14BEC75B2B62265E007D2840 /* SessionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		14CADB21293FEBD500BED068 = {
 			isa = PBXGroup;
 			children = (
 				14E834D22953C7F60027D750 /* README.md */,
+				14BEC7442B61D01D007D2840 /* Sessions */,
 				14CADB2C293FEBD500BED068 /* DittoChat */,
 				14CADB3D293FEBD600BED068 /* DittoChatTests */,
 				14CADB47293FEBD600BED068 /* DittoChatUITests */,
@@ -557,12 +614,13 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/buildEnv.sh",
+				"$(SRCROOT)/.env",
 			);
 			name = "Generate Env.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Env.swift",
+				"${SRCROOT}/${PROJECT}/Env.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -576,17 +634,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */,
+				14BEC7462B61D043007D2840 /* DittoSessions.swift in Sources */,
 				14E834C32953C7A30027D750 /* ChatScreenVM.swift in Sources */,
 				14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */,
 				14BF945F297868ED001F672D /* Room.swift in Sources */,
 				14B4E26D2979EF2C0069B69D /* LocalStoreService.swift in Sources */,
 				14E834C72953C7AB0027D750 /* ProfileScreenViewModel.swift in Sources */,
+				14BEC75C2B62265E007D2840 /* SessionView.swift in Sources */,
 				14E834B82953C6E60027D750 /* DittoService.swift in Sources */,
 				14E834C82953C7AB0027D750 /* ProfileScreen.swift in Sources */,
 				14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */,
+				14BEC74A2B61D0A4007D2840 /* LocalStoreSessions.swift in Sources */,
+				14BEC7502B61D0F6007D2840 /* Note.swift in Sources */,
 				14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */,
 				1493FF6A2978763500397DAB /* ScannerView.swift in Sources */,
 				14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */,
+				14BEC7542B61D385007D2840 /* SessionEditView.swift in Sources */,
 				14A0B87E29D3BC4100D2D625 /* UIImage+Rotation.swift in Sources */,
 				14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */,
 				14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */,
@@ -595,8 +658,11 @@
 				14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */,
 				14A0B87429D3BB8B00D2D625 /* AttachmentPreview.swift in Sources */,
 				14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */,
+				14BEC7482B61D06E007D2840 /* DataManagerSessions.swift in Sources */,
 				14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */,
 				14E834B62953C6E60027D750 /* Message.swift in Sources */,
+				14BEC7562B61E94F007D2840 /* SessionUser.swift in Sources */,
+				14BEC75A2B6225AD007D2840 /* SessionsListRowItem.swift in Sources */,
 				14B4E26F297A40380069B69D /* DataManager.swift in Sources */,
 				14A0B87229D3BB5D00D2D625 /* CustomErrors.swift in Sources */,
 				14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */,
@@ -609,12 +675,15 @@
 				143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */,
 				142B278E2A39290700C09751 /* Env.swift in Sources */,
 				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
+				14BEC7582B61F913007D2840 /* SessionKeys.swift in Sources */,
 				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
 				14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */,
 				14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */,
 				1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */,
 				14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */,
 				14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */,
+				14BEC7522B61D372007D2840 /* SessionsListView.swift in Sources */,
+				14BEC74E2B61D0E8007D2840 /* Session.swift in Sources */,
 				14E834B72953C6E60027D750 /* User.swift in Sources */,
 				14A0B88329D60C6800D2D625 /* MessageEditView.swift in Sources */,
 				14A0B88029D49E7200D2D625 /* GeneralErrorView.swift in Sources */,
