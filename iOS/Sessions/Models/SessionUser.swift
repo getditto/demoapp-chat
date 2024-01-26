@@ -8,44 +8,18 @@
 
 import DittoSwift
 import Foundation
-/*
-enum DittoTeam: CaseIterable {
-    case bigPeer
-    case cloudServices
-    case cx
-    case executive
-    case federal
-    case hr
-    case legal
-    case marketing
-    case operations
-    case product
-    case smallPeer
-    case replication
-    case sales
-    case transport
-    case undefined
 
-    var title: String {
-        switch self {
-        case .bigPeer:       return "Big Peer"
-        case .cloudServices: return "Cloud Services"
-        case .cx:            return "Customer Experience"
-        case .executive:     return "Executive"
-        case .federal:       return "Federal"
-        case .hr:            return "HR"
-        case .legal:         return "Legal"
-        case .marketing:     return "Marketing"
-        case .operations:    return "Operations"
-        case .product:       return "Product"
-        case .smallPeer:     return "Small Peer"
-        case .replication:   return "Replication"
-        case .sales:         return "Sales"
-        case .transport:     return "Transport"
-        case .undefined:     return "Undefined"
-        }
-    }
-} */
+@Observable class UserWrapper: Identifiable {
+    var user: SessionUser
+    var isSelected = false
+    init(_ usr: SessionUser) { user = usr }
+    var id: String { user.id }    
+    var firstName: String { user.firstName }
+    var lastName: String { user.lastName }
+    var fullName: String { user.fullName }
+    var team: String { user.team }
+}
+
 enum DittoTeam: String, Codable, CaseIterable {
     case bigPeer       = "Big Peer"
     case cloudServices = "Cloud Services"
@@ -62,7 +36,6 @@ enum DittoTeam: String, Codable, CaseIterable {
     case sales         = "Sales"
     case transport     = "Transport"
     case undefined     = "Undefined"
-
 }
 
 struct SessionUser: Identifiable, Hashable, Equatable {
@@ -106,4 +79,3 @@ extension SessionUser {
         ]
     }
 }
-

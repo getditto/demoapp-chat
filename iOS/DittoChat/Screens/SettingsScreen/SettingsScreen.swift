@@ -31,15 +31,15 @@ struct SettingsScreen: View {
                     VStack(alignment: .leading) {
                         
                         Toggle("Enable Advanced Features", isOn: $advancedFeaturesEnabled)
-                            .onChange(of: advancedFeaturesEnabled) { shouldEnable in
-                                vm.enableAdvancedFeatures(useAdvanced: shouldEnable)
+                            .onChange(of: advancedFeaturesEnabled) { 
+                                vm.enableAdvancedFeatures(useAdvanced: advancedFeaturesEnabled)
                             }
 
                         Divider()
                         
                         Toggle("Enable Large Images", isOn: $acceptLargeImages)
-                            .onChange(of: acceptLargeImages) { accept in
-                                vm.setLargeImagesPrefs(accept)
+                            .onChange(of: acceptLargeImages) {
+                                vm.setLargeImagesPrefs(acceptLargeImages)
                             }
                         Text("Large image sync should only be enabled if all peers are known to be using WiFi.")
                             .font(.subheadline)

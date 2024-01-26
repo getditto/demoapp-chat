@@ -9,27 +9,6 @@
 import DittoSwift
 import Foundation
 
-//enum SessionType: CaseIterable {
-//    case discussion
-//    case qa
-//    case talks
-//    case hackathon
-//    case social
-//    case other
-//    case undefined
-//    
-//    var title: String {
-//        switch self {
-//        case .discussion: return "Discussion"
-//        case .qa:         return "Q&A"
-//        case .talks:      return "Talks"
-//        case .hackathon:  return "Hackathon"
-//        case .social:     return "Social"
-//        case .other:      return "Other"
-//        case .undefined:  return "Undefined"
-//        }
-//    }
-//}
 enum SessionType: String, Codable, CaseIterable {
     case discussion = "Discussion"
     case qa         = "Q&A"
@@ -46,25 +25,31 @@ struct Session: Identifiable, Hashable {
     var type: String
     var description: String
     var presenterIds: [String:Bool] //[userId]
-    var attendeeIds: [String:Bool] //[userId]    
-    let messagesId: String?
-    let notesId: String?
+    var attendeeIds: [String:Bool]  //[userId]    
+    let messagesId: String
+    let notesId: String
     let createdBy: String
     let createdOn: Date
+    var lastUpdatedBy: String?
+    var lastUpdatedOn: Date?
 }
 
 extension Session {
     init(document: DittoDocument) {
-        self.id = document[dbIdKey].stringValue
-        self.title = document[sessionTitleKey].stringValue
-        self.type = document[sessionTypeKey].string ?? SessionType.undefined.rawValue
-        self.description = document[descriptionKey].stringValue
-        self.presenterIds = document[presenterIdsKey].dictionaryValue as? [String:Bool] ?? [:]
-        self.attendeeIds = document[attendeeIdsKey].dictionaryValue as? [String:Bool] ?? [:]
-        self.messagesId = document[messagesIdKey].stringValue
-        self.notesId = document[notesIdKey].stringValue
-        self.createdBy = document[createdByKey].stringValue
-        self.createdOn = DateFormatter.isoDate.date(from: document[createdOnKey].stringValue) ?? Date()
+        id = document[dbIdKey].stringValue
+        title = document[sessionTitleKey].stringValue
+        type = document[sessionTypeKey].string ?? SessionType.undefined.rawValue
+        description = document[sessionDescriptionKey].stringValue
+        presenterIds = document[presenterIdsKey].dictionaryValue as? [String:Bool] ?? [:]
+        attendeeIds = document[attendeeIdsKey].dictionaryValue as? [String:Bool] ?? [:]
+        messagesId = document[messagesIdKey].stringValue
+        notesId = document[notesIdKey].stringValue
+        createdBy = document[createdByKey].stringValue
+        createdOn = DateFormatter.isoDate.date(from: document[createdOnKey].stringValue) ?? Date()
+        lastUpdatedBy = document[lastUpdatedByKey].string
+        if let updatedOn = document[lastUpdatedOnKey].string {
+            lastUpdatedOn = DateFormatter.isoDate.date(from: updatedOn) ?? Date()    
+        }        
     }
 }
 
@@ -74,7 +59,7 @@ extension Session {
             dbIdKey: id,
             sessionTitleKey: title,
             sessionTypeKey: type,
-            descriptionKey: description,
+            sessionDescriptionKey: description,
             presenterIdsKey: presenterIds,
             attendeeIdsKey: attendeeIds,
             messagesIdKey: messagesId,
@@ -85,9 +70,22 @@ extension Session {
     }
 }
 
+extension Session {
+    static func new() -> Session {
+        Session(
+            id: UUID().uuidString, title: "", type: SessionType.undefined.rawValue, 
+            description: "", 
+            presenterIds: [:], attendeeIds: [:], 
+            messagesId: "", notesId: "", 
+            createdBy: DataManager.shared.currentUserId ?? unknownUserIdKey, 
+            createdOn: Date()
+        )
+    }
+}
+
 
 extension Session {
-    static func prePopulate() {//} -> [Session] {
+    static func prePopulate() {
         let sessions = [
             Session(
                 id: UUID().uuidString, title: "Big Peer Anywhere Plan", type: SessionType.discussion.rawValue, 

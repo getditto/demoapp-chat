@@ -87,12 +87,13 @@ struct MessageEditView: View {
                         }
                     }
                 }
-                .onChange(of: viewModel.editText) { value in
+                .onChange(of: viewModel.editText) {
                     withAnimation {
                         scrollToBottom(proxy: proxy)
                     }
                 }
-                .onChange(of: viewModel.keyboardStatus) { status in
+                .onChange(of: viewModel.keyboardStatus) { 
+                    let status = viewModel.keyboardStatus
                     if status == .didShow || status == .didHide {
                         withAnimation {
                             scrollToBottom(proxy: proxy)

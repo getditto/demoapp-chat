@@ -9,10 +9,13 @@
 import Foundation
 
 let attendeeIdsKey = "attendeeIds"
-let descriptionKey = "description"
+let lastUpdatedByKey = "lastUpdatedBy"
+let lastUpdatedOnKey = "lastUpdatedOn"
 let notesIdKey = "notesId"
+let plusButtonImgKey = "plus"
 let presenterIdsKey = "presenterIds"
-let sessionsKey = "sessions"
+let sessionDescriptionKey = "description"
 let sessionTypeKey = "type"
 let sessionTitleKey = "title"
+let sessionsKey = "sessions"
 let teamKey = "team"

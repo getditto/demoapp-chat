@@ -49,15 +49,16 @@ struct ChatScreen: View {
                         scrollToBottom(proxy: proxy)
                     }
                 }
-                .onChange(of: viewModel.messagesWithUsers.count) { value in
+                .onChange(of: viewModel.messagesWithUsers.count) {
                     DispatchQueue.main.async {
                         withAnimation {
                             scrollToBottom(proxy: proxy)
                         }
                     }
                 }
-                .onChange(of: viewModel.keyboardStatus) { status in
+                .onChange(of: viewModel.keyboardStatus) { 
                     guard !viewModel.presentEditingView else { return }
+                    let status = viewModel.keyboardStatus
                     if status == .willShow || status == .willHide { return }
                     withAnimation {
                         scrollToBottom(proxy: proxy)
@@ -162,7 +163,7 @@ struct ChatScreen: View {
                 .foregroundColor(.accentColor)
         }
         .buttonStyle(.borderless)
-        .onChange(of: viewModel.selectedItem) { newValue in
+        .onChange(of: viewModel.selectedItem) { _, newValue in
             Task {
                 do {
                     let imageData = try await newValue?.loadTransferable(type: Data.self)
