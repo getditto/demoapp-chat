@@ -50,6 +50,8 @@
 		14BEC7582B61F913007D2840 /* SessionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7572B61F913007D2840 /* SessionKeys.swift */; };
 		14BEC75A2B6225AD007D2840 /* SessionsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC7592B6225AD007D2840 /* SessionsListRowItem.swift */; };
 		14BEC75C2B62265E007D2840 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC75B2B62265E007D2840 /* SessionView.swift */; };
+		14BEC75E2B6365CC007D2840 /* PresentersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC75D2B6365CC007D2840 /* PresentersView.swift */; };
+		14BEC7602B6365D9007D2840 /* AttendeesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BEC75F2B6365D9007D2840 /* AttendeesView.swift */; };
 		14BF945D29786731001F672D /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 14BF945C29786731001F672D /* CodeScanner */; };
 		14BF945F297868ED001F672D /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BF945E297868ED001F672D /* Room.swift */; };
 		14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB2D293FEBD500BED068 /* DittoChatApp.swift */; };
@@ -133,6 +135,8 @@
 		14BEC7572B61F913007D2840 /* SessionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionKeys.swift; sourceTree = "<group>"; };
 		14BEC7592B6225AD007D2840 /* SessionsListRowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsListRowItem.swift; sourceTree = "<group>"; };
 		14BEC75B2B62265E007D2840 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
+		14BEC75D2B6365CC007D2840 /* PresentersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentersView.swift; sourceTree = "<group>"; };
+		14BEC75F2B6365D9007D2840 /* AttendeesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendeesView.swift; sourceTree = "<group>"; };
 		14BF945E297868ED001F672D /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		14CADB2A293FEBD500BED068 /* DittoChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DittoChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14CADB2D293FEBD500BED068 /* DittoChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatApp.swift; sourceTree = "<group>"; };
@@ -309,6 +313,8 @@
 		14BEC74C2B61D0D5007D2840 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				14BEC75F2B6365D9007D2840 /* AttendeesView.swift */,
+				14BEC75D2B6365CC007D2840 /* PresentersView.swift */,
 				14BEC7512B61D372007D2840 /* SessionsListView.swift */,
 				14BEC7592B6225AD007D2840 /* SessionsListRowItem.swift */,
 				14BEC7532B61D385007D2840 /* SessionEditView.swift */,
@@ -639,6 +645,7 @@
 				14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */,
 				14BF945F297868ED001F672D /* Room.swift in Sources */,
 				14B4E26D2979EF2C0069B69D /* LocalStoreService.swift in Sources */,
+				14BEC7602B6365D9007D2840 /* AttendeesView.swift in Sources */,
 				14E834C72953C7AB0027D750 /* ProfileScreenViewModel.swift in Sources */,
 				14BEC75C2B62265E007D2840 /* SessionView.swift in Sources */,
 				14E834B82953C6E60027D750 /* DittoService.swift in Sources */,
@@ -681,6 +688,7 @@
 				14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */,
 				1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */,
 				14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */,
+				14BEC75E2B6365CC007D2840 /* PresentersView.swift in Sources */,
 				14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */,
 				14BEC7522B61D372007D2840 /* SessionsListView.swift in Sources */,
 				14BEC74E2B61D0E8007D2840 /* Session.swift in Sources */,
@@ -861,7 +869,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -895,7 +903,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

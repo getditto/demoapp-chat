@@ -11,8 +11,20 @@ import DittoSwift
 import SwiftUI
 
 extension DataManager {
+    var ditto: Ditto { 
+        DittoInstance.shared.ditto
+    }
+    
+    var store: DittoStore {
+        ditto.store
+    }
+    
+    var sessionsColl: DittoCollection {
+        store[sessionsKey]
+    }
+        
     func allSessionsPublisher() -> AnyPublisher<[Session], Never> {
-        DittoInstance.shared.ditto.store[sessionsKey]
+        ditto.store[sessionsKey]
             .findAll()
 //            .sort(createdOnKey, direction: .ascending)
             .liveQueryPublisher()
@@ -24,11 +36,19 @@ extension DataManager {
     }
     
     func sessionPublisher(for session: Session) -> AnyPublisher<Session?, Never> {
-        DittoInstance.shared.ditto.store[sessionsKey]
+        ditto.store[sessionsKey]
             .findByID(session.id)
             .singleDocumentLiveQueryPublisher()
             .compactMap { doc, _ in return doc }
             .map { Session(document: $0) }
+            .eraseToAnyPublisher()
+    }
+    
+    func allSessionUsersPublisher() -> AnyPublisher<[SessionUser], Never>  {
+        return ditto.store[usersKey].findAll().liveQueryPublisher()
+            .map { docs, _ in
+                docs.map { SessionUser(document: $0) }
+            }
             .eraseToAnyPublisher()
     }
 }

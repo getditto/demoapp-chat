@@ -11,6 +11,7 @@ import SwiftUI
 
 class SessionsListVM: ObservableObject {
     @Published private(set) var sessions: [Session] = []
+    @Published var presentCreateSession = false
     private var cancellable = AnyCancellable({})
 
     init() {
@@ -72,14 +73,14 @@ struct SessionsListView: View {
 //                }
 //            )
 //        }
-//        .sheet(isPresented: $viewModel.presentCreateRoomScreen) {
-//            RoomEditScreen()
-//        }
+        .sheet(isPresented: $vm.presentCreateSession) {
+            SessionEditView()
+        }
 //        .sheet(isPresented: $viewModel.presentSettingsView) {
 //            SettingsScreen()
 //        }
-//        .toolbar {
-//            ToolbarItemGroup(placement: .navigationBarLeading ) {
+        .toolbar {
+//            ToolbarItemGroup(placement: .navigationBarLeading ) {x
 //                Button {
 //                    viewModel.profileButtonAction()
 //                } label: {
@@ -95,19 +96,19 @@ struct SessionsListView: View {
 //                Text(appTitleKey)
 //                    .fontWeight(.bold)
 //            }
-//            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
 //                Button {
 //                    viewModel.scanButtonAction()
 //                } label: {
 //                    Label(scanPrivateRoomTitleKey, systemImage: qrCodeViewfinderKey)
 //                }
-//                Button {
-//                    viewModel.createRoomButtonAction()
-//                } label: {
-//                    Label(newRoomTitleKey, systemImage: plusMessageFillKey)
-//                }
-//            }
-//        }
+                Button {
+                    vm.presentCreateSession = true
+                } label: {
+                    Label("", systemImage: plusButtonImgKey)
+                }
+            }
+        }
     }
 }
 

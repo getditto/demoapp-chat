@@ -1,20 +1,20 @@
 ///
-//  SessionsListRowItem.swift
+//  PresentersView.swift
 //  DittoChat
 //
-//  Created by Eric Turner on 1/24/24.
+//  Created by Eric Turner on 1/25/24.
 //
 //  Copyright © 2024 DittoLive Incorporated. All rights reserved.
 
 import SwiftUI
 
-struct SessionsListRowItem: View {
+struct PresentersView: View {
     @Environment(SessionEditVM.self) var vm
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.allAttendees) { usr in
+                ForEach(vm.allPresenters) { usr in
                     Button {
                         usr.isSelected.toggle()
                     } label: {
@@ -36,6 +36,6 @@ struct SessionsListRowItem: View {
     }
 }
 
-//#Preview {
-//    SessionsListRowItem()
-//}
+#Preview {
+    PresentersView()
+}
