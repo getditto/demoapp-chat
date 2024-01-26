@@ -97,6 +97,7 @@ class DittoService: ReplicatingDataInterface {
     @Published fileprivate private(set) var allPublicRooms: [Room] = []
     private var allPublicRoomsCancellable: AnyCancellable = AnyCancellable({})
     private var cancellables = Set<AnyCancellable>()
+    private var usersSubscription: DittoSubscription
     
     // private in-memory stores of subscriptions for rooms and messages
     private var privateRoomSubscriptions = [String: DittoSubscription]()
@@ -110,6 +111,7 @@ class DittoService: ReplicatingDataInterface {
     
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
+        self.usersSubscription = ditto.store[usersKey].findAll().subscribe()
 
         createDefaultPublicRoom()
         
