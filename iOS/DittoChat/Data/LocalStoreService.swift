@@ -51,6 +51,17 @@ class LocalStoreService: LocalDataInterface {
         defaults.acceptLargeImagesPublisher
     }
 
+    //ET: Sessions
+    //MARK: Current Sesssions User
+    var currentSessionsUserId: String? {
+        get { defaults.sessonsUserId }
+        set { defaults.sessonsUserId = newValue }
+    }
+    
+    var currentSessionsUserIdPublisher: AnyPublisher<String?, Never> {
+        defaults.userIdPublisher
+    }
+
     //MARK: Current User
     var currentUserId: String? {
         get { defaults.userId }
@@ -209,6 +220,22 @@ fileprivate extension UserDefaults {
     var userIdPublisher: AnyPublisher<String?, Never> {
         UserDefaults.standard
             .publisher(for: \.userId)
+            .eraseToAnyPublisher()
+    }
+    
+    //ET: Sessions
+    @objc var sessonsUserId: String? {
+        get {
+            return string(forKey: sessionsUserIdKey)
+        }
+        set(value) {
+            set(value, forKey: sessionsUserIdKey)
+        }
+    }
+    
+    var sessionsUserIdPublisher: AnyPublisher<String?, Never> {
+        UserDefaults.standard
+            .publisher(for: \.sessonsUserId)
             .eraseToAnyPublisher()
     }
 }

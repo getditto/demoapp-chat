@@ -1,5 +1,5 @@
 ///
-//  SessionUser.swift
+//  SessionsUser.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 1/24/24.
@@ -10,35 +10,37 @@ import DittoSwift
 import Foundation
 
 @Observable class UserWrapper: Identifiable {
-    var user: SessionUser
+    var user: SessionsUser
     var isSelected = false
-    init(_ usr: SessionUser) { user = usr }
+    init(_ usr: SessionsUser) { user = usr }
     var id: String { user.id }    
     var firstName: String { user.firstName }
     var lastName: String { user.lastName }
     var fullName: String { user.fullName }
     var team: String { user.team }
+    var imgAttachmentToken: DittoAttachmentToken?
 }
 
-enum DittoTeam: String, Codable, CaseIterable {
-    case bigPeer       = "Big Peer"
-    case cloudServices = "Cloud Services"
-    case cx            = "Customer Experience"
-    case executive     = "Executive"
-    case federal       = "Federal"
-    case hr            = "HR"
-    case legal         = "Legal"
-    case marketing     = "Marketing"
-    case operations    = "Operations"
-    case product       = "Product"
-    case smallPeer     = "Small Peer"
-    case replication   = "Replication"
-    case sales         = "Sales"
-    case transport     = "Transport"
-    case undefined     = "Undefined"
-}
+// tmp: team collection in SessionsManager
+//enum DittoTeam: String, Codable, CaseIterable {
+//    case bigPeer       = "Big Peer"
+//    case cloudServices = "Cloud Services"
+//    case cx            = "Customer Experience"
+//    case executive     = "Executive"
+//    case federal       = "Federal"
+//    case hr            = "HR"
+//    case legal         = "Legal"
+//    case marketing     = "Marketing"
+//    case operations    = "Operations"
+//    case product       = "Product"
+//    case smallPeer     = "Small Peer"
+//    case replication   = "Replication"
+//    case sales         = "Sales"
+//    case transport     = "Transport"
+//    case undefined     = "Undefined"
+//}
 
-struct SessionUser: Identifiable, Hashable, Equatable {
+struct SessionsUser: Identifiable, Hashable, Equatable {
     var id: String
     var firstName: String
     var lastName: String
@@ -46,36 +48,38 @@ struct SessionUser: Identifiable, Hashable, Equatable {
         firstName + " " + lastName
     }
     var team: String
-    
+    var imgAttachmentToken: DittoAttachmentToken?
 }
 
-extension SessionUser {
+extension SessionsUser {
     init(document: DittoDocument) {
-        self.id = document[dbIdKey].stringValue
-        self.firstName = document[firstNameKey].stringValue
-        self.lastName = document[lastNameKey].stringValue
-        self.team = document[teamKey].stringValue
+        id = document[dbIdKey].stringValue
+        firstName = document[firstNameKey].stringValue
+        lastName = document[lastNameKey].stringValue
+        team = document[teamKey].stringValue
+        imgAttachmentToken = document[largeImageTokenKey].attachmentToken
     }
 }
 
-extension SessionUser {
-    static func unknownUser() -> SessionUser {
-        SessionUser(
+extension SessionsUser {
+    static func unknownUser() -> SessionsUser {
+        SessionsUser(
             id: unknownUserIdKey,
             firstName: unknownUserNameKey,
             lastName: "",
-            team: DittoTeam.undefined.rawValue
+            team: undefinedTypeKey//DittoTeam.undefined.rawValue
         )
     }
 }
 
-extension SessionUser {    
+extension SessionsUser {    
     func docDictionary() -> [String: Any?] {
         [
             dbIdKey: id,
             firstNameKey: firstName,
             lastNameKey: lastName,
-            team: team
+            teamKey: team,
+            imgAttachmentTokenKey: imgAttachmentToken
         ]
     }
 }

@@ -1,28 +1,70 @@
 ///
-//  DataManagerSessions.swift
+//  SessionsManager.swift
 //  DittoChat
 //
-//  Created by Eric Turner on 1/24/24.
+//  Created by Eric Turner on 1/26/24.
 //
 //  Copyright © 2024 DittoLive Incorporated. All rights reserved.
 
 import Combine
 import DittoSwift
-import SwiftUI
+import SwiftUI 
 
+class SessionsManager: ObservableObject {
+    
+    var PREPOPULATE = false
+    
+    static let shared = SessionsManager()
+    
+    @Published var sessions = [Session]()
+    @Published var sessionTypes = [String]()
+    @Published var dittoTeams = [String]()
+    
+    let dataManager = DataManager.shared    
+    var ditto = DittoInstance.shared.ditto
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        allSessionsPublisher()
+            .receive(on: DispatchQueue.main)
+            .sink {[weak self] items in
+                guard let self = self else { return }
+                print("SessionsManager received \(items.count) sessions")
+                sessions = items
+            }
+            .store(in: &cancellables)
 
-extension DataManager {
-    var ditto: Ditto {
-        DittoInstance.shared.ditto
+        store[dittoOrgIdKey].findByID(dittoTeamsIdKey)
+            .singleDocumentLiveQueryPublisher()
+            .receive(on: DispatchQueue.main)
+            .compactMap { doc, _ in return doc }
+            .sink {[weak self] doc in
+                guard let self = self else { return }
+                let teamsDict = doc[teamsKey].dictionaryValue
+                dittoTeams = Array(teamsDict.keys)
+                print("teamsDict.count: \(dittoTeams.count)") 
+            }
+            .store(in: &cancellables)
+
+        store[dittoOrgIdKey].findByID(sessionTypesIdKey)
+            .singleDocumentLiveQueryPublisher()
+            .receive(on: DispatchQueue.main)
+            .compactMap { doc, _ in return doc }
+            .sink {[weak self] doc in
+                guard let self = self else { return }
+                let typesDict = doc[typesKey].dictionaryValue
+                sessionTypes = Array(typesDict.keys)
+                print("typesDict.count: \(sessionTypes.count)") 
+            }
+            .store(in: &cancellables)
+
+        prePopulate()
     }
     
-    var store: DittoStore {
-        ditto.store
-    }
-    
-    var sessionsCollection: DittoCollection {
-        store[sessionsIdKey]
-    }
+    var store: DittoStore { ditto.store }
+    var sessionsUsers: [SessionsUser] { dataManager.sessionsUsers }
+    var sessionsCollection: DittoCollection { store[sessionsIdKey] }
+    var currentUserId: String? { dataManager.currentUserId }
     
     func allSessionsPublisher() -> AnyPublisher<[Session], Never> {
         ditto.store[sessionsIdKey]
@@ -45,16 +87,16 @@ extension DataManager {
             .eraseToAnyPublisher()
     }
     
-    func allSessionUsersPublisher() -> AnyPublisher<[SessionUser], Never>  {
-        return ditto.store[usersKey].findAll().liveQueryPublisher()
+    func allSessionsUsersPublisher() -> AnyPublisher<[SessionsUser], Never>  {
+        ditto.store[usersKey].findAll().liveQueryPublisher()
             .map { docs, _ in
-                docs.map { SessionUser(document: $0) }
+                docs.map { SessionsUser(document: $0) }
             }
             .eraseToAnyPublisher()
     }
 }
 
-extension DataManager {
+extension SessionsManager {
     
     func prePopulate() {
         guard PREPOPULATE else { return }
@@ -62,12 +104,14 @@ extension DataManager {
         upsertSessions()
         upsertTypes()
         upsertTeams()
+        
+        PREPOPULATE = false
     }
     
     func upsertSessions() {
         let sessions = [
             Session(
-                id: UUID().uuidString, title: "Big Peer Anywhere Plan", 
+                id: "BPAnywhere" , title: "Big Peer Anywhere Plan", 
                 type: "Discussion", 
                 description: "Flesh out more details on a plan for Big Peer Anywhere this year. Ideally this would include Federal.", 
                 presenterIds: [:], attendeeIds: [:], 
@@ -77,7 +121,7 @@ extension DataManager {
         ]
         
         for session in sessions {
-            _ = try? DittoInstance.shared.ditto.store[sessionsIdKey]
+            _ = try? store[sessionsIdKey]
                 .upsert(session.docDictionary(), writeStrategy: .insertDefaultIfAbsent)
         }        
     }
@@ -95,8 +139,7 @@ extension DataManager {
                 undefinedTypeKey: true
             ]
         ]
-        _ = try? DittoInstance.shared.ditto.store[dittoOrgIdKey]
-            .upsert(typesDoc, writeStrategy: .insertDefaultIfAbsent)
+        _ = try? store[dittoOrgIdKey].upsert(typesDoc, writeStrategy: .insertDefaultIfAbsent)
     }
     
     func upsertTeams() {
@@ -122,9 +165,7 @@ extension DataManager {
             ]
         ]
         
-        _ = try? DittoInstance.shared.ditto.store[dittoOrgIdKey]
-            .upsert(teamsDoc, writeStrategy: .insertDefaultIfAbsent)
+        _ = try? store[dittoOrgIdKey].upsert(teamsDoc, writeStrategy: .insertDefaultIfAbsent)
     }
-    
-    
 }
+

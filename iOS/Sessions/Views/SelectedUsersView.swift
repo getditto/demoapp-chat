@@ -8,13 +8,17 @@
 
 import SwiftUI
 
-struct PresentersView: View {
-    @Environment(SessionEditVM.self) var vm
+struct SelectedUsersView: View {
+    @State var selectedUsers: SelectedUsers
+
+    init(type: SelectedUsersType, session: ObservableSession) {
+        selectedUsers = type == .presenters ? session.allPresenters : session.allAttendees
+    }
     
-    var body: some View {
+    var body: some View { 
         NavigationView {
             List {
-                ForEach(vm.allPresenters) { usr in
+                ForEach(selectedUsers) { usr in
                     Button {
                         usr.isSelected.toggle()
                     } label: {
@@ -37,5 +41,5 @@ struct PresentersView: View {
 }
 
 #Preview {
-    PresentersView()
+    SelectedUsersView(type: .presenters, session: ObservableSession())
 }

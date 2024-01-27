@@ -27,6 +27,10 @@ protocol LocalDataInterface {
     func archivePublicRoom(_ room: Room)
     func unarchivePublicRoom(_ room: Room)
     
+    //ET: Sessions
+    var currentSessionsUserId: String? { get set }
+    var currentSessionsUserIdPublisher: AnyPublisher<String?, Never> { get }
+
     var currentUserId: String? { get set }
     var currentUserIdPublisher: AnyPublisher<String?, Never> { get }
     
@@ -35,6 +39,8 @@ protocol LocalDataInterface {
 }
 
 protocol ReplicatingDataInterface {
+    var sessionsUsers: [SessionsUser] { get } //ET: Added for Sessions
+    
     var publicRoomsPublisher: CurrentValueSubject<[Room], Never> { get }
 
     func room(for room: Room) -> Room?
@@ -57,6 +63,10 @@ protocol ReplicatingDataInterface {
         in collectionId: String
     ) -> DittoSwift.DittoCollection.FetchAttachmentPublisher
     
+    //ET: Sessions
+    func addSessionsUser(_ usr: SessionsUser)
+    func currentSessionsUserPublisher() -> AnyPublisher<SessionsUser?, Never>
+    
     func addUser(_ usr: User)
     func currentUserPublisher() -> AnyPublisher<User?, Never>
     func allUsersPublisher() -> AnyPublisher<[User], Never>
@@ -75,6 +85,11 @@ class DataManager {
         self.p2pStore = DittoService(privateStore: localStore)
         self.publicRoomsPublisher = p2pStore.publicRoomsPublisher.eraseToAnyPublisher()
         self.privateRoomsPublisher = localStore.privateRoomsPublisher
+    }
+    
+    //ET: Added for Sessions
+    var sessionsUsers: [SessionsUser] {
+        p2pStore.sessionsUsers
     }
 }
 
@@ -155,8 +170,35 @@ extension DataManager {
 }
 
 extension DataManager {
-    //MARK: Current User
+    //ET: Sessions
+    //MARK: Current Sessions User
+    var currentSessionsUserId: String? {
+        get { localStore.currentSessionsUserId }
+        set { localStore.currentSessionsUserId = newValue }
+    }    
+    var currentSessionsUserIdPublisher: AnyPublisher<String?, Never> {
+        localStore.currentSessionsUserIdPublisher
+    }
+    func currentSessionsUserPublisher() -> AnyPublisher<SessionsUser?, Never> {
+        p2pStore.currentSessionsUserPublisher()
+    }
+    func addSessionsUser(_ usr: SessionsUser) {
+        p2pStore.addSessionsUser(usr)
+    }
+//    func saveCurrentSessionsUser(firstName: String, lastName: String) {
+    func saveCurrentSessionsUser(_ usr: SessionsUser) {
+        if currentSessionsUserId == nil {
+            let userId = usr.id//UUID().uuidString
+            currentSessionsUserId = userId
+        }
+        assert(currentSessionsUserId != nil, "Error: expected currentSessionsUserId to not be NIL")
+//        let user = User(id: currentUserId!, firstName: firstName, lastName: lastName)
+        p2pStore.addSessionsUser(usr)        
+    }
+
     
+    
+    //MARK: Current User    
     var currentUserId: String? {
         get { localStore.currentUserId }
         set { localStore.currentUserId = newValue }

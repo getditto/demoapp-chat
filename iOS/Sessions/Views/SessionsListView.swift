@@ -9,6 +9,7 @@
 import Combine
 import SwiftUI
 
+/*
 class SessionsListVM: ObservableObject {
     @Published private(set) var sessions: [Session] = []
     @Published var presentCreateSession = false
@@ -24,26 +25,56 @@ class SessionsListVM: ObservableObject {
 //            .assign(to: &$sessions)
     }
 } 
+*/
+class SessionsListVM: ObservableObject {
+    @Published var sessions = [Session]()
+    @Published var presentCreateSession = false
+    @Published var userIsValidated = false
+
+    var cancelleables = Set<AnyCancellable>()
+    init() {
+        DataManager.shared.currentUserIdPublisher
+            .receive(on: DispatchQueue.main)
+            .sink {[weak self] userId in
+                guard let self = self else { return }
+                userIsValidated = (userId != nil)
+            }
+            .store(in: &cancelleables)
+        
+        SessionsManager.shared.allSessionsPublisher()
+            .receive(on: DispatchQueue.main)
+            .sink {[weak self] seshons in 
+                guard let self = self else { return }
+                sessions = seshons
+            }
+            .store(in: &cancelleables)
+    }
+}
 
 struct SessionsListView: View {
     @StateObject var vm = SessionsListVM()    
+//    @State var vm = SessionsListVM()
+//    private var sessionsManager = SessionsManager.shared
 
     var body: some View {
-        List {
-            Section("Sessions") {//}( vm.sessions.count > 0 ? publicRoomsTitleKey : "" ) {
-                ForEach(vm.sessions, id: \.self) { session in
-                    NavigationLink(value: session) {
-                        SessionsListRowItem(session: session)
-                    }
+        if !vm.userIsValidated {
+            SessionsUserProfileView()
+        } else {            
+            List {
+                Section("Sessions") {//}( vm.sessions.count > 0 ? publicRoomsTitleKey : "" ) {
+                    ForEach(vm.sessions) { session in//, id: \.self) { session in
+                        NavigationLink(value: session) {
+                            SessionsListRowItem(session)
+                        }
 //                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
 //                        Button(settingsHideTitleKey) {
 //                            viewModel.archiveRoom(room)
 //                        }
 //                        .tint(.red)
 //                    }
+                    }
                 }
-            }
-            
+
 //            Section( viewModel.privateRooms.count > 0 ? privateRoomsTitleKey : "" ) {
 //                ForEach(viewModel.privateRooms) { room in
 //                    NavigationLink(value: room) {
@@ -57,12 +88,12 @@ struct SessionsListView: View {
 //                    }
 //                }
 //            }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: Session.self) { session in
-            SessionView(session: session)
-                .withErrorHandling()
-        }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: Session.self) { session in
+                SessionView(session: session)
+                    .withErrorHandling()
+            }
 //        .sheet(isPresented: $viewModel.presentProfileScreen) {
 //            ProfileScreen()
 //        }
@@ -73,13 +104,13 @@ struct SessionsListView: View {
 //                }
 //            )
 //        }
-        .sheet(isPresented: $vm.presentCreateSession) {
-            SessionEditView()
-        }
-//        .sheet(isPresented: $viewModel.presentSettingsView) {
-//            SettingsScreen()
-//        }
-        .toolbar {
+            .sheet(isPresented: $vm.presentCreateSession) {
+                SessionEditView()
+            }
+        //        .sheet(isPresented: $viewModel.presentSettingsView) {
+        //            SettingsScreen()
+        //        }
+            .toolbar {
 //            ToolbarItemGroup(placement: .navigationBarLeading ) {x
 //                Button {
 //                    viewModel.profileButtonAction()
@@ -96,16 +127,17 @@ struct SessionsListView: View {
 //                Text(appTitleKey)
 //                    .fontWeight(.bold)
 //            }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
 //                Button {
 //                    viewModel.scanButtonAction()
 //                } label: {
 //                    Label(scanPrivateRoomTitleKey, systemImage: qrCodeViewfinderKey)
 //                }
-                Button {
-                    vm.presentCreateSession = true
-                } label: {
-                    Label("", systemImage: plusButtonImgKey)
+                    Button {
+                        vm.presentCreateSession = true
+                    } label: {
+                        Label("", systemImage: plusButtonImgKey)
+                    }
                 }
             }
         }

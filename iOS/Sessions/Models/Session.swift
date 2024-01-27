@@ -8,7 +8,10 @@
 
 import DittoSwift
 import Foundation
+import Observation
 
+
+//tmp for sessions edit picker for now
 enum SessionType: String, Codable, CaseIterable {
     case discussion = "Discussion"
     case qa         = "Q&A"
@@ -25,7 +28,8 @@ struct Session: Identifiable, Hashable {
     var type: String
     var description: String
     var presenterIds: [String:Bool] //[userId]
-    var attendeeIds: [String:Bool]  //[userId]    
+    var attendeeIds: [String:Bool]  //[userId]
+    var chatRoomId: String    
     let messagesId: String
     let notesId: String
     let createdBy: String
@@ -38,10 +42,11 @@ extension Session {
     init(document: DittoDocument) {
         id = document[dbIdKey].stringValue
         title = document[sessionTitleKey].stringValue
-        type = document[sessionTypeKey].string ?? SessionType.undefined.rawValue
+        type = document[typeKey].string ?? undefinedTypeKey
         description = document[sessionDescriptionKey].stringValue
         presenterIds = document[presenterIdsKey].dictionaryValue as? [String:Bool] ?? [:]
         attendeeIds = document[attendeeIdsKey].dictionaryValue as? [String:Bool] ?? [:]
+        chatRoomId = document[chatRoomIdKey].stringValue
         messagesId = document[messagesIdKey].stringValue
         notesId = document[notesIdKey].stringValue
         createdBy = document[createdByKey].stringValue
@@ -58,11 +63,12 @@ extension Session {
         [
             dbIdKey: id,
             sessionTitleKey: title,
-            sessionTypeKey: type,
+            typeKey: type,
             sessionDescriptionKey: description,
             presenterIdsKey: presenterIds,
             attendeeIdsKey: attendeeIds,
             messagesIdKey: messagesId,
+            chatRoomIdKey: chatRoomId,
             notesIdKey: notesId,
             createdByKey: createdBy,
             createdOnKey: DateFormatter.isoDate.string(from: createdOn)
@@ -73,37 +79,12 @@ extension Session {
 extension Session {
     static func new() -> Session {
         Session(
-            id: UUID().uuidString, title: "", type: SessionType.undefined.rawValue, 
+            id: UUID().uuidString, title: "", type: undefinedTypeKey, 
             description: "", 
             presenterIds: [:], attendeeIds: [:], 
-            messagesId: "", notesId: "", 
+            chatRoomId: "", messagesId: "", notesId: "", 
             createdBy: DataManager.shared.currentUserId ?? unknownUserIdKey, 
             createdOn: Date()
         )
-    }
-}
-
-
-extension Session {
-    static func prePopulate() {
-        let sessions = [
-            Session(
-                id: UUID().uuidString, title: "Big Peer Anywhere Plan", type: SessionType.discussion.rawValue, 
-                description: "Flesh out more details on a plan for Big Peer Anywhere this year. Ideally this would include Federal.", 
-                presenterIds: [:], attendeeIds: [:], messagesId: "BPAnywhere", 
-                notesId: "BPAnywhereNotes", 
-                createdBy: "", 
-                createdOn: Date()
-            )
-        ]
-        
-        for session in sessions {
-            upsertSession(session)
-        }
-    }
-    
-    static func upsertSession(_ session: Session) {
-        _ = try? DittoInstance.shared.ditto.store[sessionsKey]
-            .upsert(session.docDictionary(), writeStrategy: .insertDefaultIfAbsent)
     }
 }

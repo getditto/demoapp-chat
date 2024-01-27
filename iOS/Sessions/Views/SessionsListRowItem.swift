@@ -9,30 +9,13 @@
 import SwiftUI
 
 struct SessionsListRowItem: View {
-    @Environment(SessionEditVM.self) var vm
+    let session: Session
+    init(_ sesh: Session) { 
+        session = sesh 
+    }
     
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(vm.allAttendees) { usr in
-                    Button {
-                        usr.isSelected.toggle()
-                    } label: {
-                        HStack {
-                            Text(usr.fullName).foregroundColor(.primary)
-                            
-                            Spacer()
-                            
-                            if usr.isSelected {
-                                Image(systemName: checkmarkKey)
-                                    .font(.body)
-                            }
-                        }                        
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            }
-        }
+        Text(session.title)
     }
 }
 

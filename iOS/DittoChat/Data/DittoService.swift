@@ -126,6 +126,12 @@ class DittoService: ReplicatingDataInterface {
     @Published var publicRoomsPublisher = CurrentValueSubject<[Room], Never>([])
     @Published fileprivate private(set) var allPublicRooms: [Room] = []
     private var allPublicRoomsCancellable: AnyCancellable = AnyCancellable({})
+
+    //ET: Added for Sessions
+    @Published private(set) var sessionsUsers = [SessionsUser]()
+    private var sessionsUsersSubscription: DittoSubscription
+    
+//    private var
     private var cancellables = Set<AnyCancellable>()
     private var usersSubscription: DittoSubscription
     
@@ -142,6 +148,18 @@ class DittoService: ReplicatingDataInterface {
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
         self.usersSubscription = ditto.store[usersKey].findAll().subscribe()
+        
+        //ET: Added for Sessions
+        self.sessionsUsersSubscription = ditto.store[usersKey].findAll().subscribe() 
+        ditto.store[sessionsUsersKey].findAll().liveQueryPublisher()
+            .map { docs, _ in
+                docs.map { SessionsUser(document: $0) }
+            }
+            .sink {[weak self] users in
+                guard let self = self else { return }
+                sessionsUsers = users
+            }
+            .store(in: &cancellables)
 
         createDefaultPublicRoom()
         
@@ -267,8 +285,32 @@ extension DittoService {
 }
     
 extension DittoService {
-    //MARK: Users
+    //ET: Sessions
+    //MARK: SessionsUser
+    func addSessionsUser(_ usr: SessionsUser) {
+        _ = try? ditto.store[sessionsUsersKey]
+            .upsert(usr.docDictionary())
+    }
+
+    func currentSessionsUserPublisher() -> AnyPublisher<SessionsUser?, Never> {
+        privateStore.currentSessionsUserIdPublisher
+            .map { userId -> AnyPublisher<SessionsUser?, Never> in
+                guard let userId = userId else {
+                    return Just<SessionsUser?>(nil).eraseToAnyPublisher()
+                }
+                return self.ditto.store[sessionsUsersKey]
+                    .findByID(userId)
+                    .singleDocumentLiveQueryPublisher()
+                    .compactMap { doc, _ in return doc }
+                    .map { SessionsUser(document: $0) }
+                    .eraseToAnyPublisher()
+            }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+    }
+
     
+    //MARK: Users    
     func currentUserPublisher() -> AnyPublisher<User?, Never> {
         privateStore.currentUserIdPublisher
             .map { userId -> AnyPublisher<User?, Never> in

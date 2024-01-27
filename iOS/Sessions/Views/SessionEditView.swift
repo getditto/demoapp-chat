@@ -10,129 +10,40 @@ import Combine
 import Observation
 import SwiftUI
 
-enum SessionUsernameType { 
-//    case presenters(usernames: String)
-//    case attendees (usernames: String)
-    case presenters, attendees
-    var title: String {
-        switch self {
-        case .presenters: return "Presenter(s)"
-        case .attendees:  return "Attendees"
-        }
-    }
-}
+//enum SessionsUsernameType { 
+//    case presenters, attendees
+//    var title: String {
+//        switch self {
+//        case .presenters: return "Presenter(s)"
+//        case .attendees:  return "Attendees"
+//        }
+//    }
+//}
 
-@Observable class SessionEditVM {
-    var session = Session.new()
-    var txtTitle: String = ""    
-    var txtType: String = SessionType.undefined.rawValue
-    var txtDescription: String = ""    
+@Observable class SessionEditVM {    
+    var session = ObservableSession()
     var dummyTxt: String = "" // for disabled presenter/attendees textfields
-    var msgsId: String = ""
-    var notesId: String = ""
-    var allPresenters = [UserWrapper]()
-    var allAttendees = [UserWrapper]()
-
     var presentPresentersSheet = false
     var presentAttendeesSheet = false    
 
-    private var isNewSession = true
-    private var cancellable = AnyCancellable({})
-
     init(_ sesh: Session? = nil) {
-        if let seshon = sesh { 
-            session = seshon
-            isNewSession = false
-        }
-        txtTitle = session.title        
-        txtType = session.type
-        txtDescription = session.description
-        
-        cancellable = DataManager.shared.allSessionUsersPublisher()
-            .receive(on: DispatchQueue.main)
-            .sink {[weak self] users in
-                guard let self = self else { return }
-                allPresenters = users.sorted(by: { $0.firstName < $1.firstName } )
-                    .map { UserWrapper($0) }
-                allAttendees  = users.sorted(by: { $0.firstName < $1.firstName } )
-                    .map { UserWrapper($0) }
-            }
+        session = ObservableSession(sesh)
     }
     
-    private var presenterIds: [String:Bool] {
-        selectedUserIds(allPresenters)
-    }
-    private var attendeeIds: [String:Bool] {
-        selectedUserIds(allAttendees)
-    }    
-    private func selectedUserIds(_ users: [UserWrapper]) -> [String:Bool] {
-        users
-            .filter { $0.isSelected }
-            .reduce(into: [:]) { dict, userWrapper in dict[userWrapper.id] = true }        
-    }
-
-    var presenterNames: String {
-        selectedUserNames(allPresenters)
-    }
-    var attendeeNames: String {
-        selectedUserNames(allAttendees)
-    }    
-    private func selectedUserNames(_ users: [UserWrapper]) -> String {
-        users
-            .sorted(by: { $0.firstName < $1.firstName } )
-            .filter { $0.isSelected }
-            .map { $0.fullName }            
-            .joined(separator: ", ")
-    }
-
-    func saveEdit() {
-        guard canSave else { print("SessionEditView.\(#function): canSave == FALSE --> return"); return }
-        
-        if isNewSession {
-            let newSesh = newSessionHelper(session)            
-            let _ = try? DataManager.shared.sessionsColl.upsert(newSesh.docDictionary())
-        } else {
-            let _ = DataManager.shared.sessionsColl.findByID(session.id).update {[weak self] mutableDoc in
-                guard let self = self else { print("SessionEdit.\(#function) - ERROR"); return }
-                mutableDoc?[sessionTitleKey].set(txtTitle)
-                mutableDoc?[sessionTypeKey].set(txtType)
-                mutableDoc?[sessionDescriptionKey].set(txtDescription)
-                mutableDoc?[presenterIdsKey].set(presenterIds)
-                mutableDoc?[attendeeIdsKey].set(attendeeIds)
-                mutableDoc?[lastUpdatedByKey].set(DataManager.shared.currentUserId!)
-                mutableDoc?[lastUpdatedOnKey].set(DateFormatter.isoDate.string(from: Date()))
-            }
-        }
-    }
-    
-    func newSessionHelper(_ sesh: Session) -> Session {
-        Session(
-            id: sesh.id, title: txtTitle, type: txtType, description: txtDescription, 
-            presenterIds: presenterIds, attendeeIds: attendeeIds, messagesId: msgsId, 
-            notesId: notesId, createdBy: sesh.createdBy, createdOn: sesh.createdOn
-        )
-    }
-    
-    var canSave: Bool {
-        !txtTitle.isEmpty &&
-        !txtDescription.isEmpty &&
-        !msgsId.isEmpty && // need to check for uniqueness across collection names
-        !notesId.isEmpty &&
-        !presenterIds.isEmpty
-    }
-    
-    var chatIdIsValid: Bool {
-        true
+    func save() {
+        session.save()
     }
 }
 
 struct SessionEditView: View {
     @Environment(\.dismiss) private var dismiss
+//    @Environment(\.sessionsModel) private var sessionsModel    
     @State var vm = SessionEditVM()
     @FocusState var titleHasFocus : Bool
     @FocusState var descriptionHasFocus : Bool
     @FocusState var chatIdHasFocus : Bool
     @FocusState var notesIdHasFocus : Bool
+    private var sessionsManager = SessionsManager.shared
 
     init(_ sesh: Session? = nil) {
         vm = SessionEditVM(sesh)
@@ -143,14 +54,14 @@ struct SessionEditView: View {
         NavigationView {
             Form {                
                 Section {
-                    TextField("Title", text: $vm.txtTitle)
+                    TextField("Title", text: $vm.session.title)
                         .focused($titleHasFocus)
                     
                     typePickerView()
                 }
                 
                 Section {                    
-                    TextField("Description", text: $vm.txtDescription, axis: .vertical)
+                    TextField("Description", text: $vm.session.description, axis: .vertical)
                         .lineLimit(nil)
                         .focused($descriptionHasFocus)
                 }
@@ -172,15 +83,15 @@ struct SessionEditView: View {
                 }
                 
                 Section {
-                    TextField("Unique chat collection name", text: $vm.msgsId)
+                    TextField("Unique chat collection name", text: $vm.session.chatRoomId)
                         .focused($chatIdHasFocus)
 
-                    TextField("Unique private notes collection name", text: $vm.notesId)
+                    TextField("Unique private notes collection name", text: $vm.session.notesId)
                         .focused($notesIdHasFocus)                    
                 }
             }
             .sheet(isPresented: $vm.presentPresentersSheet) {
-                PresentersView()
+                SelectedUsersView(type: .presenters, session: vm.session)
                     .environment(vm)
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -195,12 +106,13 @@ struct SessionEditView: View {
                 }
                 ToolbarItem(placement: .principal) {
                     VStack {
-                        Text(vm.txtTitle)
+                        Text(vm.session.title)
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        vm.saveEdit()
+//                        vm.saveEdit()
+                        vm.save()
                     } label: {
                         Text(saveTitleKey)
                     }
@@ -214,15 +126,15 @@ struct SessionEditView: View {
         VStack {
             Picker(selection: $vm.session.type, label: Text("Session type")) {
                 ForEach(SessionType.allCases, id: \.self) { type in
-                    Text(type.rawValue).tag(type.rawValue)//.font(Font.title)
+                    Text(type.rawValue).tag(type.rawValue)
                 }
             }
         }
     }
     
-    func selectedUsernamesView(_ type: SessionUsernameType) -> some View {
-        var usernames = type == .attendees ? vm.attendeeNames : vm.presenterNames
-       return HStack(alignment: .center) {
+    func selectedUsernamesView(_ type: SelectedUsersType) -> some View {
+        let usernames = type == .attendees ? vm.session.attendeeNames : vm.session.presenterNames
+        return HStack(alignment: .center) {
             VStack(alignment: .leading) {
                 Text(type.title)
                 
