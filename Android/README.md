@@ -19,7 +19,7 @@ Android version of the Chat App Demo
 You need to setup some environment variables in order to build this project:
 
 1. In your project root, create a directory called **secure**
-2. Add a file to that directory called **creds.properties**, for the build variants as defined in the app **build.gradle** file.
+2. Add a file to that directory called **creds.properties**.
 Add the following environment variables to the credential file, substituting your own values:
 ```
     # Environment Variables  
