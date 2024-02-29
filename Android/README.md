@@ -18,17 +18,18 @@ Android version of the Chat App Demo
 
 You need to setup some environment variables in order to build this project:
 
-1. In your project root, create a directory called **secure**
-2. Add a file to that directory called **creds.properties**.
-Add the following environment variables to the credential file, substituting your own values:
+1. In the Ditto Portal, create a new app if you have not already done so.
+2. In your project root, create a directory called **secure**
+3. Add a file to that directory called **creds.properties**.
+4. Add the following environment variables to the credential file, substituting your own values (based on your app configuration in the portal you will only need a subset of these values):
 ```
     # Environment Variables  
     
     DITTO_APP_ID = "replace with your app id"
-    DITTO_PLAYGROUND_TOKEN = "replace with your playground token"
-    DITTO_AUTH_PASSWORD = "replace with your auth password"
-    DITTO_AUTH_PROVIDER = "replace with your auth provider"
-    DITTO_OFFLINE_TOKEN = "replace with your offline license token"
+    DITTO_PLAYGROUND_TOKEN = "replace with your playground token if applicable"
+    DITTO_AUTH_PASSWORD = "replace with your auth password if applicable"
+    DITTO_AUTH_PROVIDER = "replace with your auth provider if applicable"
+    DITTO_OFFLINE_TOKEN = "replace with your offline license token if applicable"
 ```
 
 * `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the app in order for them to see each other, including across different platforms.

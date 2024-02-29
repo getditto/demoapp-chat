@@ -1,13 +1,14 @@
 # ChatDemo-SwiftUI  
 
-Basic Chat application written with Ditto and SwiftUI/Combine  
+Basic Chat application written with Ditto and SwiftUI/Combine
 
-1. Clone this repo to a location on your machine, and open in Xcode    
-2. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
+1. In the Ditto Portal, create a new app if you have not already done so.
+2. Clone this repo to a location on your machine, and open in Xcode    
+3. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
 settings to your Apple developer account credentials to provision building to your device   
-3. In Terminal, run `cp .env.template .env` in the iOS directory  
+4. In Terminal, run `cp .env.template .env` in the iOS directory  
 
-4. Edit `.env` to add environment variables as in the following example, substituting your own values:
+5. Edit `.env` to add environment variables as in the following example, substituting your own values as needed (based on your app configuration in the portal you will only need a subset of these values):
 ```
     DITTO_APP_ID = "replace with your app id"
     DITTO_PLAYGROUND_TOKEN = "replace with your playground token"
