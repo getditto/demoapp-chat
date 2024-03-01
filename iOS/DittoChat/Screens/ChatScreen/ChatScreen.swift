@@ -64,14 +64,15 @@ struct ChatScreen: View {
                     }
                 }
             }
-            HStack(alignment: .top) {
+
+            HStack(alignment: .center, spacing: 0) {
                 photosPickerButtonView
-                    .padding(.top, 4)
                 
                 ChatInputView(
                     text: $viewModel.inputText,
                     onSendButtonTappedCallback: viewModel.sendMessage
                 )
+                .padding(.leading, 0)
             }
         }
         .listStyle(.inset)
@@ -161,6 +162,9 @@ struct ChatScreen: View {
                 .font(.system(size: 28))
                 .foregroundColor(.accentColor)
         }
+        .padding(.leading, 12)
+        .padding(.trailing, 4)
+        .frame(width: 56, height: 44)
         .buttonStyle(.borderless)
         .onChange(of: viewModel.selectedItem) { newValue in
             Task {
