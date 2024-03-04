@@ -139,15 +139,6 @@ fun DittochatDrawerContent(
                     .height(24.dp),
                 contentDescription = stringResource(id = R.string.info)
             )
-            Icon(
-                imageVector = Icons.Outlined.Message,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .clickable(onClick = { /* TODO */ })
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
-                    .height(24.dp),
-                contentDescription = stringResource(id = R.string.info)
-            )
         }
         
         DividerItem()
