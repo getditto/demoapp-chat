@@ -91,20 +91,6 @@ class ProfileFragment : Fragment() {
                     DittochatAppBar(
                         onNavIconPressed = { activityViewModel.openDrawer() },
                         title = { },
-                        actions = {
-                            // More icon
-                            Icon(
-                                imageVector = Icons.Outlined.MoreVert,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier
-                                    .clickable(onClick = {
-                                        functionalityNotAvailablePopupShown = true
-                                    })
-                                    .padding(horizontal = 12.dp, vertical = 16.dp)
-                                    .height(24.dp),
-                                contentDescription = stringResource(id = R.string.more_options)
-                            )
-                        }
                     )
                 }
             }
