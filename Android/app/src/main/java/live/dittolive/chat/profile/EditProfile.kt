@@ -170,7 +170,6 @@ fun EditUserInfoFields(userData: ProfileScreenState, containerHeight: Dp,  userV
 //
 //        EditProfileProperty(stringResource(R.string.status), userData.status)
 //
-//        EditProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
 //
 //        userData.timeZone?.let {
 //            EditProfileProperty(stringResource(R.string.timezone), userData.timeZone)
