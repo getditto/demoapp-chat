@@ -551,12 +551,13 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/buildEnv.sh",
+				"${SRCROOT}/.env",
 			);
 			name = "Generate Env.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Env.swift",
+				"${SRCROOT}/${PROJECT}/Env.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
