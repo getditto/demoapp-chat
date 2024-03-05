@@ -166,15 +166,6 @@ fun EditUserInfoFields(userData: ProfileScreenState, containerHeight: Dp,  userV
 
         EditNameAndPosition(userData, userViewModel = userViewModel)
 
-//        EditProfileProperty(stringResource(R.string.display_name), userData.displayName)
-//
-//        EditProfileProperty(stringResource(R.string.status), userData.status)
-//
-//
-//        userData.timeZone?.let {
-//            EditProfileProperty(stringResource(R.string.timezone), userData.timeZone)
-//        }
-
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
         // in order to always leave some content at the top.
         Spacer(Modifier.height((containerHeight - 320.dp).coerceAtLeast(0.dp)))
@@ -191,12 +182,6 @@ private fun EditNameAndPosition(
             modifier = Modifier.baselineHeight(32.dp),
             userViewModel = userViewModel
         )
-//        Position(
-//            userData.position,
-//            modifier = Modifier
-//                .padding(bottom = 20.dp)
-//                .baselineHeight(24.dp)
-//        )
     }
 }
 
@@ -263,6 +248,7 @@ fun EditProfileProperty(label: String, value: String, isLink: Boolean = false) {
 //}
 //
 //@Preview(widthDp = 360, heightDp = 480)
+//@Preview(widthDp = 360, heightDp = 480)var id
 //@Composable
 //fun EditConvPreviewPortraitMeDefault() {
 //    DittochatTheme {

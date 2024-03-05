@@ -280,13 +280,13 @@ fun ProfileFab(
     modifier: Modifier = Modifier,
     onFabClicked: () -> Unit = { }
 ) {
-    var id : Int = if (isEditMode) {
+    val id : Int = if (isEditMode) {
         R.string.save_profile
     } else {
         R.string.edit_profile
     }
 
-    var imageVector : ImageVector = if (isEditMode) {
+    val imageVector : ImageVector = if (isEditMode) {
         Icons.Outlined.Save
     } else {
         Icons.Outlined.Create
