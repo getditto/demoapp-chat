@@ -55,7 +55,6 @@
     <string name="display_name">Display name</string>
     <string name="status">Status</string>
     <string name="timezone">Timezone</string>
-    <string name="twitter">Twitter</string>
     <string name="profile_error">There was an error loading the profile</string>
     <string name="message">Message</string>
     <string name="edit_profile">Edit Profile</string>

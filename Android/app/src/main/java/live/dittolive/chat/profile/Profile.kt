@@ -161,8 +161,6 @@ fun UserInfoFields(userData: ProfileScreenState, containerHeight: Dp, userViewMo
 
         ProfileProperty(stringResource(R.string.status), userData.status)
 
-        ProfileProperty(stringResource(R.string.twitter), userData.twitter, isLink = true)
-
         userData.timeZone?.let {
             ProfileProperty(stringResource(R.string.timezone), userData.timeZone)
         }
@@ -282,16 +280,16 @@ fun ProfileFab(
     modifier: Modifier = Modifier,
     onFabClicked: () -> Unit = { }
 ) {
-    var id : Int = if (isEditMode) {
+    val id : Int = if (isEditMode) {
         R.string.save_profile
     } else {
-        if (userIsMe) R.string.edit_profile else R.string.message
+        R.string.edit_profile
     }
 
-    var imageVector : ImageVector = if (isEditMode) {
+    val imageVector : ImageVector = if (isEditMode) {
         Icons.Outlined.Save
     } else {
-        if (userIsMe) Icons.Outlined.Create else Icons.Outlined.Chat
+        Icons.Outlined.Create
     }
 
     key(userIsMe) { // Prevent multiple invocations to execute during composition
