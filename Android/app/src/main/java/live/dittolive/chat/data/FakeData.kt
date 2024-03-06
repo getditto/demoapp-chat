@@ -51,7 +51,6 @@ val colleagueProfile = ProfileScreenState(
     status = "Away",
     displayName = "eric",
     position = "Senior iOS Dev at Ditto",
-    twitter = "twitter.com/EricTurner",
     timeZone = "12:25 AM local time (Eastern Daylight Time)",
     commonChannels = "2"
 )
@@ -72,7 +71,6 @@ val meProfile = ProfileScreenState(
     status = "Online",
     displayName = "flexronin",
     position = "Senior Customer Engineer at Ditto\nAuthor of Android App Distribution",
-    twitter = "twitter.com/flexronin",
     timeZone = "In your timezone",
     commonChannels = null
 )
