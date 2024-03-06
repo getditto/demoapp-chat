@@ -11,14 +11,12 @@ settings to your Apple developer account credentials to provision building to yo
 5. Edit `.env` to add environment variables as in the following example, substituting your own values as needed (based on your app configuration in the portal you will only need a subset of these values):
 ```
     DITTO_APP_ID = "replace with your app id"
-    DITTO_PLAYGROUND_TOKEN = "replace with your playground token"
-    DITTO_AUTH_PASSWORD = "replace with your auth password"
-    DITTO_AUTH_PROVIDER = "replace with your auth provider"
-    DITTO_OFFLINE_TOKEN = "replace with your offline license token"
+    DITTO_PLAYGROUND_TOKEN = "replace with your playground token if applicable"
+    DITTO_AUTH_PASSWORD = "replace with your auth password if applicable"
+    DITTO_AUTH_PROVIDER = "replace with your auth provider if applicable"
 ```
 * `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the app in order for them to see each other, including across different platforms.
 * `DITTO_PLAYGROUND_TOKEN` is the online playground token. This is used when using the online playground identity type.
-* `DITTO_OFFLINE_TOKEN` is the offline-only playground token. This is used when using the offline playground identity type. Note this feature will be discontinued in the future.
 * `DITTO_AUTH_PROVIDER` is the authentication provider name. This is used when using the online with authentication identity type.
 * `DITTO_AUTH_PASSWORD` is the authentication password. This is used when using the online with authentication identity type.
 
