@@ -85,12 +85,3 @@ private fun resolveIdentity(androidDependencies: DefaultAndroidDittoDependencies
 
     return DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
 }
-
-/**
- * Sets license token only on release build.
- */
-private fun Ditto.setOfflineOnlyLicenseToken() {
-    if (BuildConfig.DEBUG) return
-
-    setOfflineOnlyLicenseToken(BuildConfig.DITTO_OFFLINE_TOKEN)
-}
