@@ -14,7 +14,7 @@ android {
         applicationId "live.dittolive.chat"
         minSdk 29
         targetSdk 33
-        versionCode 27
+        versionCode 30
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
