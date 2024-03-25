@@ -18,21 +18,22 @@ Android version of the Chat App Demo
 
 You need to setup some environment variables in order to build this project:
 
-1. In the Ditto Portal, create a new app if you have not already done so.
-2. In your project root, create a directory called **secure**
-3. Add a file to that directory called **creds.properties**.
-4. Add the following environment variables to the credential file, substituting your own values (based on your app configuration in the portal you will only need a subset of these values):
+1. In your project root, create a directory called **secure**
+2. Add a file to that directory called **creds.properties**, for the build variants as defined in the app **build.gradle** file.
+Add the following environment variables to the credential file, substituting your own values:
 ```
     # Environment Variables  
     
     DITTO_APP_ID = "replace with your app id"
-    DITTO_PLAYGROUND_TOKEN = "replace with your playground token if applicable"
-    DITTO_AUTH_PASSWORD = "replace with your auth password if applicable"
-    DITTO_AUTH_PROVIDER = "replace with your auth provider if applicable"
+    DITTO_PLAYGROUND_TOKEN = "replace with your playground token"
+    DITTO_AUTH_PASSWORD = "replace with your auth password"
+    DITTO_AUTH_PROVIDER = "replace with your auth provider"
+    DITTO_OFFLINE_TOKEN = "replace with your offline license token"
 ```
 
 * `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the app in order for them to see each other, including across different platforms.
 * `DITTO_PLAYGROUND_TOKEN` is the online playground token. This is used when using the online playground identity type.
+* `DITTO_OFFLINE_TOKEN` is the offline-only playground token. This is used when using the offline playground identity type. Note this feature will be discontinued in the future.
 * `DITTO_AUTH_PROVIDER` is the authentication provider name. This is used when using the online with authentication identity type.
 * `DITTO_AUTH_PASSWORD` is the authentication password. This is used when using the online with authentication identity type.
 
