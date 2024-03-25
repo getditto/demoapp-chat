@@ -23,6 +23,8 @@ class DittoInstance: ObservableObject {
     init() {
         ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
         
+        try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
+        
         // make sure our log level is set _before_ starting ditto.
         self.loggingOption = Self.storedLoggingOption()
         resetLogging()

@@ -27,6 +27,7 @@ android {
         prop.load(new FileInputStream(credsFile))
         buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID'])
         buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
+        buildConfigField('String', 'DITTO_OFFLINE_TOKEN', prop['DITTO_OFFLINE_TOKEN'])
     }
 
     buildTypes {
