@@ -24,6 +24,7 @@ struct ExpandingTextView: View {
             view.font = UIFont.systemFont(ofSize: UIFont.labelFontSize)
             view.backgroundColor = .clear
             view.delegate = context.coordinator
+            view.textContainerInset = UIEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0, right: 0.0)
             return view
         }
 
@@ -86,10 +87,10 @@ struct ExpandingTextView: View {
     }
 }
 
-#if DEBUG
+
 struct ExpandingTextView_Previews: PreviewProvider {
     static var previews: some View {
         ExpandingTextView(text: .constant("foo"))
+            .previewLayout(.sizeThatFits)
     }
 }
-#endif
