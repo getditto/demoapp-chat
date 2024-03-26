@@ -29,10 +29,12 @@ class SettingsScreenVM: ObservableObject {
                 var unRepRooms = [Room]()
 
                 pubRooms.forEach { room in
-                    if let r = DataManager.shared.room(for: room) {
-                        rooms.append(r)
-                    } else {
-                        unRepRooms.append(room)
+                    DataManager.shared.room(for: room) { (result) in
+                        if let r = result {
+                            rooms.append(r)
+                        } else {
+                            unRepRooms.append(room)
+                        }
                     }
                 }
                 unRepRooms.sort { $0.createdOn > $1.createdOn }
@@ -53,11 +55,14 @@ class SettingsScreenVM: ObservableObject {
                 var unRepRooms = [Room]()
                 
                 rooms.forEach { privRoom in
-                    if let r = DataManager.shared.room(for: privRoom) {
-                        privRooms.append(r)
-                    } else {
-                        unRepRooms.append(privRoom)
+                    DataManager.shared.room(for: privRoom) { (result) in
+                        if let r = result {
+                            privRooms.append(r)
+                        } else {
+                            unRepRooms.append(privRoom)
+                        }
                     }
+ 
                 }
                 unRepRooms.sort { $0.createdOn > $1.createdOn }
                 self.unReplicatedPrivateRooms = unRepRooms

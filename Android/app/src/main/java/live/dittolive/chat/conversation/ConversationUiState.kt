@@ -34,10 +34,15 @@ import kotlinx.datetime.Instant
 import live.ditto.DittoAttachmentToken
 import live.ditto.DittoDocument
 import live.dittolive.chat.R
+import live.dittolive.chat.data.collectionIdKey
+import live.dittolive.chat.data.createdByKey
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
+import live.dittolive.chat.data.isPrivateKey
+import live.dittolive.chat.data.messagesIdKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.toInstant
+import live.dittolive.chat.data.nameKey
 import live.dittolive.chat.data.roomIdKey
 import live.dittolive.chat.data.textKey
 import live.dittolive.chat.data.thumbnailKey
@@ -76,6 +81,7 @@ data class Message(
     val photoUri: Uri? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
+    //delete this
     constructor(document: DittoDocument) :this(
         document[dbIdKey].stringValue,
         document[createdOnKey].stringValue.toInstant(),
@@ -83,5 +89,14 @@ data class Message(
         document[textKey].stringValue,
         document[userIdKey].stringValue,
         document[thumbnailKey].attachmentToken
+    )
+
+    constructor(item: Map<String, Any?>) :this(
+        item[dbIdKey] as String,
+        (item[createdOnKey] as String).toInstant(),
+        item[roomIdKey] as String,
+        item[textKey] as String,
+        item[userIdKey] as String,
+        item[thumbnailKey] as DittoAttachmentToken,
     )
 }

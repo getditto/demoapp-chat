@@ -75,7 +75,9 @@ class ChatScreenVM: ObservableObject {
         // only allow non-empty string messages
         guard !inputText.isEmpty else { return }
 
-        DataManager.shared.createMessage(for: room, text: inputText)
+        Task {
+            await DataManager.shared.createMessage(for: room, text: inputText)
+        }
         
         inputText = ""
     }

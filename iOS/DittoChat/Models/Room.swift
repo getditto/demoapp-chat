@@ -22,18 +22,6 @@ struct Room: Identifiable, Hashable, Equatable {
 }
 
 extension Room {
-    init(document: DittoDocument) {
-        self.id = document[dbIdKey].stringValue
-        self.name = document[nameKey].stringValue
-        self.messagesId = document[messagesIdKey].stringValue
-        self.isPrivate = document[isPrivateKey].boolValue
-        self.collectionId = document[collectionIdKey].string
-        self.createdBy = document[createdByKey].stringValue
-        self.createdOn = DateFormatter.isoDate.date(from: document[createdOnKey].stringValue) ?? Date()
-    }
-}
-
-extension Room {
     init(
         id: String,
         name: String,
@@ -78,6 +66,19 @@ extension Room {
             messagesId: publicMessagesIdKey,
             isPrivate: false
         )
+    }
+}
+
+extension Room: DittoDecodable {
+    init(value: [String: Any?]) {
+        self.id = value[dbIdKey] as? String ?? ""
+        self.name = value[nameKey] as? String ?? ""
+        self.messagesId = value[messagesIdKey] as? String ?? ""
+        self.isPrivate = value[isPrivateKey] as? Bool ?? false
+        self.collectionId = value[collectionIdKey] as? String
+        self.createdBy = value[createdByKey] as? String ?? ""
+        let dateString = value[createdOnKey] as? String ?? ""
+        self.createdOn = DateFormatter.isoDate.date(from: dateString) ?? Date()
     }
 }
 
