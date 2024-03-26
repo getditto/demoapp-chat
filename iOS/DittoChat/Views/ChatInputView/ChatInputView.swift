@@ -43,10 +43,9 @@ struct ChatInputView: View {
     }
 }
 
-#if DEBUG
 struct ChatInputView_Previews: PreviewProvider {
     static var previews: some View {
         ChatInputView(text: .constant("Hellosdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfasdfasdfsdfsdfsdfsdf")){}
+            .previewLayout(.sizeThatFits)
     }
 }
-#endif
