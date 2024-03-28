@@ -14,7 +14,7 @@ import SwiftUI
 
 class DittoInstance: ObservableObject {
     @Published var loggingOption: DittoLogger.LoggingOptions
-    private static let defaultLoggingOption: DittoLogger.LoggingOptions = .error    
+    private static let defaultLoggingOption: DittoLogger.LoggingOptions = .debug
     private var cancellables = Set<AnyCancellable>()
     
     static var shared = DittoInstance()
