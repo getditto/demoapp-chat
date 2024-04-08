@@ -412,7 +412,7 @@ extension DittoService {
             throw AttachmentError.tmpStorageWriteFail
         }
         
-        guard let thumbAttachment = await ditto.store[room.messagesId].newAttachment(
+        guard let thumbAttachment = try? await ditto.store.newAttachment(
             path: tmpStorage.fileURL.path,
             metadata: metadata(for: image, fname: fname, timestamp: nowDate)
         ) else {
@@ -459,7 +459,7 @@ extension DittoService {
             throw AttachmentError.tmpStorageWriteFail
         }
         
-        guard let largeAttachment = await ditto.store[room.messagesId].newAttachment(
+        guard let largeAttachment = try? await ditto.store.newAttachment(
             path: tmpStorage.fileURL.path,
             metadata: metadata(for: image, fname: fname, timestamp: nowDate)
         ) else {
@@ -554,8 +554,8 @@ extension DittoService {
     func attachmentPublisher(
         for token: DittoAttachmentToken,
         in collectionId: String
-    ) -> DittoSwift.DittoCollection.FetchAttachmentPublisher {
-        ditto.store[collectionId].fetchAttachmentPublisher(attachmentToken: token)
+    ) -> DittoSwift.DittoStore.FetchAttachmentPublisher {
+        ditto.store.fetchAttachmentPublisher(attachmentToken: token)
     }
 }
 
