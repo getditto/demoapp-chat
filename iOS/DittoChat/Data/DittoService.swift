@@ -785,7 +785,8 @@ extension DittoService {
     }
     
     func deletePrivateRoom(_ room: Room) {
-        guard let collectionId = room.collectionId else {
+//        guard let collectionId = room.collectionId else {
+        guard room.collectionId != nil else {
             print("\(#function): ERROR: Expected PrivateRoom collectionId not NIL")
             return
         }
