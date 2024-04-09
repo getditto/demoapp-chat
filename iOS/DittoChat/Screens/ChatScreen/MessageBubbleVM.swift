@@ -110,7 +110,7 @@ struct ImageAttachmentFetcher {
     typealias ProgressHandler = (CompletionRatio) -> Void
     typealias CompletionHandler = (Result<ImageMetadataTuple, Error>) -> Void
 
-    func fetch(with token: DittoAttachmentToken?,
+    func fetch(with token: [String: Any]?,
                from collectionId: String,
                onProgress: @escaping ProgressHandler,
                onComplete: @escaping CompletionHandler

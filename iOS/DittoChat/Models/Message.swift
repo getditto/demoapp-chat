@@ -20,12 +20,22 @@ struct Message: Identifiable, Equatable {
     var roomId: String
     var text: String
     var userId: String
-    var largeImageToken: DittoAttachmentToken?
-    var thumbnailImageToken: DittoAttachmentToken?
-    
+    var largeImageToken: [String: Any]?
+    var thumbnailImageToken: [String: Any]?
+
     var isImageMessage: Bool {
         thumbnailImageToken != nil || largeImageToken != nil
-    }    
+    }
+
+    // FIXME: Excluding attachment tokens from equality because Any is not equatable
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.id == rhs.id &&
+        lhs.createdOn == rhs.createdOn &&
+        lhs.roomId == rhs.roomId &&
+        lhs.text == rhs.text &&
+        lhs.userId == rhs.userId &&
+        lhs.isImageMessage == rhs.isImageMessage
+    }
 }
 
 extension Message {
@@ -35,8 +45,8 @@ extension Message {
         roomId: String,
         text: String? = nil,
         userId: String? = nil,
-        largeImageToken: DittoAttachmentToken? = nil,
-        thumbnailImageToken: DittoAttachmentToken? = nil
+        largeImageToken: [String: Any]? = nil,
+        thumbnailImageToken: [String: Any]? = nil
     ) {
         self.id = id ?? UUID().uuidString
         self.createdOn = createdOn ?? Date()
@@ -96,9 +106,10 @@ extension Message: DittoDecodable {
             self.userId = DataManager.shared.currentUserId ?? createdByUnknownKey
         }
 
-        self.largeImageToken = value[largeImageTokenKey] as? DittoAttachmentToken
-        self.thumbnailImageToken = value[thumbnailImageTokenKey] as? DittoAttachmentToken
-        print("Checking thumbnailToken value \(String(describing: value[thumbnailImageTokenKey] as? DittoAttachmentToken))")
+        // Attachment tokens are now a sub-dictionary under the key the attachment was saved at.
+        self.largeImageToken = value[largeImageTokenKey] as? [String: Any]
+        self.thumbnailImageToken = value[thumbnailImageTokenKey] as? [String: Any]
+        print("Checking thumbnailToken value \(String(describing: value[thumbnailImageTokenKey] as? [String: Any]))")
 
     }
 }
