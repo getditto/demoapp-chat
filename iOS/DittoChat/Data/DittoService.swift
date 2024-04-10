@@ -91,9 +91,22 @@ extension DittoInstance {
         default:
             DittoLogger.enabled = true
             DittoLogger.minimumLogLevel = DittoLogLevel(rawValue: logOption.rawValue)!
-            if let logFileURL = DittoLogManager.shared.logFileURL {
-                DittoLogger.setLogFileURL(logFileURL)
+
+            let logsDirectoryName = "debug-logs"
+            let logFileName = "logs.txt"
+            
+            let logsDirectory = FileManager.default
+                .urls(for: .cachesDirectory, in: .userDomainMask).first!
+                .appendingPathComponent(logsDirectoryName, isDirectory: true)
+
+            do {
+                try FileManager.default.createDirectory(at: logsDirectory,
+                                                        withIntermediateDirectories: true)
+            } catch let error {
+                assertionFailure("Failed to create logs directory: \(error)")
             }
+
+            DittoLogger.setLogFileURL(logsDirectory.appendingPathComponent(logFileName))
         }
     }
 }
