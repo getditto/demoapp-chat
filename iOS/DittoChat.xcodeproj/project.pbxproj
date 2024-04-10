@@ -40,7 +40,7 @@
 		14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAC297C774F00509E57 /* SettingsScreen.swift */; };
 		14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */; };
 		14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BB526329A010790072C4AD /* RoomsListRowItem.swift */; };
-		14BF945D29786731001F672D /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 14BF945C29786731001F672D /* CodeScanner */; };
+		14BF945D29786731001F672D /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = 14BF945C29786731001F672D /* CodeScanner */; };
 		14BF945F297868ED001F672D /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BF945E297868ED001F672D /* Room.swift */; };
 		14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB2D293FEBD500BED068 /* DittoChatApp.swift */; };
 		14CADB35293FEBD600BED068 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14CADB34293FEBD600BED068 /* Preview Assets.xcassets */; };

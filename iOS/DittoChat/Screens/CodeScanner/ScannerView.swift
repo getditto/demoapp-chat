@@ -6,6 +6,8 @@
 //
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
+// AVMetadataObject is unavailable in visionOS
+#if !os(visionOS)
 import CodeScanner
 import SwiftUI
 
@@ -16,8 +18,9 @@ struct ScannerView: View {
     @State private var scanFailed: Bool = false
     var successAction: (String) -> Void = {_ in}
     var failAction: (String) -> Void = {_ in}
+
     var scanError: ScanError? = nil
-    
+
     var body: some View {
         VStack {
             CodeScannerView(codeTypes: [.qr], completion: handleScan)
@@ -72,3 +75,5 @@ struct ScannerView_Previews: PreviewProvider {
         ScannerView()
     }
 }
+
+#endif
