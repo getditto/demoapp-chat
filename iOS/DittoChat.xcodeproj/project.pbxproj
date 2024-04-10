@@ -988,7 +988,7 @@
 		};
 		14CADB59293FEFD700BED068 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
+			repositoryURL = "https://github.com/getditto/DittoSwiftPackage.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.7.0;
@@ -996,7 +996,7 @@
 		};
 		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/vadymmarkov/Fakery";
+			repositoryURL = "https://github.com/vadymmarkov/Fakery.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;

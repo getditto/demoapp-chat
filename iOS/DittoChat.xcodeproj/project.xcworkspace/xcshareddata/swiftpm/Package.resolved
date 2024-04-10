@@ -1,19 +1,19 @@
 {
-  "originHash" : "ce9a358ed7dc7dbb0b047bc9b8fb5a0d0c43a0f7dc85b9d00019e04838da56be",
+  "originHash" : "54a5037c9ce9e37ba3e66f462a05b6eff9902ce5cb2f68fa20147a678577e325",
   "pins" : [
     {
       "identity" : "codescanner",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/twostraws/CodeScanner.git",
       "state" : {
-        "revision" : "bf5d7087015620b250ee6c865b3c9039fc159d1a",
-        "version" : "2.3.3"
+        "revision" : "303bd5adbb61d068c3bcbb839857340c3e6ff8b0",
+        "version" : "2.4.0"
       }
     },
     {
       "identity" : "dittoswiftpackage",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/getditto/DittoSwiftPackage",
+      "location" : "https://github.com/getditto/DittoSwiftPackage.git",
       "state" : {
         "revision" : "e9ac25ae9d38d215cc5958c995450dbc9b9dbea7",
         "version" : "4.7.1"
@@ -24,14 +24,14 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftTools.git",
       "state" : {
-        "revision" : "c121a51ce7dba950df94689e3f5a695342883fa0",
-        "version" : "4.4.0"
+        "revision" : "e78ed387c8467e60c7909b9af2ad5af5eabe076b",
+        "version" : "4.7.4"
       }
     },
     {
       "identity" : "fakery",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vadymmarkov/Fakery",
+      "location" : "https://github.com/vadymmarkov/Fakery.git",
       "state" : {
         "revision" : "71cb3bf36a808534659d1248780c2bf3c4c4fc91",
         "version" : "5.1.0"
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "a902f1823a7ff3c9ab2fba0f992396b948eda307",
-        "version" : "1.0.5"
+        "revision" : "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
+        "version" : "1.1.0"
       }
     }
   ],
