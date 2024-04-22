@@ -119,6 +119,20 @@ class RepositoryImpl @Inject constructor(
     private lateinit var usersLiveQuery: DittoLiveQuery
     private lateinit var usersSubscription: DittoSubscription
 
+    private lateinit var missionCollection: DittoCollection
+    private lateinit var missionSubscription: DittoSubscription
+    private lateinit var equipmentCollection: DittoCollection
+    private lateinit var equipmentSubscription: DittoSubscription
+    private lateinit var taskCollection: DittoCollection
+    private lateinit var taskSubscription: DittoSubscription
+    private lateinit var greenbookCollection: DittoCollection
+    private lateinit var greenbookSubscription: DittoSubscription
+    private lateinit var greenbookEntryCollection: DittoCollection
+    private lateinit var greenbookEntrySubscription: DittoSubscription
+    private lateinit var filesCollection: DittoCollection
+    private lateinit var filesSubscription: DittoSubscription
+    private lateinit var systemsCollection: DittoCollection
+    private lateinit var systemsSubscription: DittoSubscription
     init {
         initDatabase(this::postInitActions)
     }
@@ -340,6 +354,22 @@ class RepositoryImpl @Inject constructor(
                 this.userssDocs = docs
                 allUsers.value = docs.map { User(it) }
             }
+
+            missionCollection = ditto.store.collection("events")
+            missionSubscription = missionCollection.findAll().subscribe()
+            equipmentCollection = ditto.store.collection("equipment")
+            equipmentSubscription = equipmentCollection.findAll().subscribe()
+            taskCollection = ditto.store.collection("workItems")
+            taskSubscription = taskCollection.findAll().subscribe()
+            greenbookCollection = ditto.store.collection("greenBook")
+            greenbookSubscription = greenbookCollection.findAll().subscribe()
+            greenbookEntryCollection = ditto.store.collection("greenBookEntries")
+            greenbookEntrySubscription = greenbookEntryCollection.findAll().subscribe()
+            filesCollection = ditto.store.collection("files")
+            filesSubscription = filesCollection.findAll().subscribe()
+            systemsCollection = ditto.store.collection("systems")
+            systemsSubscription = systemsCollection.findAll().subscribe()
+
         }
     }
 
