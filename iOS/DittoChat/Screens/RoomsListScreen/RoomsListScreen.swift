@@ -3,26 +3,35 @@
 //  DittoChat
 //
 //  Created by Eric Turner on 2/17/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 
-struct RoomsListScreen: View {
-    @ObservedObject var viewModel = RoomsListScreenVM()    
+public struct RoomsListScreen: View {
+    @ObservedObject var viewModel = RoomsListScreenVM()
 
-    var body: some View {
+    public init() { /*Make init public access level*/ }
+
+    public var body: some View {
         List {
             if let defaultPublicRoom = viewModel.defaultPublicRoom {
                 Section(openPublicRoomTitleKey) {
-                    NavigationLink(value: defaultPublicRoom) {
+                    NavigationLink(destination: ChatScreen(room: defaultPublicRoom)) {
                         RoomsListRowItem(room: defaultPublicRoom)
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button(action: {
+                            viewModel.toggleSubscriptionFor(room: defaultPublicRoom)
+                        }, label: {
+                            Text("Sub")
+                        })
                     }
                 }
             }
             Section( viewModel.publicRooms.count > 0 ? publicRoomsTitleKey : "" ) {
                 ForEach(viewModel.publicRooms) { room in
-                    NavigationLink(value: room) {
+                    NavigationLink(destination: ChatScreen(room: room)) {
                         RoomsListRowItem(room: room)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -31,12 +40,19 @@ struct RoomsListScreen: View {
                         }
                         .tint(.red)
                     }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button(action: {
+                            viewModel.toggleSubscriptionFor(room: room)
+                        }, label: {
+                            Text("Sub")
+                        })
+                    }
                 }
             }
             
             Section( viewModel.privateRooms.count > 0 ? privateRoomsTitleKey : "" ) {
                 ForEach(viewModel.privateRooms) { room in
-                    NavigationLink(value: room) {
+                    NavigationLink(destination: ChatScreen(room: room)) {
                         RoomsListRowItem(room: room)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -45,14 +61,17 @@ struct RoomsListScreen: View {
                         }
                         .tint(.red)
                     }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button(action: {
+                            viewModel.toggleSubscriptionFor(room: room)
+                        }, label: {
+                            Text("Sub")
+                        })
+                    }
                 }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: Room.self) { room in
-            ChatScreen(room: room)
-                .withErrorHandling()
-        }
         .sheet(isPresented: $viewModel.presentProfileScreen) {
             ProfileScreen()
         }
@@ -70,7 +89,7 @@ struct RoomsListScreen: View {
             SettingsScreen()
         }
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading ) {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
                     viewModel.profileButtonAction()
                 } label: {
@@ -82,7 +101,7 @@ struct RoomsListScreen: View {
                     Image(systemName: gearShapeKey)
                 }
             }
-            ToolbarItemGroup(placement: .principal ) {
+            ToolbarItemGroup(placement: .principal) {
                 Text(appTitleKey)
                     .fontWeight(.bold)
             }
@@ -105,7 +124,7 @@ struct RoomsListScreen: View {
 #if DEBUG
 struct RoomsListScreen_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
+        NavigationView {
             RoomsListScreen()
         }
     }

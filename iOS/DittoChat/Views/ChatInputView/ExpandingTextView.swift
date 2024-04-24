@@ -3,12 +3,12 @@
 //  DittoChat
 //
 //  Created by Maximilian Alexander on 7/19/22.
+//  Copyright © 2022 DittoLive Incorporated. All rights reserved.
 //
 
 import SwiftUI
 
 struct ExpandingTextView: View {
-
     /**
      * This is a UITextView Adapter to SwiftUI
      */
@@ -53,7 +53,6 @@ struct ExpandingTextView: View {
                 self.textDidChange(textView)
             }
 
-            
             func textViewDidBeginEditing(_ textView: UITextView) {
                 if textView.textColor == UIColor.lightGray {
                     textView.text = ""
@@ -70,7 +69,6 @@ struct ExpandingTextView: View {
         }
     }
 
-    
     @Binding var text: String
 
     let minHeight: CGFloat = UIFont.systemFont(ofSize: UIFont.labelFontSize).lineHeight
@@ -87,10 +85,11 @@ struct ExpandingTextView: View {
     }
 }
 
-
+#if DEBUG
 struct ExpandingTextView_Previews: PreviewProvider {
     static var previews: some View {
         ExpandingTextView(text: .constant("foo"))
             .previewLayout(.sizeThatFits)
     }
 }
+#endif

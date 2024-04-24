@@ -6,7 +6,7 @@ import Foundation
 import MessageUI
 import UIKit
 
-private struct Config {
+fileprivate struct Config {
     static let logsDirectoryName = "ditto-debug-logs"
     static let logFileName = "DittoLogs.txt"
     static let zippedLogFileName = "DittoLogs.zip"
@@ -36,7 +36,6 @@ private struct Config {
 /// LogManager acts as a thin interface over our stored log files and
 /// offers functionality to share zipped logs with an iOS share sheet.
 struct LogManager {
-
     // MARK: - Singleton
 
     public static let shared = LogManager()

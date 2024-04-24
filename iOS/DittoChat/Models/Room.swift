@@ -1,24 +1,34 @@
-///
-//  PrivateRoom.swift
+//
+//  Room.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 1/12/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import DittoSwift
 import Foundation
 
-extension Room: Codable {}
+extension Room: Codable { /*Adding codable protocol*/ }
 
-struct Room: Identifiable, Hashable, Equatable {
-    let id: String
-    let name: String
-    let messagesId: String
-    private(set) var isPrivate: Bool
-    let collectionId: String?
-    let createdBy: String
-    let createdOn: Date
+public struct Room: Identifiable, Hashable, Equatable {
+    public let id: String
+    public let name: String
+    public let messagesId: String
+    public private(set) var isPrivate: Bool
+    public let collectionId: String?
+    public let createdBy: String
+    public let createdOn: Date
+
+    public init(id: String, name: String, messagesId: String, isPrivate: Bool, collectionId: String?, createdBy: String, createdOn: Date) {
+        self.id = id
+        self.name = name
+        self.messagesId = messagesId
+        self.isPrivate = isPrivate
+        self.collectionId = collectionId
+        self.createdBy = createdBy
+        self.createdOn = createdOn
+    }
 }
 
 extension Room {
@@ -68,7 +78,7 @@ extension Room {
     }
 }
 
-extension Room {
+public extension Room {
     // This "dummy" object is a Room object used by DittoChatApp.swift
     // to initialize a basic chat mode ChatScreen as root view
     static var basicChatDummy: Room {
@@ -80,4 +90,3 @@ extension Room {
         )
     }
 }
-

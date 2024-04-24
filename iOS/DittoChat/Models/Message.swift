@@ -3,6 +3,7 @@
 //  DittoChat
 //
 //  Created by Maximilian Alexander on 7/19/22.
+//  Copyright © 2022 DittoLive Incorporated. All rights reserved.
 //
 
 import DittoSwift
@@ -22,10 +23,13 @@ struct Message: Identifiable, Equatable {
     var userId: String
     var largeImageToken: DittoAttachmentToken?
     var thumbnailImageToken: DittoAttachmentToken?
-    
+
+    var archivedMessage: String?
+    var isArchived: Bool
+
     var isImageMessage: Bool {
         thumbnailImageToken != nil || largeImageToken != nil
-    }    
+    }
 }
 
 extension Message {
@@ -37,6 +41,8 @@ extension Message {
         self.userId = document[userIdKey].stringValue
         self.largeImageToken = document[largeImageTokenKey].attachmentToken
         self.thumbnailImageToken = document[thumbnailImageTokenKey].attachmentToken
+        self.archivedMessage = document[archivedMessageKey].string
+        self.isArchived = document[isArchivedKey].bool ?? false
     }
 }
 
@@ -48,7 +54,9 @@ extension Message {
         text: String? = nil,
         userId: String? = nil,
         largeImageToken: DittoAttachmentToken? = nil,
-        thumbnailImageToken: DittoAttachmentToken? = nil
+        thumbnailImageToken: DittoAttachmentToken? = nil,
+        archivedMessage: String? = nil,
+        isArchived: Bool = false
     ) {
         self.id = id ?? UUID().uuidString
         self.createdOn = createdOn ?? Date()
@@ -57,6 +65,8 @@ extension Message {
         self.userId = DataManager.shared.currentUserId ?? createdByUnknownKey
         self.largeImageToken = largeImageToken
         self.thumbnailImageToken = thumbnailImageToken
+        self.archivedMessage = archivedMessage
+        self.isArchived = isArchived
     }
 }
 
@@ -69,7 +79,9 @@ extension Message {
             textKey: text,
             userIdKey: userId,
             largeImageTokenKey: largeImageToken,
-            thumbnailImageTokenKey: thumbnailImageToken
+            thumbnailImageTokenKey: thumbnailImageToken,
+            archivedMessageKey: archivedMessage,
+            isArchivedKey: isArchived,
         ]
     }
 }

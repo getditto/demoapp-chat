@@ -1,10 +1,10 @@
-///
+//
 //  MessageBubbleVM.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 2/27/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import Combine
 import DittoSwift
@@ -18,17 +18,17 @@ class MessageBubbleVM: ObservableObject {
     @Published private(set) var message: Message
     @Published var presentDeleteAlert = false
     private let messagesId: String
-    private var tmpStorage: TemporaryFile?    
-    
+    private var tmpStorage: TemporaryFile?
+
     init(_ msg: Message, messagesId: String) {
         self.message = msg
         self.messagesId = messagesId
-        
+
         DataManager.shared.messagePublisher(for: message.id, in: messagesId)
             .receive(on: RunLoop.main)
             .assign(to: &$message)
     }
-    
+
     func cleanupStorage() async throws {
         if let storage = tmpStorage {
             Task {
@@ -40,17 +40,17 @@ class MessageBubbleVM: ObservableObject {
             }
         }
     }
-    
+
     func fetchAttachment(type: AttachmentType) async {
         guard let token = type == .largeImage
-                ? message.largeImageToken
-                : message.thumbnailImageToken
+            ? message.largeImageToken
+            : message.thumbnailImageToken
         else { return }
-        
+
         ImageAttachmentFetcher().fetch(
             with: token,
             from: messagesId,
-            onProgress: {[weak self] ratio in
+            onProgress: { [weak self] ratio in
                 switch type {
                 case .thumbnailImage:
                     self?.thumbnailProgress = ratio
@@ -60,37 +60,38 @@ class MessageBubbleVM: ObservableObject {
             },
             onComplete: { result in
                 switch result {
-                case .success(let (uiImage, metadata) ):
-                    
+                case .success(let (uiImage, metadata)):
+
                     switch type {
                     case .thumbnailImage:
                         self.thumbnailImage = Image(uiImage: uiImage)
-                    
+
                     case .largeImage:
                         let fname = metadata[filenameKey] ?? unnamedLargeImageFileKey
-                        
+
                         if let tmp = try? TemporaryFile(creatingTempDirectoryForFilename: fname) {
                             self.tmpStorage = tmp
-                            
+
                             if let _ = try? uiImage.jpegData(compressionQuality: 1.0)?.write(to: tmp.fileURL) {
                                 self.fileURL = tmp.fileURL
                             } else {
                                 print("ImageAttachmentFetcher.onComplete: Error writing JPG attachment data to file at path: \(tmp.fileURL.path) --> Return")
-                            }                            
+                            }
                         } else {
                             print("ImageAttachmentFetcher.onComplete.success ERROR creating tmpStorage")
                         }
                     }
-                    
+
                 case .failure:
                     print("MessageBubbleVM.ImageAttachmentFetcher.failure: UNKNOWN Thumbnail image Error")
                     self.thumbnailImage = Image(uiImage: UIImage(systemName: messageImageFailKey)!)
-                    
+
                     // do nothing for large image fetch
                 }
-            })
+            }
+        )
     }
-    
+
     deinit {
         if let storage = tmpStorage {
             Task {
@@ -106,7 +107,7 @@ class MessageBubbleVM: ObservableObject {
 
 struct ImageAttachmentFetcher {
     typealias CompletionRatio = CGFloat
-    typealias ImageMetadataTuple = (image:UIImage, metadata:[String:String])
+    typealias ImageMetadataTuple = (image: UIImage, metadata: [String: String])
     typealias ProgressHandler = (CompletionRatio) -> Void
     typealias CompletionHandler = (Result<ImageMetadataTuple, Error>) -> Void
 

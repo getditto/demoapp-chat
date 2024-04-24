@@ -1,10 +1,10 @@
-///
+//
 //  SpinnerView.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 3/3/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 
@@ -18,27 +18,26 @@ extension View {
 struct SpinnerView: View {
     let primary: Color
     let secondary: Color
-    
+
     init(primary: Color = .white, secondary: Color = .white.opacity(0.2)) {
         self.primary = primary
         self.secondary = secondary
     }
-    
+
     var body: some View {
         SpinningView(
             content:
-                Arc(startAngle: .degrees(0), endAngle: .degrees(-270))
+            Arc(startAngle: .degrees(0), endAngle: .degrees(-270))
                 .stroke(
                     AngularGradient(
                         gradient: Gradient(colors: [
                             primary,
                             primary,
-                            secondary
-                            
+                            secondary,
                         ]),
                         center: .center,
                         startAngle: .degrees(0),
-                        endAngle:   .degrees(-270)
+                        endAngle: .degrees(-270)
                     ),
                     lineWidth: 3
                 )
@@ -49,10 +48,10 @@ struct SpinnerView: View {
 struct SpinningView<Content: View>: View {
     @State var isAnimating = false
     let content: Content
-    
+
     var body: some View {
         content
-            .rotationEffect( isAnimating ? Angle(degrees: 360) : .zero )
+            .rotationEffect(isAnimating ? Angle(degrees: 360) : .zero)
             .onAppear {
                 withAnimation(
                     Animation
@@ -68,7 +67,7 @@ struct SpinningView<Content: View>: View {
 struct Arc: Shape {
     let startAngle: Angle
     let endAngle: Angle
-    
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.addArc(

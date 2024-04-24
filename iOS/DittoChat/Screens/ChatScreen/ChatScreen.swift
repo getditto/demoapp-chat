@@ -1,20 +1,20 @@
-///
+//
 //  ChatScreen.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 02/24/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 import PhotosUI
 import SwiftUI
 
-struct ChatScreen: View {
+public struct ChatScreen: View {
     @StateObject var viewModel: ChatScreenVM
     @EnvironmentObject var errorHandler: ErrorHandler
 
-    init(room: Room) {
+    public init(room: Room) {
         self._viewModel = StateObject(wrappedValue: ChatScreenVM(room: room))
     }
 
@@ -25,49 +25,73 @@ struct ChatScreen: View {
             return viewModel.roomName
         }
     }
-    
-    var body: some View {
+
+    public var body: some View {
         VStack {
             ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(viewModel.messagesWithUsers) { usrMsg in
-                            MessageBubbleView(
-                                messageWithUser: usrMsg,
-                                messagesId: viewModel.room.messagesId,
-                                messageOpCallback: viewModel.messageOperationCallback,
-                                isEditing: $viewModel.isEditing
-                            )
-                            .id(usrMsg.message.id)
-                            .transition(.slide)
+                ZStack {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(viewModel.messagesWithUsers) { usrMsg in
+                                MessageBubbleView(
+                                    messageWithUser: usrMsg,
+                                    messagesId: viewModel.room.messagesId,
+                                    messageOpCallback: viewModel.messageOperationCallback,
+                                    isEditing: $viewModel.isEditing
+                                )
+                                .id(usrMsg.message.id)
+                                .transition(.slide)
+                            }
                         }
                     }
-                }
-                .scrollDismissesKeyboard(.interactively)
-                .onAppear {
-                    DispatchQueue.main.async {
-                        scrollToBottom(proxy: proxy)
+                    //.defaultScrollAnchor(.bottom)
+                    .scrollDismissesKeyboard(.interactively)
+                    .onAppear {
+                        DispatchQueue.main.async {
+                            scrollToBottom(proxy: proxy)
+                        }
                     }
-                }
-                .onChange(of: viewModel.messagesWithUsers.count) { value in
-                    DispatchQueue.main.async {
+                    .onChange(of: viewModel.messagesWithUsers.count) { value in
+                        DispatchQueue.main.async {
+                            withAnimation {
+                                scrollToBottom(proxy: proxy)
+                            }
+                        }
+                    }
+                    .onChange(of: viewModel.keyboardStatus) { status in
+                        guard !viewModel.presentEditingView else { return }
+                        if status == .willShow || status == .willHide { return }
                         withAnimation {
                             scrollToBottom(proxy: proxy)
                         }
                     }
-                }
-                .onChange(of: viewModel.keyboardStatus) { status in
-                    guard !viewModel.presentEditingView else { return }
-                    if status == .willShow || status == .willHide { return }
-                    withAnimation {
-                        scrollToBottom(proxy: proxy)
+                    if let lastUnreadMessage = viewModel.lastUnreadMessage() {
+                        VStack(alignment: .leading) {
+                            Button(action: {
+                                DispatchQueue.main.async {
+                                    withAnimation {
+                                        proxy.scrollTo(lastUnreadMessage, anchor: .top)
+                                    }
+                                    viewModel.clearUnreadsAndMentions()
+                                }
+                            }, label: {
+                                Image(systemName: "arrow.up.message")
+                                Text("new messages")
+                            })
+                            .padding(.top)
+                            .padding(.horizontal)
+                            .buttonBorderShape(.capsule)
+                            .buttonStyle(.borderedProminent)
+                            Spacer()
+                        }
                     }
                 }
             }
 
             HStack(alignment: .center, spacing: 0) {
                 photosPickerButtonView
-                
+                    .padding(.top, 4)
+
                 ChatInputView(
                     text: $viewModel.inputText,
                     onSendButtonTappedCallback: viewModel.sendMessage
@@ -104,21 +128,21 @@ struct ChatScreen: View {
                 }
             }
         }
-        .sheet(isPresented: $viewModel.presentProfileScreen) {// basic chat mode
+        .sheet(isPresented: $viewModel.presentProfileScreen) { // basic chat mode
             ProfileScreen()
         }
-        .sheet(isPresented: $viewModel.presentSettingsView) {// basic chat mode
+        .sheet(isPresented: $viewModel.presentSettingsView) { // basic chat mode
             SettingsScreen()
         }
         .toolbar {
             // basic chat mode
             if viewModel.isBasicChatScreen {
-                ToolbarItemGroup(placement: .navigationBarLeading ) {
-                Button {
-                    viewModel.presentProfileScreen = true
-                } label: {
-                    Image(systemName: personCircleKey)
-                }
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        viewModel.presentProfileScreen = true
+                    } label: {
+                        Image(systemName: personCircleKey)
+                    }
                     Button {
                         viewModel.presentSettingsView = true
                     } label: {
@@ -151,7 +175,7 @@ struct ChatScreen: View {
             }
         }
     }
-    
+
     var photosPickerButtonView: some View {
         PhotosPicker(selection: $viewModel.selectedItem,
                      matching: .images,
@@ -170,10 +194,10 @@ struct ChatScreen: View {
             Task {
                 do {
                     let imageData = try await newValue?.loadTransferable(type: Data.self)
-                    
+
                     if let image = UIImage(data: imageData ?? Data()) {
                         viewModel.selectedImage = image
-                        
+
                         do {
                             try await viewModel.sendImageMessage()
                         } catch {

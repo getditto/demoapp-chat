@@ -1,25 +1,23 @@
-///
+//
 //  DocumentPickerView.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 1/29/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 import UniformTypeIdentifiers
 
 struct DocumentPickerView: View {
-    
     var body: some View {
         DocumentPickerController()
     }
 }
 
 struct DocumentPickerController: UIViewControllerRepresentable {
-    
 //    func makeUIViewController(context: UIViewControllerRepresentableContext<DocumentPickerController>) -> some UIDocumentPickerViewController {
-    func makeUIViewController(context: Context) ->  UIDocumentPickerViewController {
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let supportedTypes: [UTType] = [.pdf]
 //        let picker = UIDocumentPickerViewController(documentTypes: [], in: .open)
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes)
@@ -27,32 +25,32 @@ struct DocumentPickerController: UIViewControllerRepresentable {
         picker.delegate = context.coordinator
         return picker
     }
-    
-    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: UIViewControllerRepresentableContext<DocumentPickerController>) {}
-    
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: UIViewControllerRepresentableContext<DocumentPickerController>) { /*not used*/}
+
     func makeCoordinator() -> Coordinator {
         return Coordinator(parent: self)
     }
-    
+
     class Coordinator: NSObject, UIDocumentPickerDelegate {
         let parent: DocumentPickerController
         init(parent: DocumentPickerController) {
             self.parent = parent
         }
-        
+
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             for url in urls {
                 print("DocumentPickerControllerDelegate: urls: \(url)")
-                
+
                 // Start accessing a security-scoped resource.
                 guard url.startAccessingSecurityScopedResource() else {
                     // Handle the failure here.
                     print("Accessing Security Scoped Resource Error!")
                     return
                 }
-                
+
                 do {
-                    let _ = try Data.init(contentsOf: url)
+                    let _ = try Data(contentsOf: url)
                     print("RECEIVED DATA from file at url: \(url.path)")
                     // You will have data of the selected file
                 }
@@ -64,16 +62,17 @@ struct DocumentPickerController: UIViewControllerRepresentable {
                 do { url.stopAccessingSecurityScopedResource() }
             }
         }
-        
+
         func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
             controller.dismiss(animated: true, completion: nil)
         }
     }
-
 }
 
+#if DEBUG
 struct DocumentPicker_Previews: PreviewProvider {
     static var previews: some View {
         DocumentPickerController()
     }
 }
+#endif

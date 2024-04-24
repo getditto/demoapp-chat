@@ -1,10 +1,10 @@
-///
+//
 //  ChatInputView.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 02/20/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 
@@ -13,9 +13,8 @@ struct ChatInputView: View {
     var onSendButtonTappedCallback: (() -> Void)? = nil
 
     var body: some View {
-
         HStack(alignment: .center) {
-            
+
             HStack(alignment: .center) {
                 
                 ExpandingTextView(text: $text)
@@ -30,22 +29,23 @@ struct ChatInputView: View {
                         .clipShape(Circle())
                 }
                 .padding(4)
-                
+
                 Spacer(minLength: 8)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(.secondary, lineWidth: 1)
             )
-            
+
             Spacer(minLength: 12)
         }
     }
 }
 
+#if DEBUG
 struct ChatInputView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatInputView(text: .constant("Hellosdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfasdfasdfsdfsdfsdfsdf")){}
-            .previewLayout(.sizeThatFits)
+        ChatInputView(text: .constant("Hello how are you this fine evening?")) { /*for previews only*/ }
     }
 }
+#endif

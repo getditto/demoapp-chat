@@ -1,8 +1,9 @@
 //
 //  TemporaryFile.swift
-//  Pics
+//  DittoChat
 //
 //  Created by Maximilian Alexander on 12/10/20.
+//  Copyright © 2020 DittoLive Incorporated. All rights reserved.
 //
 
 import Foundation

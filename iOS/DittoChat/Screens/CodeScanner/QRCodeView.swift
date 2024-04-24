@@ -1,40 +1,41 @@
-///
+//
 //  QRCodeView.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 1/12/23.
+//  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 //  Credit to Paul Hudson
 //  https://www.hackingwithswift.com/books/ios-swiftui/generating-and-scaling-up-a-qr-code
 //
-//  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import SwiftUI
 
 struct QRCodeView: View {
     let roomName: String
     let codeString: String
-        
+
     var body: some View {
         NavigationView {
-                VStack {
-                    Spacer().frame(height: 64)
-                    ZStack {
-                        Image("thin_message_bubble")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 355, height: 355)
-                        
-                        Image(uiImage: codeString.generateQRCode())
-                                    .interpolation(.none)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 180, height: 180)
-                                    .padding(.bottom, 36)
-                    }
-                    Spacer()
+            VStack {
+                Spacer().frame(height: 64)
+                ZStack {
+                    Image("thin_message_bubble")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 355, height: 355)
+
+                    Image(uiImage: codeString.generateQRCode())
+                        .interpolation(.none)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 180, height: 180)
+                        .padding(.bottom, 36)
+                }
+                Spacer()
             }
             .toolbar {
-                ToolbarItemGroup(placement: .principal ) {
+                ToolbarItemGroup(placement: .principal) {
                     VStack {
                         Text(roomName)
                             .font(.title)
@@ -48,6 +49,7 @@ struct QRCodeView: View {
     }
 }
 
+#if DEBUG
 struct QRCodeView_Previews: PreviewProvider {
     static var previews: some View {
         QRCodeView(
@@ -56,3 +58,4 @@ struct QRCodeView_Previews: PreviewProvider {
         )
     }
 }
+#endif

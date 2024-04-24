@@ -1,8 +1,10 @@
 //
-//  MessageBubble.swift
+//  MessageBubbleView.swift
 //  DittoChat
 //
 //  Created by Maximilian Alexander on 7/20/22.
+//  Copyright © 2022 DittoLive Incorporated. All rights reserved.
+//
 //  Credits to: https://prafullkumar77.medium.com/swiftui-creating-a-chat-bubble-like-imessage-using-path-and-shape-67cf23ccbf62
 //
 
@@ -10,7 +12,7 @@ import Combine
 import DittoSwift
 import SwiftUI
 
-struct MessageBubbleView: View {    
+struct MessageBubbleView: View {
     @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject private var viewModel: MessageBubbleVM
     @State private var needsImageSync = true
@@ -32,11 +34,11 @@ struct MessageBubbleView: View {
         self.needsImageSync = messageWithUser.message.thumbnailImageToken != nil
         self.messageOpCallback = messageOpCallback
     }
-    
-    private var user: User {
+
+    private var user: ChatUser {
         messageUser.user
     }
-    
+
     private var message: Message {
         messageUser.message
     }
@@ -44,7 +46,7 @@ struct MessageBubbleView: View {
     private var hasThumbnail: Bool {
         message.thumbnailImageToken != nil
     }
-    
+
     private var isImageMessage: Bool {
         message.isImageMessage
     }
@@ -81,7 +83,7 @@ struct MessageBubbleView: View {
         }
         return user.id == DataManager.shared.currentUserId
     }
-    
+
     private var backgroundColor: Color {
         if side == .left {
             return Color(.tertiarySystemFill)
@@ -383,7 +385,7 @@ struct MessageBubbleView_Previews: PreviewProvider {
                 text: Self.faker.lorem.sentence(),
                 userId: "max"
             ),
-            user: User(id: "max", firstName: "Maximilian", lastName: "Alexander")
+            user: ChatUser(id: "max", firstName: "Maximilian", lastName: "Alexander", subscriptions: [:], mentions: [:])
         ),
         MessageWithUser(
             message: Message(
@@ -393,11 +395,7 @@ struct MessageBubbleView_Previews: PreviewProvider {
                 text: Self.faker.lorem.paragraph(sentencesAmount: 12),
                 userId: "me"
             ),
-            user: User(
-                id: "me",
-                firstName: "Me",
-                lastName: "NotYou"
-            )
+            user: ChatUser(id: "me", firstName: "Me", lastName: "NotYou", subscriptions: [:], mentions: [:])
         ),
         MessageWithUser(
             message: Message(
@@ -407,7 +405,7 @@ struct MessageBubbleView_Previews: PreviewProvider {
                 text: Self.faker.lorem.sentence(),
                 userId: "max"
             ),
-            user: User(id: "max", firstName: "Maximilian", lastName: "Alexander")
+            user: ChatUser(id: "max", firstName: "Maximilian", lastName: "Alexander", subscriptions: [:], mentions: [:])
         ),
         MessageWithUser(
             message: Message(
@@ -417,15 +415,15 @@ struct MessageBubbleView_Previews: PreviewProvider {
                 text: Self.faker.lorem.sentence(),
                 userId: "me"
             ),
-            user: User(id: "me", firstName: "Me", lastName: "NotYou")
-        )
+            user: ChatUser(id: "me", firstName: "Me", lastName: "NotYou", subscriptions: [:], mentions: [:])
+        ),
     ]
 
     static var previews: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(messagesWithUsers) { m in
-                    MessageBubbleView(messageWithUser: m, preview: true)
+                ForEach(messagesWithUsers) { message in
+                    MessageBubbleView(messageWithUser: message, preview: true)
                 }
             }
         }

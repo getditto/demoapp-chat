@@ -1,10 +1,10 @@
-///
+//
 //  CustomErrors.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 3/27/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import Foundation
 
@@ -32,12 +32,12 @@ extension AppError: CustomStringConvertible {
         }
     }
 }
+
 extension AppError: LocalizedError {
     public var errorDescription: String? {
         self.description
     }
 }
-
 
 public enum AttachmentError: Error {
     case createFail
@@ -97,7 +97,7 @@ extension AttachmentError: LocalizedError {
 enum AttachmentType: String, CustomStringConvertible {
     case thumbnailImage
     case largeImage
-    
+
     var description: String {
         switch self {
         case .thumbnailImage:

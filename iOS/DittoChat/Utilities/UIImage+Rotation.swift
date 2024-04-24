@@ -1,20 +1,19 @@
-///
+//
 //  UIImage+Rotation.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 3/1/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 
 // WWDC 2021 - Meet async/await in Swift
 extension UIImage {
-
     func attachmentThumbnail() async -> UIImage? {
         return await self.byPreparingThumbnail(ofSize: attachmentThumbnailSize)
     }
-    
+
     var attachmentThumbnailSize: CGSize {
         // arbitrary portrait thumbnail dimensions; invert if landscape
         let edge1 = 282.0; let edge2 = 376.0

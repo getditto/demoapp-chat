@@ -1,10 +1,10 @@
-///
+//
 //  RoomView.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 1/28/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import SwiftUI
 
@@ -23,8 +23,10 @@ struct RoomView: View {
     }
 }
 
-//struct RoomView_Previews: PreviewProvider {
+//#if DEBUG
+// struct RoomView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        RoomView()
 //    }
-//}
+// }
+//#endif

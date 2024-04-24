@@ -1,10 +1,11 @@
-///
-//  ErrorHandler.swift
 //
-//  Created by Ralf Ebert July 29, 2021
+//  ErrorHandler.swift
+//  DittoChat
+//
+//  Created by Ralf Ebert on 07/29/21.
+//  Copyright © 2021 DittoLive Incorporated. All rights reserved.
+//
 //  https://www.ralfebert.com/swiftui/generic-error-handling/
-
-
 
 import SwiftUI
 
@@ -47,8 +48,8 @@ struct HandleErrorsByShowingAlertViewModifier: ViewModifier {
     }
 }
 
-extension View {
-    func withErrorHandling() -> some View {
+public extension View {
+    @MainActor func withErrorHandling() -> some View {
         modifier(HandleErrorsByShowingAlertViewModifier())
     }
 }

@@ -9,9 +9,13 @@ import Combine
 import SwiftUI
 
 class DittoChatAppVM: ObservableObject {
-    @Published var basicChatAsRootView = DataManager.shared.basicChat
-    
+    @Published var basicChatAsRootView: Bool
+
     init() {
+        let ditto = DittoManager.shared.ditto
+        DittoInstance.dittoShared = ditto
+        
+        basicChatAsRootView = DataManager.shared.basicChat
         DataManager.shared.basicChatPublisher
             .assign(to: &$basicChatAsRootView)
     }

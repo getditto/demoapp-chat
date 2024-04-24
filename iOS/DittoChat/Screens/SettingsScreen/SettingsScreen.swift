@@ -1,10 +1,10 @@
-///
+//
 //  SettingsScreen.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 1/21/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import DittoDataBrowser
 import DittoDiskUsage
@@ -21,22 +21,22 @@ struct SettingsScreen: View {
     @ObservedObject var dittoInstance = DittoInstance.shared
     @State var acceptLargeImages: Bool = DataManager.shared.acceptLargeImages
     @State var advancedFeaturesEnabled: Bool = !DataManager.shared.basicChat
-        
+
     private var textColor: Color { colorScheme == .dark ? .white : .black }
-    
+
     var body: some View {
         NavigationView {
             List {
                 Section(userSettingsTitleKey) {
                     VStack(alignment: .leading) {
-                        
+
                         Toggle("Enable Advanced Features", isOn: $advancedFeaturesEnabled)
                             .onChange(of: advancedFeaturesEnabled) { shouldEnable in
                                 vm.enableAdvancedFeatures(useAdvanced: shouldEnable)
                             }
 
                         Divider()
-                        
+
                         Toggle("Enable Large Images", isOn: $acceptLargeImages)
                             .onChange(of: acceptLargeImages) { accept in
                                 vm.setLargeImagesPrefs(accept)
@@ -106,9 +106,9 @@ struct SettingsScreen: View {
                     } message: {
                         Text("Compressing log data may take a while.")
                     }
-                
+
                 // Public Rooms
-                if vm.archivedPublicRooms.count > 0 {
+                if !vm.archivedPublicRooms.isEmpty {
                     Section(archivedPublicRoomsTitleKey) {
                         // public rooms contains Room instances fetched from Ditto
                         ForEach(vm.archivedPublicRooms) { room in
@@ -130,7 +130,7 @@ struct SettingsScreen: View {
                     }
                 }
 
-                if vm.unReplicatedPublicRooms.count > 0 {
+                if !vm.unReplicatedPublicRooms.isEmpty {
                     Section(unreplicatedPublicRoomsTitleKey) {
                         /* This "unreplicated"/Archived public rooms section contains "placeholder"
                          public room instances from localStore archive (not Ditto) for which the
@@ -160,7 +160,7 @@ struct SettingsScreen: View {
                 }
 
                 // Private Rooms
-                if vm.archivedPrivateRooms.count > 0 {
+                if !vm.archivedPrivateRooms.isEmpty {
                     Section(archivedPrivateRoomsTitleKey) {
                         ForEach(vm.archivedPrivateRooms) { privRoom in
                             NavigationLink {
@@ -178,29 +178,29 @@ struct SettingsScreen: View {
                     }
                 }
 
-                if vm.unReplicatedPrivateRooms.count > 0 {
+                if !vm.unReplicatedPrivateRooms.isEmpty {
                     Section {
                         /* This "unreplicated/evicted" rooms section contains placeholder archived
                          rooms (stored as JSON in UserDefaults) for which messages have been evicted
                          and the room document has not been replicated by a peer.
-                         
+
                          It is possible that a private room appearing in this section is off-mesh or
                          out of range of any peer members of the room, and therefore unable to be
                          replicated. In this case the room could be restored when in range of a peer
                          member of the room. (Note that replication will not multi-hop across
                          devices in the mesh which are not subscribed to the private room, so
                          replication will not occur until a peer member device is in range.)
-                         
+
                          Further, if a room from this section is "restored", the placeholder room
                          instance is placed back in the privateRooms collection and will appear
                          in the rooms list (RoomsListScreen), however, the room will not contain
                          any messages until peer member replication has occurred.
-                                                  
+
                          NOTE: The swipe-to-DELETE feature for rooms in this section is to handle
                          the case where the user creates a private room without sharing it with any
                          peer, then archives it. In this case, the room cannot be restored because
                          there are no peers with its data.
-                         
+
                          Though possibly ambiguous to the user in the UI, without this DELETE
                          feature, there exists the possibility of an ever-increasing group of
                          orphaned private rooms without a way to remove them.
@@ -240,7 +240,7 @@ struct SettingsScreen: View {
                     }
                     .font(.body)
                 }
-            }// end List
+            } // end List
             .listStyle(.insetGrouped)
             .navigationBarTitle(settingsTitleKey)
             .navigationBarTitleDisplayMode(.inline)
@@ -248,8 +248,10 @@ struct SettingsScreen: View {
     }
 }
 
+#if DEBUG
 struct SettingsScreen_Previews: PreviewProvider {
     static var previews: some View {
         SettingsScreen()
     }
 }
+#endif

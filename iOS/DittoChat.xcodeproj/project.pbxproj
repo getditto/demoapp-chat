@@ -7,64 +7,71 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		142B278E2A39290700C09751 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142B278D2A39290700C09751 /* Env.swift */; };
-		143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */; };
+		07C2696E2BD99C9D001C468B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269282BD99C9D001C468B /* DataManager.swift */; };
+		07C2696F2BD99C9D001C468B /* DittoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269292BD99C9D001C468B /* DittoService.swift */; };
+		07C269702BD99C9D001C468B /* LocalStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2692A2BD99C9D001C468B /* LocalStoreService.swift */; };
+		07C269712BD99C9D001C468B /* CustomErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2692C2BD99C9D001C468B /* CustomErrors.swift */; };
+		07C269722BD99C9D001C468B /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2692D2BD99C9D001C468B /* ErrorHandler.swift */; };
+		07C269732BD99C9D001C468B /* GeneralErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2692E2BD99C9D001C468B /* GeneralErrorView.swift */; };
+		07C269742BD99C9D001C468B /* ChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269302BD99C9D001C468B /* ChatUser.swift */; };
+		07C269752BD99C9D001C468B /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269312BD99C9D001C468B /* Message.swift */; };
+		07C269762BD99C9D001C468B /* MessageWithUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269322BD99C9D001C468B /* MessageWithUser.swift */; };
+		07C269772BD99C9D001C468B /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269332BD99C9D001C468B /* Room.swift */; };
+		07C269782BD99C9D001C468B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269342BD99C9D001C468B /* User.swift */; };
+		07C269792BD99C9D001C468B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07C269362BD99C9D001C468B /* Preview Assets.xcassets */; };
+		07C2697A2BD99C9D001C468B /* AttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269382BD99C9D001C468B /* AttachmentPreview.swift */; };
+		07C2697B2BD99C9D001C468B /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269392BD99C9D001C468B /* ChatScreen.swift */; };
+		07C2697C2BD99C9D001C468B /* ChatScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2693A2BD99C9D001C468B /* ChatScreenVM.swift */; };
+		07C2697D2BD99C9D001C468B /* DocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2693B2BD99C9D001C468B /* DocumentPickerView.swift */; };
+		07C2697E2BD99C9D001C468B /* MessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2693C2BD99C9D001C468B /* MessageBubbleView.swift */; };
+		07C2697F2BD99C9D001C468B /* MessageBubbleVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2693D2BD99C9D001C468B /* MessageBubbleVM.swift */; };
+		07C269802BD99C9D001C468B /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2693E2BD99C9D001C468B /* PreviewView.swift */; };
+		07C269812BD99C9D001C468B /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269402BD99C9D001C468B /* QRCodeView.swift */; };
+		07C269822BD99C9D001C468B /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269412BD99C9D001C468B /* ScannerView.swift */; };
+		07C269832BD99C9D001C468B /* EditMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269432BD99C9D001C468B /* EditMessageBubbleView.swift */; };
+		07C269842BD99C9D001C468B /* MessageEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269442BD99C9D001C468B /* MessageEditView.swift */; };
+		07C269852BD99C9D001C468B /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269462BD99C9D001C468B /* ProfileScreen.swift */; };
+		07C269862BD99C9D001C468B /* ProfileScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269472BD99C9D001C468B /* ProfileScreenViewModel.swift */; };
+		07C269872BD99C9D001C468B /* RoomEditScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269492BD99C9D001C468B /* RoomEditScreen.swift */; };
+		07C269882BD99C9D001C468B /* RoomEditScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2694A2BD99C9D001C468B /* RoomEditScreenViewModel.swift */; };
+		07C269892BD99C9D001C468B /* RoomsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2694C2BD99C9D001C468B /* RoomsListRowItem.swift */; };
+		07C2698A2BD99C9D001C468B /* RoomsListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2694D2BD99C9D001C468B /* RoomsListScreen.swift */; };
+		07C2698B2BD99C9D001C468B /* RoomsListScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2694E2BD99C9D001C468B /* RoomsListScreenVM.swift */; };
+		07C2698C2BD99C9D001C468B /* DittoToolsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269502BD99C9D001C468B /* DittoToolsListItem.swift */; };
+		07C2698D2BD99C9D001C468B /* DittoToolsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269512BD99C9D001C468B /* DittoToolsListView.swift */; };
+		07C2698E2BD99C9D001C468B /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269522BD99C9D001C468B /* SettingsScreen.swift */; };
+		07C2698F2BD99C9D001C468B /* SettingsScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269532BD99C9D001C468B /* SettingsScreenVM.swift */; };
+		07C269902BD99C9D001C468B /* DittoToolsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269562BD99C9D001C468B /* DittoToolsUtilities.swift */; };
+		07C269912BD99C9D001C468B /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269572BD99C9D001C468B /* LogManager.swift */; };
+		07C269922BD99C9D001C468B /* StringKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269582BD99C9D001C468B /* StringKeys.swift */; };
+		07C269932BD99C9D001C468B /* TemporaryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269592BD99C9D001C468B /* TemporaryFile.swift */; };
+		07C269942BD99C9D001C468B /* UIImage+Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2695A2BD99C9D001C468B /* UIImage+Rotation.swift */; };
+		07C269952BD99C9D001C468B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2695B2BD99C9D001C468B /* Utils.swift */; };
+		07C269962BD99C9D001C468B /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2695D2BD99C9D001C468B /* AvatarView.swift */; };
+		07C269972BD99C9D001C468B /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2695F2BD99C9D001C468B /* ChatInputView.swift */; };
+		07C269982BD99C9D001C468B /* ExpandingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269602BD99C9D001C468B /* ExpandingTextView.swift */; };
+		07C269992BD99C9D001C468B /* CheckboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269622BD99C9D001C468B /* CheckboxButton.swift */; };
+		07C2699A2BD99C9D001C468B /* DittoProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269632BD99C9D001C468B /* DittoProgressView.swift */; };
+		07C2699B2BD99C9D001C468B /* RoomDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269642BD99C9D001C468B /* RoomDetailsView.swift */; };
+		07C2699C2BD99C9D001C468B /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269652BD99C9D001C468B /* RoomView.swift */; };
+		07C2699D2BD99C9D001C468B /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269662BD99C9D001C468B /* SpinnerView.swift */; };
+		07C2699E2BD99C9D001C468B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07C269682BD99C9D001C468B /* Assets.xcassets */; };
+		07C2699F2BD99C9D001C468B /* DittoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C269692BD99C9D001C468B /* DittoChatApp.swift */; };
+		07C269A02BD99C9D001C468B /* DittoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2696A2BD99C9D001C468B /* DittoManager.swift */; };
+		07C269A12BD99C9D001C468B /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C2696B2BD99C9D001C468B /* Env.swift */; };
 		143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */ = {isa = PBXBuildFile; productRef = 143FFCC32B20F4840085A2EF /* DittoExportData */; };
 		143FFCC62B20F4840085A2EF /* DittoPeersList in Frameworks */ = {isa = PBXBuildFile; productRef = 143FFCC52B20F4840085A2EF /* DittoPeersList */; };
-		1493FF6A2978763500397DAB /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF682978763500397DAB /* ScannerView.swift */; };
-		1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1493FF692978763500397DAB /* QRCodeView.swift */; };
-		14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */; };
-		14A0B87229D3BB5D00D2D625 /* CustomErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87029D3BB5D00D2D625 /* CustomErrors.swift */; };
-		14A0B87429D3BB8B00D2D625 /* AttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87329D3BB8B00D2D625 /* AttachmentPreview.swift */; };
-		14A0B87829D3BBB400D2D625 /* MessageBubbleVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87729D3BBB400D2D625 /* MessageBubbleVM.swift */; };
-		14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87929D3BBC400D2D625 /* DittoProgressView.swift */; };
-		14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */; };
-		14A0B87E29D3BC4100D2D625 /* UIImage+Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */; };
-		14A0B88029D49E7200D2D625 /* GeneralErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */; };
-		14A0B88329D60C6800D2D625 /* MessageEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A0B88229D60C6800D2D625 /* MessageEditView.swift */; };
 		14A2B744298987D300E0FF86 /* DittoDataBrowser in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B743298987D300E0FF86 /* DittoDataBrowser */; };
 		14A2B746298987D300E0FF86 /* DittoDiskUsage in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B745298987D300E0FF86 /* DittoDiskUsage */; };
 		14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B747298987D300E0FF86 /* DittoExportLogs */; };
 		14A2B74A298987D400E0FF86 /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B749298987D400E0FF86 /* DittoPresenceViewer */; };
-		14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */; };
-		14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E25F2978F2350069B69D /* ChatInputView.swift */; };
-		14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2612978F23E0069B69D /* ExpandingTextView.swift */; };
-		14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2642978F25D0069B69D /* AvatarView.swift */; };
-		14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2662978F2740069B69D /* CheckboxButton.swift */; };
-		14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2682978F2A40069B69D /* MessageBubbleView.swift */; };
-		14B4E26D2979EF2C0069B69D /* LocalStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E26C2979EF2C0069B69D /* LocalStoreService.swift */; };
-		14B4E26F297A40380069B69D /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E26E297A40380069B69D /* DataManager.swift */; };
-		14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B5F1AA2985A25D00024BE4 /* RoomView.swift */; };
-		14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAA297C774300509E57 /* SettingsScreenVM.swift */; };
-		14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAC297C774F00509E57 /* SettingsScreen.swift */; };
-		14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */; };
-		14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BB526329A010790072C4AD /* RoomsListRowItem.swift */; };
 		14BF945D29786731001F672D /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 14BF945C29786731001F672D /* CodeScanner */; };
-		14BF945F297868ED001F672D /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BF945E297868ED001F672D /* Room.swift */; };
-		14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB2D293FEBD500BED068 /* DittoChatApp.swift */; };
-		14CADB35293FEBD600BED068 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14CADB34293FEBD600BED068 /* Preview Assets.xcassets */; };
 		14CADB3F293FEBD600BED068 /* DittoChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB3E293FEBD600BED068 /* DittoChatTests.swift */; };
 		14CADB49293FEBD600BED068 /* DittoChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB48293FEBD600BED068 /* DittoChatUITests.swift */; };
 		14CADB4B293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */; };
-		14CADB58293FEC1400BED068 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14CADB57293FEC1400BED068 /* Assets.xcassets */; };
 		14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5A293FEFD700BED068 /* DittoObjC */; };
 		14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5C293FEFD700BED068 /* DittoSwift */; };
 		14CADB60293FF00700BED068 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5F293FF00700BED068 /* Fakery */; };
-		14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902E82954DFC8006B54E3 /* StringKeys.swift */; };
-		14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902EA2954ED1B006B54E3 /* Utils.swift */; };
-		14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E57BB529D8AA2700D71154 /* EditMessageBubbleView.swift */; };
-		14E834B62953C6E60027D750 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B02953C6E60027D750 /* Message.swift */; };
-		14E834B72953C6E60027D750 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B12953C6E60027D750 /* User.swift */; };
-		14E834B82953C6E60027D750 /* DittoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B22953C6E60027D750 /* DittoService.swift */; };
-		14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834B32953C6E60027D750 /* MessageWithUser.swift */; };
-		14E834C32953C7A30027D750 /* ChatScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C12953C7A30027D750 /* ChatScreenVM.swift */; };
-		14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C22953C7A30027D750 /* ChatScreen.swift */; };
-		14E834C72953C7AB0027D750 /* ProfileScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C52953C7AB0027D750 /* ProfileScreenViewModel.swift */; };
-		14E834C82953C7AB0027D750 /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C62953C7AB0027D750 /* ProfileScreen.swift */; };
-		14E834CB2953C7B20027D750 /* RoomEditScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834C92953C7B20027D750 /* RoomEditScreen.swift */; };
-		14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */; };
-		14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CD2953C7B90027D750 /* RoomsListScreen.swift */; };
-		14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,58 +92,64 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		142B278D2A39290700C09751 /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
-		143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoToolsListItem.swift; sourceTree = "<group>"; };
-		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
-		1493FF692978763500397DAB /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
-		14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
-		14A0B87029D3BB5D00D2D625 /* CustomErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomErrors.swift; sourceTree = "<group>"; };
-		14A0B87329D3BB8B00D2D625 /* AttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentPreview.swift; sourceTree = "<group>"; };
-		14A0B87729D3BBB400D2D625 /* MessageBubbleVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleVM.swift; sourceTree = "<group>"; };
-		14A0B87929D3BBC400D2D625 /* DittoProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoProgressView.swift; sourceTree = "<group>"; };
-		14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemporaryFile.swift; sourceTree = "<group>"; };
-		14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Rotation.swift"; sourceTree = "<group>"; };
-		14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralErrorView.swift; sourceTree = "<group>"; };
-		14A0B88229D60C6800D2D625 /* MessageEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEditView.swift; sourceTree = "<group>"; };
-		14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoToolsUtilities.swift; sourceTree = "<group>"; };
-		14B4E25F2978F2350069B69D /* ChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
-		14B4E2612978F23E0069B69D /* ExpandingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingTextView.swift; sourceTree = "<group>"; };
-		14B4E2642978F25D0069B69D /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
-		14B4E2662978F2740069B69D /* CheckboxButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxButton.swift; sourceTree = "<group>"; };
-		14B4E2682978F2A40069B69D /* MessageBubbleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleView.swift; sourceTree = "<group>"; };
-		14B4E26C2979EF2C0069B69D /* LocalStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreService.swift; sourceTree = "<group>"; };
-		14B4E26E297A40380069B69D /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		14B5F1AA2985A25D00024BE4 /* RoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
-		14B98AAA297C774300509E57 /* SettingsScreenVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreenVM.swift; sourceTree = "<group>"; };
-		14B98AAC297C774F00509E57 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
-		14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomDetailsView.swift; sourceTree = "<group>"; };
-		14BB526329A010790072C4AD /* RoomsListRowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsListRowItem.swift; sourceTree = "<group>"; };
-		14BF945E297868ED001F672D /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		07C269282BD99C9D001C468B /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		07C269292BD99C9D001C468B /* DittoService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoService.swift; sourceTree = "<group>"; };
+		07C2692A2BD99C9D001C468B /* LocalStoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStoreService.swift; sourceTree = "<group>"; };
+		07C2692C2BD99C9D001C468B /* CustomErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomErrors.swift; sourceTree = "<group>"; };
+		07C2692D2BD99C9D001C468B /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
+		07C2692E2BD99C9D001C468B /* GeneralErrorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralErrorView.swift; sourceTree = "<group>"; };
+		07C269302BD99C9D001C468B /* ChatUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatUser.swift; sourceTree = "<group>"; };
+		07C269312BD99C9D001C468B /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		07C269322BD99C9D001C468B /* MessageWithUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageWithUser.swift; sourceTree = "<group>"; };
+		07C269332BD99C9D001C468B /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		07C269342BD99C9D001C468B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		07C269362BD99C9D001C468B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		07C269382BD99C9D001C468B /* AttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentPreview.swift; sourceTree = "<group>"; };
+		07C269392BD99C9D001C468B /* ChatScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
+		07C2693A2BD99C9D001C468B /* ChatScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScreenVM.swift; sourceTree = "<group>"; };
+		07C2693B2BD99C9D001C468B /* DocumentPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentPickerView.swift; sourceTree = "<group>"; };
+		07C2693C2BD99C9D001C468B /* MessageBubbleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleView.swift; sourceTree = "<group>"; };
+		07C2693D2BD99C9D001C468B /* MessageBubbleVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleVM.swift; sourceTree = "<group>"; };
+		07C2693E2BD99C9D001C468B /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		07C269402BD99C9D001C468B /* QRCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
+		07C269412BD99C9D001C468B /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
+		07C269432BD99C9D001C468B /* EditMessageBubbleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditMessageBubbleView.swift; sourceTree = "<group>"; };
+		07C269442BD99C9D001C468B /* MessageEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageEditView.swift; sourceTree = "<group>"; };
+		07C269462BD99C9D001C468B /* ProfileScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
+		07C269472BD99C9D001C468B /* ProfileScreenViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreenViewModel.swift; sourceTree = "<group>"; };
+		07C269492BD99C9D001C468B /* RoomEditScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomEditScreen.swift; sourceTree = "<group>"; };
+		07C2694A2BD99C9D001C468B /* RoomEditScreenViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomEditScreenViewModel.swift; sourceTree = "<group>"; };
+		07C2694C2BD99C9D001C468B /* RoomsListRowItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListRowItem.swift; sourceTree = "<group>"; };
+		07C2694D2BD99C9D001C468B /* RoomsListScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreen.swift; sourceTree = "<group>"; };
+		07C2694E2BD99C9D001C468B /* RoomsListScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreenVM.swift; sourceTree = "<group>"; };
+		07C269502BD99C9D001C468B /* DittoToolsListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoToolsListItem.swift; sourceTree = "<group>"; };
+		07C269512BD99C9D001C468B /* DittoToolsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoToolsListView.swift; sourceTree = "<group>"; };
+		07C269522BD99C9D001C468B /* SettingsScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		07C269532BD99C9D001C468B /* SettingsScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsScreenVM.swift; sourceTree = "<group>"; };
+		07C269562BD99C9D001C468B /* DittoToolsUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoToolsUtilities.swift; sourceTree = "<group>"; };
+		07C269572BD99C9D001C468B /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
+		07C269582BD99C9D001C468B /* StringKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringKeys.swift; sourceTree = "<group>"; };
+		07C269592BD99C9D001C468B /* TemporaryFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemporaryFile.swift; sourceTree = "<group>"; };
+		07C2695A2BD99C9D001C468B /* UIImage+Rotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Rotation.swift"; sourceTree = "<group>"; };
+		07C2695B2BD99C9D001C468B /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		07C2695D2BD99C9D001C468B /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		07C2695F2BD99C9D001C468B /* ChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
+		07C269602BD99C9D001C468B /* ExpandingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingTextView.swift; sourceTree = "<group>"; };
+		07C269622BD99C9D001C468B /* CheckboxButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxButton.swift; sourceTree = "<group>"; };
+		07C269632BD99C9D001C468B /* DittoProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoProgressView.swift; sourceTree = "<group>"; };
+		07C269642BD99C9D001C468B /* RoomDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailsView.swift; sourceTree = "<group>"; };
+		07C269652BD99C9D001C468B /* RoomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
+		07C269662BD99C9D001C468B /* SpinnerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
+		07C269682BD99C9D001C468B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		07C269692BD99C9D001C468B /* DittoChatApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoChatApp.swift; sourceTree = "<group>"; };
+		07C2696A2BD99C9D001C468B /* DittoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoManager.swift; sourceTree = "<group>"; };
+		07C2696B2BD99C9D001C468B /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		14CADB2A293FEBD500BED068 /* DittoChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DittoChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		14CADB2D293FEBD500BED068 /* DittoChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatApp.swift; sourceTree = "<group>"; };
-		14CADB34293FEBD600BED068 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		14CADB3A293FEBD600BED068 /* DittoChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DittoChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		14CADB3E293FEBD600BED068 /* DittoChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatTests.swift; sourceTree = "<group>"; };
 		14CADB44293FEBD600BED068 /* DittoChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DittoChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		14CADB48293FEBD600BED068 /* DittoChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatUITests.swift; sourceTree = "<group>"; };
 		14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		14CADB57293FEC1400BED068 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		14CADC0B2941089A00BED068 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		14D902E82954DFC8006B54E3 /* StringKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringKeys.swift; sourceTree = "<group>"; };
-		14D902EA2954ED1B006B54E3 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		14E57BB529D8AA2700D71154 /* EditMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMessageBubbleView.swift; sourceTree = "<group>"; };
-		14E834B02953C6E60027D750 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		14E834B12953C6E60027D750 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		14E834B22953C6E60027D750 /* DittoService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoService.swift; sourceTree = "<group>"; };
-		14E834B32953C6E60027D750 /* MessageWithUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageWithUser.swift; sourceTree = "<group>"; };
-		14E834C12953C7A30027D750 /* ChatScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScreenVM.swift; sourceTree = "<group>"; };
-		14E834C22953C7A30027D750 /* ChatScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
-		14E834C52953C7AB0027D750 /* ProfileScreenViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreenViewModel.swift; sourceTree = "<group>"; };
-		14E834C62953C7AB0027D750 /* ProfileScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
-		14E834C92953C7B20027D750 /* RoomEditScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomEditScreen.swift; sourceTree = "<group>"; };
-		14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomEditScreenViewModel.swift; sourceTree = "<group>"; };
-		14E834CD2953C7B90027D750 /* RoomsListScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreen.swift; sourceTree = "<group>"; };
-		14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreenVM.swift; sourceTree = "<group>"; };
 		14E834D22953C7F60027D750 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -175,32 +188,191 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1493FF672978763500397DAB /* CodeScanner */ = {
+		07C2692B2BD99C9D001C468B /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				1493FF682978763500397DAB /* ScannerView.swift */,
-				1493FF692978763500397DAB /* QRCodeView.swift */,
+				07C269282BD99C9D001C468B /* DataManager.swift */,
+				07C269292BD99C9D001C468B /* DittoService.swift */,
+				07C2692A2BD99C9D001C468B /* LocalStoreService.swift */,
 			);
-			path = CodeScanner;
+			path = Data;
 			sourceTree = "<group>";
 		};
-		14A0B86E29D3BB5D00D2D625 /* ErrorHandling */ = {
+		07C2692F2BD99C9D001C468B /* ErrorHandling */ = {
 			isa = PBXGroup;
 			children = (
-				14A0B86F29D3BB5D00D2D625 /* ErrorHandler.swift */,
-				14A0B87029D3BB5D00D2D625 /* CustomErrors.swift */,
-				14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */,
+				07C2692C2BD99C9D001C468B /* CustomErrors.swift */,
+				07C2692D2BD99C9D001C468B /* ErrorHandler.swift */,
+				07C2692E2BD99C9D001C468B /* GeneralErrorView.swift */,
 			);
 			path = ErrorHandling;
 			sourceTree = "<group>";
 		};
-		14A0B88129D60C3F00D2D625 /* MessageEditView */ = {
+		07C269352BD99C9D001C468B /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				14A0B88229D60C6800D2D625 /* MessageEditView.swift */,
-				14E57BB529D8AA2700D71154 /* EditMessageBubbleView.swift */,
+				07C269302BD99C9D001C468B /* ChatUser.swift */,
+				07C269312BD99C9D001C468B /* Message.swift */,
+				07C269322BD99C9D001C468B /* MessageWithUser.swift */,
+				07C269332BD99C9D001C468B /* Room.swift */,
+				07C269342BD99C9D001C468B /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		07C269372BD99C9D001C468B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				07C269362BD99C9D001C468B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		07C2693F2BD99C9D001C468B /* ChatScreen */ = {
+			isa = PBXGroup;
+			children = (
+				07C269382BD99C9D001C468B /* AttachmentPreview.swift */,
+				07C269392BD99C9D001C468B /* ChatScreen.swift */,
+				07C2693A2BD99C9D001C468B /* ChatScreenVM.swift */,
+				07C2693B2BD99C9D001C468B /* DocumentPickerView.swift */,
+				07C2693C2BD99C9D001C468B /* MessageBubbleView.swift */,
+				07C2693D2BD99C9D001C468B /* MessageBubbleVM.swift */,
+				07C2693E2BD99C9D001C468B /* PreviewView.swift */,
+			);
+			path = ChatScreen;
+			sourceTree = "<group>";
+		};
+		07C269422BD99C9D001C468B /* CodeScanner */ = {
+			isa = PBXGroup;
+			children = (
+				07C269402BD99C9D001C468B /* QRCodeView.swift */,
+				07C269412BD99C9D001C468B /* ScannerView.swift */,
+			);
+			path = CodeScanner;
+			sourceTree = "<group>";
+		};
+		07C269452BD99C9D001C468B /* MessageEditView */ = {
+			isa = PBXGroup;
+			children = (
+				07C269432BD99C9D001C468B /* EditMessageBubbleView.swift */,
+				07C269442BD99C9D001C468B /* MessageEditView.swift */,
 			);
 			path = MessageEditView;
+			sourceTree = "<group>";
+		};
+		07C269482BD99C9D001C468B /* ProfileScreen */ = {
+			isa = PBXGroup;
+			children = (
+				07C269462BD99C9D001C468B /* ProfileScreen.swift */,
+				07C269472BD99C9D001C468B /* ProfileScreenViewModel.swift */,
+			);
+			path = ProfileScreen;
+			sourceTree = "<group>";
+		};
+		07C2694B2BD99C9D001C468B /* RoomEditScreen */ = {
+			isa = PBXGroup;
+			children = (
+				07C269492BD99C9D001C468B /* RoomEditScreen.swift */,
+				07C2694A2BD99C9D001C468B /* RoomEditScreenViewModel.swift */,
+			);
+			path = RoomEditScreen;
+			sourceTree = "<group>";
+		};
+		07C2694F2BD99C9D001C468B /* RoomsListScreen */ = {
+			isa = PBXGroup;
+			children = (
+				07C2694C2BD99C9D001C468B /* RoomsListRowItem.swift */,
+				07C2694D2BD99C9D001C468B /* RoomsListScreen.swift */,
+				07C2694E2BD99C9D001C468B /* RoomsListScreenVM.swift */,
+			);
+			path = RoomsListScreen;
+			sourceTree = "<group>";
+		};
+		07C269542BD99C9D001C468B /* SettingsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				07C269502BD99C9D001C468B /* DittoToolsListItem.swift */,
+				07C269512BD99C9D001C468B /* DittoToolsListView.swift */,
+				07C269522BD99C9D001C468B /* SettingsScreen.swift */,
+				07C269532BD99C9D001C468B /* SettingsScreenVM.swift */,
+			);
+			path = SettingsScreen;
+			sourceTree = "<group>";
+		};
+		07C269552BD99C9D001C468B /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				07C2693F2BD99C9D001C468B /* ChatScreen */,
+				07C269422BD99C9D001C468B /* CodeScanner */,
+				07C269452BD99C9D001C468B /* MessageEditView */,
+				07C269482BD99C9D001C468B /* ProfileScreen */,
+				07C2694B2BD99C9D001C468B /* RoomEditScreen */,
+				07C2694F2BD99C9D001C468B /* RoomsListScreen */,
+				07C269542BD99C9D001C468B /* SettingsScreen */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		07C2695C2BD99C9D001C468B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				07C269562BD99C9D001C468B /* DittoToolsUtilities.swift */,
+				07C269572BD99C9D001C468B /* LogManager.swift */,
+				07C269582BD99C9D001C468B /* StringKeys.swift */,
+				07C269592BD99C9D001C468B /* TemporaryFile.swift */,
+				07C2695A2BD99C9D001C468B /* UIImage+Rotation.swift */,
+				07C2695B2BD99C9D001C468B /* Utils.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		07C2695E2BD99C9D001C468B /* AvatarView */ = {
+			isa = PBXGroup;
+			children = (
+				07C2695D2BD99C9D001C468B /* AvatarView.swift */,
+			);
+			path = AvatarView;
+			sourceTree = "<group>";
+		};
+		07C269612BD99C9D001C468B /* ChatInputView */ = {
+			isa = PBXGroup;
+			children = (
+				07C2695F2BD99C9D001C468B /* ChatInputView.swift */,
+				07C269602BD99C9D001C468B /* ExpandingTextView.swift */,
+			);
+			path = ChatInputView;
+			sourceTree = "<group>";
+		};
+		07C269672BD99C9D001C468B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				07C2695E2BD99C9D001C468B /* AvatarView */,
+				07C269612BD99C9D001C468B /* ChatInputView */,
+				07C269622BD99C9D001C468B /* CheckboxButton.swift */,
+				07C269632BD99C9D001C468B /* DittoProgressView.swift */,
+				07C269642BD99C9D001C468B /* RoomDetailsView.swift */,
+				07C269652BD99C9D001C468B /* RoomView.swift */,
+				07C269662BD99C9D001C468B /* SpinnerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		07C2696D2BD99C9D001C468B /* DittoChat */ = {
+			isa = PBXGroup;
+			children = (
+				07C2692B2BD99C9D001C468B /* Data */,
+				07C2692F2BD99C9D001C468B /* ErrorHandling */,
+				07C269352BD99C9D001C468B /* Models */,
+				07C269372BD99C9D001C468B /* Preview Content */,
+				07C269552BD99C9D001C468B /* Screens */,
+				07C2695C2BD99C9D001C468B /* Utilities */,
+				07C269672BD99C9D001C468B /* Views */,
+				07C269682BD99C9D001C468B /* Assets.xcassets */,
+				07C269692BD99C9D001C468B /* DittoChatApp.swift */,
+				07C2696A2BD99C9D001C468B /* DittoManager.swift */,
+				07C2696B2BD99C9D001C468B /* Env.swift */,
+			);
+			path = DittoChat;
 			sourceTree = "<group>";
 		};
 		14A2B742298987D300E0FF86 /* Frameworks */ = {
@@ -210,62 +382,11 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		14B4E25B2978F18B0069B69D /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				14B4E2632978F2480069B69D /* AvatarView */,
-				14B4E25C2978F1E10069B69D /* ChatInputView */,
-				14B4E2662978F2740069B69D /* CheckboxButton.swift */,
-				14A0B87929D3BBC400D2D625 /* DittoProgressView.swift */,
-				14B98AAE297C7CB600509E57 /* RoomDetailsView.swift */,
-				14B5F1AA2985A25D00024BE4 /* RoomView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		14B4E25C2978F1E10069B69D /* ChatInputView */ = {
-			isa = PBXGroup;
-			children = (
-				14B4E25F2978F2350069B69D /* ChatInputView.swift */,
-				14B4E2612978F23E0069B69D /* ExpandingTextView.swift */,
-			);
-			path = ChatInputView;
-			sourceTree = "<group>";
-		};
-		14B4E2632978F2480069B69D /* AvatarView */ = {
-			isa = PBXGroup;
-			children = (
-				14B4E2642978F25D0069B69D /* AvatarView.swift */,
-			);
-			path = AvatarView;
-			sourceTree = "<group>";
-		};
-		14B4E270297AFE5A0069B69D /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				14E834B02953C6E60027D750 /* Message.swift */,
-				14E834B32953C6E60027D750 /* MessageWithUser.swift */,
-				14BF945E297868ED001F672D /* Room.swift */,
-				14E834B12953C6E60027D750 /* User.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		14B98AA9297C772000509E57 /* SettingsScreen */ = {
-			isa = PBXGroup;
-			children = (
-				14B98AAC297C774F00509E57 /* SettingsScreen.swift */,
-				14B98AAA297C774300509E57 /* SettingsScreenVM.swift */,
-				143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */,
-			);
-			path = SettingsScreen;
-			sourceTree = "<group>";
-		};
 		14CADB21293FEBD500BED068 = {
 			isa = PBXGroup;
 			children = (
 				14E834D22953C7F60027D750 /* README.md */,
-				14CADB2C293FEBD500BED068 /* DittoChat */,
+				07C2696D2BD99C9D001C468B /* DittoChat */,
 				14CADB3D293FEBD600BED068 /* DittoChatTests */,
 				14CADB47293FEBD600BED068 /* DittoChatUITests */,
 				14CADB2B293FEBD500BED068 /* Products */,
@@ -283,32 +404,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		14CADB2C293FEBD500BED068 /* DittoChat */ = {
-			isa = PBXGroup;
-			children = (
-				14CADB2D293FEBD500BED068 /* DittoChatApp.swift */,
-				14E834AF2953C6C60027D750 /* Data */,
-				14A0B86E29D3BB5D00D2D625 /* ErrorHandling */,
-				14B4E270297AFE5A0069B69D /* Models */,
-				14E834BC2953C6F60027D750 /* Screens */,
-				14B4E25B2978F18B0069B69D /* Views */,
-				14D902E72954DF82006B54E3 /* Utilities */,
-				14CADB33293FEBD600BED068 /* Preview Content */,
-				142B278D2A39290700C09751 /* Env.swift */,
-				14CADB57293FEC1400BED068 /* Assets.xcassets */,
-				14CADC0B2941089A00BED068 /* Info.plist */,
-			);
-			path = DittoChat;
-			sourceTree = "<group>";
-		};
-		14CADB33293FEBD600BED068 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				14CADB34293FEBD600BED068 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
 		14CADB3D293FEBD600BED068 /* DittoChatTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -324,82 +419,6 @@
 				14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */,
 			);
 			path = DittoChatUITests;
-			sourceTree = "<group>";
-		};
-		14D902E72954DF82006B54E3 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */,
-				14D902E82954DFC8006B54E3 /* StringKeys.swift */,
-				14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */,
-				14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */,
-				14D902EA2954ED1B006B54E3 /* Utils.swift */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
-		14E834AF2953C6C60027D750 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				14B4E26E297A40380069B69D /* DataManager.swift */,
-				14E834B22953C6E60027D750 /* DittoService.swift */,
-				14B4E26C2979EF2C0069B69D /* LocalStoreService.swift */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
-		14E834BC2953C6F60027D750 /* Screens */ = {
-			isa = PBXGroup;
-			children = (
-				14A0B88129D60C3F00D2D625 /* MessageEditView */,
-				14E834BD2953C70B0027D750 /* ChatScreen */,
-				1493FF672978763500397DAB /* CodeScanner */,
-				14E834BE2953C7280027D750 /* ProfileScreen */,
-				14E834C02953C74E0027D750 /* RoomEditScreen */,
-				14E834BF2953C73D0027D750 /* RoomsListScreen */,
-				14B98AA9297C772000509E57 /* SettingsScreen */,
-			);
-			path = Screens;
-			sourceTree = "<group>";
-		};
-		14E834BD2953C70B0027D750 /* ChatScreen */ = {
-			isa = PBXGroup;
-			children = (
-				14A0B87329D3BB8B00D2D625 /* AttachmentPreview.swift */,
-				14B4E2682978F2A40069B69D /* MessageBubbleView.swift */,
-				14A0B87729D3BBB400D2D625 /* MessageBubbleVM.swift */,
-				14E834C22953C7A30027D750 /* ChatScreen.swift */,
-				14E834C12953C7A30027D750 /* ChatScreenVM.swift */,
-			);
-			path = ChatScreen;
-			sourceTree = "<group>";
-		};
-		14E834BE2953C7280027D750 /* ProfileScreen */ = {
-			isa = PBXGroup;
-			children = (
-				14E834C62953C7AB0027D750 /* ProfileScreen.swift */,
-				14E834C52953C7AB0027D750 /* ProfileScreenViewModel.swift */,
-			);
-			path = ProfileScreen;
-			sourceTree = "<group>";
-		};
-		14E834BF2953C73D0027D750 /* RoomsListScreen */ = {
-			isa = PBXGroup;
-			children = (
-				14BB526329A010790072C4AD /* RoomsListRowItem.swift */,
-				14E834CD2953C7B90027D750 /* RoomsListScreen.swift */,
-				14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */,
-			);
-			path = RoomsListScreen;
-			sourceTree = "<group>";
-		};
-		14E834C02953C74E0027D750 /* RoomEditScreen */ = {
-			isa = PBXGroup;
-			children = (
-				14E834C92953C7B20027D750 /* RoomEditScreen.swift */,
-				14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */,
-			);
-			path = RoomEditScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -526,8 +545,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14CADB58293FEC1400BED068 /* Assets.xcassets in Resources */,
-				14CADB35293FEBD600BED068 /* Preview Assets.xcassets in Resources */,
+				07C2699E2BD99C9D001C468B /* Assets.xcassets in Resources */,
+				07C269792BD99C9D001C468B /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -576,49 +595,56 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14B98AAD297C774F00509E57 /* SettingsScreen.swift in Sources */,
-				14E834C32953C7A30027D750 /* ChatScreenVM.swift in Sources */,
-				14E834B92953C6E60027D750 /* MessageWithUser.swift in Sources */,
-				14BF945F297868ED001F672D /* Room.swift in Sources */,
-				14B4E26D2979EF2C0069B69D /* LocalStoreService.swift in Sources */,
-				14E834C72953C7AB0027D750 /* ProfileScreenViewModel.swift in Sources */,
-				14E834B82953C6E60027D750 /* DittoService.swift in Sources */,
-				14E834C82953C7AB0027D750 /* ProfileScreen.swift in Sources */,
-				14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */,
-				14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */,
-				1493FF6A2978763500397DAB /* ScannerView.swift in Sources */,
-				14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */,
-				14A0B87E29D3BC4100D2D625 /* UIImage+Rotation.swift in Sources */,
-				14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */,
-				14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */,
-				14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */,
-				14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */,
-				14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */,
-				14A0B87429D3BB8B00D2D625 /* AttachmentPreview.swift in Sources */,
-				14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */,
-				14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */,
-				14E834B62953C6E60027D750 /* Message.swift in Sources */,
-				14B4E26F297A40380069B69D /* DataManager.swift in Sources */,
-				14A0B87229D3BB5D00D2D625 /* CustomErrors.swift in Sources */,
-				14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */,
-				14E834CB2953C7B20027D750 /* RoomEditScreen.swift in Sources */,
-				14A0B87129D3BB5D00D2D625 /* ErrorHandler.swift in Sources */,
-				14A0B87829D3BBB400D2D625 /* MessageBubbleVM.swift in Sources */,
-				14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */,
-				14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */,
-				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
-				143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */,
-				142B278E2A39290700C09751 /* Env.swift in Sources */,
-				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
-				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
-				14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */,
-				14B4E2672978F2740069B69D /* CheckboxButton.swift in Sources */,
-				1493FF6B2978763500397DAB /* QRCodeView.swift in Sources */,
-				14B4E2692978F2A40069B69D /* MessageBubbleView.swift in Sources */,
-				14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */,
-				14E834B72953C6E60027D750 /* User.swift in Sources */,
-				14A0B88329D60C6800D2D625 /* MessageEditView.swift in Sources */,
-				14A0B88029D49E7200D2D625 /* GeneralErrorView.swift in Sources */,
+				07C2698E2BD99C9D001C468B /* SettingsScreen.swift in Sources */,
+				07C269972BD99C9D001C468B /* ChatInputView.swift in Sources */,
+				07C2698B2BD99C9D001C468B /* RoomsListScreenVM.swift in Sources */,
+				07C269742BD99C9D001C468B /* ChatUser.swift in Sources */,
+				07C2696F2BD99C9D001C468B /* DittoService.swift in Sources */,
+				07C2699B2BD99C9D001C468B /* RoomDetailsView.swift in Sources */,
+				07C269712BD99C9D001C468B /* CustomErrors.swift in Sources */,
+				07C269952BD99C9D001C468B /* Utils.swift in Sources */,
+				07C269732BD99C9D001C468B /* GeneralErrorView.swift in Sources */,
+				07C269772BD99C9D001C468B /* Room.swift in Sources */,
+				07C2697A2BD99C9D001C468B /* AttachmentPreview.swift in Sources */,
+				07C269722BD99C9D001C468B /* ErrorHandler.swift in Sources */,
+				07C269752BD99C9D001C468B /* Message.swift in Sources */,
+				07C2698A2BD99C9D001C468B /* RoomsListScreen.swift in Sources */,
+				07C2697B2BD99C9D001C468B /* ChatScreen.swift in Sources */,
+				07C269962BD99C9D001C468B /* AvatarView.swift in Sources */,
+				07C2698C2BD99C9D001C468B /* DittoToolsListItem.swift in Sources */,
+				07C269932BD99C9D001C468B /* TemporaryFile.swift in Sources */,
+				07C2699F2BD99C9D001C468B /* DittoChatApp.swift in Sources */,
+				07C269822BD99C9D001C468B /* ScannerView.swift in Sources */,
+				07C269872BD99C9D001C468B /* RoomEditScreen.swift in Sources */,
+				07C269902BD99C9D001C468B /* DittoToolsUtilities.swift in Sources */,
+				07C269882BD99C9D001C468B /* RoomEditScreenViewModel.swift in Sources */,
+				07C269812BD99C9D001C468B /* QRCodeView.swift in Sources */,
+				07C269702BD99C9D001C468B /* LocalStoreService.swift in Sources */,
+				07C269862BD99C9D001C468B /* ProfileScreenViewModel.swift in Sources */,
+				07C2697F2BD99C9D001C468B /* MessageBubbleVM.swift in Sources */,
+				07C2699D2BD99C9D001C468B /* SpinnerView.swift in Sources */,
+				07C2698F2BD99C9D001C468B /* SettingsScreenVM.swift in Sources */,
+				07C269802BD99C9D001C468B /* PreviewView.swift in Sources */,
+				07C2697D2BD99C9D001C468B /* DocumentPickerView.swift in Sources */,
+				07C269832BD99C9D001C468B /* EditMessageBubbleView.swift in Sources */,
+				07C2698D2BD99C9D001C468B /* DittoToolsListView.swift in Sources */,
+				07C2699A2BD99C9D001C468B /* DittoProgressView.swift in Sources */,
+				07C2696E2BD99C9D001C468B /* DataManager.swift in Sources */,
+				07C269A12BD99C9D001C468B /* Env.swift in Sources */,
+				07C269762BD99C9D001C468B /* MessageWithUser.swift in Sources */,
+				07C269942BD99C9D001C468B /* UIImage+Rotation.swift in Sources */,
+				07C269842BD99C9D001C468B /* MessageEditView.swift in Sources */,
+				07C2697C2BD99C9D001C468B /* ChatScreenVM.swift in Sources */,
+				07C2699C2BD99C9D001C468B /* RoomView.swift in Sources */,
+				07C269892BD99C9D001C468B /* RoomsListRowItem.swift in Sources */,
+				07C269A02BD99C9D001C468B /* DittoManager.swift in Sources */,
+				07C269982BD99C9D001C468B /* ExpandingTextView.swift in Sources */,
+				07C269912BD99C9D001C468B /* LogManager.swift in Sources */,
+				07C269852BD99C9D001C468B /* ProfileScreen.swift in Sources */,
+				07C2697E2BD99C9D001C468B /* MessageBubbleView.swift in Sources */,
+				07C269922BD99C9D001C468B /* StringKeys.swift in Sources */,
+				07C269992BD99C9D001C468B /* CheckboxButton.swift in Sources */,
+				07C269782BD99C9D001C468B /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,7 +810,6 @@
 				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DittoChat/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Use camera to scan invitation to private room";
@@ -818,7 +843,6 @@
 				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DittoChat/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Use camera to scan invitation to private room";

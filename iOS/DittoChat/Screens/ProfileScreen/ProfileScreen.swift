@@ -3,6 +3,7 @@
 //  DittoChat
 //
 //  Created by Maximilian Alexander on 7/20/22.
+//  Copyright © 2022 DittoLive Incorporated. All rights reserved.
 //
 
 import SwiftUI
@@ -15,8 +16,28 @@ struct ProfileScreen: View {
         NavigationView {
             Form {
                 Section {
-                    TextField(firstNameTitleKey, text: $viewModel.firstName)
-                    TextField(lastNameTitleKey, text: $viewModel.lastName)
+                    TextField(firstNameTitleKey, text: Binding(
+                        get: { viewModel.firstName },
+                        set: { newValue in
+                            if newValue.isValidInput(newValue) {
+                                viewModel.firstName = String(newValue.prefix(2500))
+                                viewModel.isValid = true
+                            } else {
+                                viewModel.isValid = false
+                            }
+                        }
+                    ))
+                    TextField(lastNameTitleKey, text: Binding(
+                        get: { viewModel.lastName },
+                        set: { newValue in
+                            if newValue.isValidInput(newValue) {
+                                viewModel.lastName = String(newValue.prefix(2500))
+                                viewModel.isValid = true
+                            } else {
+                                viewModel.isValid = false
+                            }
+                        }
+                    ))
                 }
                 Button {
                     viewModel.saveChanges()

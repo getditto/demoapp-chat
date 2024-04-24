@@ -1,10 +1,10 @@
-///
+//
 //  ChatScreenVM.swift
 //  DittoChat
 //
 //  Created by Eric Turner on 2/20/23.
-//
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
+//
 
 import Combine
 import PhotosUI
@@ -19,19 +19,21 @@ class ChatScreenVM: ObservableObject {
     @Published var roomName: String = ""
     @Published var messagesWithUsers = [MessageWithUser]()
     var room: Room
-    
+
     @Published var selectedItem: PhotosPickerItem?
     @Published var selectedImage: UIImage?
     @Published var presentAttachmentView = false
     var attachmentMessage: Message?
-    
+
+    @Published var currentUser: ChatUser?
+
     @Published var presentEditingView = false
     @Published var isEditing = false
     @Published var keyboardStatus: KeyboardChangeEvent = .unchanged
     var editMsgId: String?
-        
+
     @Published var presentShareRoomScreen = false
-    
+
     // Basic chat mode
     @Published var presentProfileScreen: Bool = false
     @Published var presentSettingsView = false
@@ -53,7 +55,7 @@ class ChatScreenVM: ObservableObject {
             .map { messages, users -> [MessageWithUser] in
                 var messagesWithUsers = [MessageWithUser]()
                 for message in messages {
-                    let user = users.first(where: { $0.id == message.userId }) ?? User.unknownUser()
+                    let user = users.first(where: { $0.id == message.userId }) ?? ChatUser.unknownUser()
                     messagesWithUsers.append(MessageWithUser(message: message, user: user))
                 }
                 return messagesWithUsers
@@ -66,20 +68,25 @@ class ChatScreenVM: ObservableObject {
                 return room?.name ?? ""
             }
             .assign(to: &$roomName)
-        
-        Publishers.keyboardStatus
-            .assign(to: &$keyboardStatus)
+
+        DispatchQueue.main.async {
+            Publishers.keyboardStatus
+                .assign(to: &self.$keyboardStatus)
+        }
+
+        DataManager.shared.currentUserPublisher()
+            .assign(to: &$currentUser)
     }
-    
+
     func sendMessage() {
         // only allow non-empty string messages
         guard !inputText.isEmpty else { return }
 
         DataManager.shared.createMessage(for: room, text: inputText)
-        
+
         inputText = ""
     }
-    
+
     func sendImageMessage() async throws {
         guard let image = selectedImage else {
             throw AttachmentError.libraryImageFail
@@ -87,19 +94,19 @@ class ChatScreenVM: ObservableObject {
         
         do {
             try await DataManager.shared.createImageMessage(for: room, image: image, text: inputText)
-            
+
         } catch {
             print("Caught error: \(error.localizedDescription)")
             throw error
         }
-        
+
         await MainActor.run {
             inputText = ""
             selectedItem = nil
             selectedImage = nil
         }
     }
-    
+
     func messageOperationCallback(_ op: MessageOperation, msg: Message) {
         switch op {
         case .edit:
@@ -118,11 +125,11 @@ class ChatScreenVM: ObservableObject {
         isEditing = true
         presentEditingView = true
     }
-    
+
     func cancelEditCallback() {
         cleanupEdit()
     }
-    
+
     func cleanupEdit() {
         editMsgId = nil
         isEditing = false
@@ -137,7 +144,7 @@ class ChatScreenVM: ObservableObject {
         let chats = messagesWithUsers.prefix(through: msgIdx)
         return (editUsrMsg: usrMsg, chats: chats)
     }
-    
+
     func saveEditedTextMessage(_ msg: Message) {
         if msg.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return deleteTextMessage(msg)
@@ -145,13 +152,13 @@ class ChatScreenVM: ObservableObject {
         DataManager.shared.saveEditedTextMessage(msg, in: room)
         cleanupEdit()
     }
-    
+
     func deleteTextMessage(_ msg: Message) {
         var editedMsg = msg
         editedMsg.text = deletedTextMessageKey
         saveEditedTextMessage(editedMsg)
     }
-    
+
     func deleteImageMessage(_ msg: Message) {
         var editedMsg = msg
         editedMsg.text = deletedImageMessageKey
@@ -159,12 +166,12 @@ class ChatScreenVM: ObservableObject {
         editedMsg.largeImageToken = nil
         DataManager.shared.saveDeletedImageMessage(editedMsg, in: room)
     }
-    
+
     func presentAttachment(_ msg: Message) {
         attachmentMessage = msg
         presentAttachmentView = true
     }
-    
+
     func cleanupAttachmentAttribs() {
         attachmentMessage = nil
     }
@@ -176,7 +183,29 @@ class ChatScreenVM: ObservableObject {
         }
         return nil
     }
+
+    func lastUnreadMessage() -> String? {
+        if let lastReadKeyValue = currentUser?.subscriptions[room.id], let lastReadDate = lastReadKeyValue {
+            let firstunreadMEssage = messagesWithUsers.first { messageWithUser in
+                messageWithUser.message.createdOn > lastReadDate
+            }
+
+            if let firstunreadMEssage {
+                return firstunreadMEssage.id
+            }
+
+            return nil
+        }
+        return nil
+    }
+
+    func clearUnreadsAndMentions() {
+        guard let currentUser else { return }
+        var subs = currentUser.subscriptions
+        var mentions = currentUser.mentions
+        subs.updateValue(.now, forKey: room.id)
+        mentions.updateValue([], forKey: room.id)
+
+        DataManager.shared.updateUser(withId: currentUser.id, firstName: nil, lastName: nil, subscriptions: subs, mentions: mentions)
+    }
 }
-
-
-
