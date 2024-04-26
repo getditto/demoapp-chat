@@ -116,6 +116,7 @@ out/
 # Gradle files
 .gradle/
 build/
+env.properties
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -184,4 +185,3 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-/Android/secure
