@@ -16,6 +16,7 @@ import DittoSwift
 import SwiftUI
 
 struct SettingsScreen: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @StateObject var vm = SettingsScreenVM()
     @ObservedObject var dittoInstance = DittoInstance.shared
@@ -243,6 +244,17 @@ struct SettingsScreen: View {
             }// end List
             .listStyle(.insetGrouped)
             .navigationBarTitle(settingsTitleKey)
+            .toolbar(content: {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    if !vm.dismissDisabled {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text(cancelTitleKey)
+                        }
+                    }
+                }
+            })
             .navigationBarTitleDisplayMode(.inline)
         }
     }

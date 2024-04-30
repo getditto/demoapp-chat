@@ -10,6 +10,7 @@ import Combine
 import SwiftUI
 
 class SettingsScreenVM: ObservableObject {
+    @Published var dismissDisabled = false
     @Published var archivedPublicRooms: [Room] = []
     @Published var unReplicatedPublicRooms: [Room] = []
     @Published var archivedPrivateRooms: [Room] = []
