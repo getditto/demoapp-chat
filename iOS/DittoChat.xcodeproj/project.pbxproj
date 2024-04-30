@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -68,6 +68,16 @@
 		F81907A92BC74D720003C117 /* DittoPermissionsHealth in Frameworks */ = {isa = PBXBuildFile; productRef = F81907A82BC74D720003C117 /* DittoPermissionsHealth */; };
 		F81907AB2BC74D720003C117 /* DittoPresenceDegradation in Frameworks */ = {isa = PBXBuildFile; productRef = F81907AA2BC74D720003C117 /* DittoPresenceDegradation */; };
 		F81907AD2BC74D720003C117 /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = F81907AC2BC74D720003C117 /* DittoPresenceViewer */; };
+		F889C4222BE19A4800EC6330 /* DittoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4212BE19A4800EC6330 /* DittoSwift */; };
+		F889C4252BE19AD800EC6330 /* DittoDataBrowser in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4242BE19AD800EC6330 /* DittoDataBrowser */; };
+		F889C4272BE19AD800EC6330 /* DittoDiskUsage in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4262BE19AD800EC6330 /* DittoDiskUsage */; };
+		F889C4292BE19AD800EC6330 /* DittoExportData in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4282BE19AD800EC6330 /* DittoExportData */; };
+		F889C42B2BE19AD800EC6330 /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = F889C42A2BE19AD800EC6330 /* DittoExportLogs */; };
+		F889C42D2BE19AD800EC6330 /* DittoHeartbeat in Frameworks */ = {isa = PBXBuildFile; productRef = F889C42C2BE19AD800EC6330 /* DittoHeartbeat */; };
+		F889C42F2BE19AD800EC6330 /* DittoPeersList in Frameworks */ = {isa = PBXBuildFile; productRef = F889C42E2BE19AD800EC6330 /* DittoPeersList */; };
+		F889C4312BE19AD800EC6330 /* DittoPermissionsHealth in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4302BE19AD800EC6330 /* DittoPermissionsHealth */; };
+		F889C4332BE19AD800EC6330 /* DittoPresenceDegradation in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4322BE19AD800EC6330 /* DittoPresenceDegradation */; };
+		F889C4352BE19AD800EC6330 /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = F889C4342BE19AD800EC6330 /* DittoPresenceViewer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,17 +160,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				14BF945D29786731001F672D /* CodeScanner in Frameworks */,
+				F889C42B2BE19AD800EC6330 /* DittoExportLogs in Frameworks */,
+				F889C42D2BE19AD800EC6330 /* DittoHeartbeat in Frameworks */,
 				F81907A32BC74D720003C117 /* DittoExportLogs in Frameworks */,
+				F889C4312BE19AD800EC6330 /* DittoPermissionsHealth in Frameworks */,
+				F889C4222BE19A4800EC6330 /* DittoSwift in Frameworks */,
 				F81907A52BC74D720003C117 /* DittoHeartbeat in Frameworks */,
 				F81907A12BC74D720003C117 /* DittoExportData in Frameworks */,
 				F81907A92BC74D720003C117 /* DittoPermissionsHealth in Frameworks */,
+				F889C4252BE19AD800EC6330 /* DittoDataBrowser in Frameworks */,
+				F889C4332BE19AD800EC6330 /* DittoPresenceDegradation in Frameworks */,
+				F889C42F2BE19AD800EC6330 /* DittoPeersList in Frameworks */,
 				F81907AB2BC74D720003C117 /* DittoPresenceDegradation in Frameworks */,
 				14CADB60293FF00700BED068 /* Fakery in Frameworks */,
+				F889C4272BE19AD800EC6330 /* DittoDiskUsage in Frameworks */,
 				F819079D2BC74D720003C117 /* DittoDataBrowser in Frameworks */,
 				F819079A2BC74C3D0003C117 /* DittoSwift in Frameworks */,
 				F819079F2BC74D720003C117 /* DittoDiskUsage in Frameworks */,
+				F889C4352BE19AD800EC6330 /* DittoPresenceViewer in Frameworks */,
 				F81907AD2BC74D720003C117 /* DittoPresenceViewer in Frameworks */,
 				F81907A72BC74D720003C117 /* DittoPeersList in Frameworks */,
+				F889C4292BE19AD800EC6330 /* DittoExportData in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +459,16 @@
 				F81907A82BC74D720003C117 /* DittoPermissionsHealth */,
 				F81907AA2BC74D720003C117 /* DittoPresenceDegradation */,
 				F81907AC2BC74D720003C117 /* DittoPresenceViewer */,
+				F889C4212BE19A4800EC6330 /* DittoSwift */,
+				F889C4242BE19AD800EC6330 /* DittoDataBrowser */,
+				F889C4262BE19AD800EC6330 /* DittoDiskUsage */,
+				F889C4282BE19AD800EC6330 /* DittoExportData */,
+				F889C42A2BE19AD800EC6330 /* DittoExportLogs */,
+				F889C42C2BE19AD800EC6330 /* DittoHeartbeat */,
+				F889C42E2BE19AD800EC6330 /* DittoPeersList */,
+				F889C4302BE19AD800EC6330 /* DittoPermissionsHealth */,
+				F889C4322BE19AD800EC6330 /* DittoPresenceDegradation */,
+				F889C4342BE19AD800EC6330 /* DittoPresenceViewer */,
 			);
 			productName = DittoChat;
 			productReference = 14CADB2A293FEBD500BED068 /* DittoChat.app */;
@@ -516,8 +546,8 @@
 			packageReferences = (
 				14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */,
 				14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */,
-				F81907982BC74C3D0003C117 /* XCLocalSwiftPackageReference "../../DittoSwiftPackage" */,
-				F819079B2BC74D720003C117 /* XCLocalSwiftPackageReference "../../DittoSwiftTools" */,
+				F889C4202BE19A4800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */,
+				F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */,
 			);
 			productRefGroup = 14CADB2B293FEBD500BED068 /* Products */;
 			projectDirPath = "";
@@ -975,17 +1005,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		F81907982BC74C3D0003C117 /* XCLocalSwiftPackageReference "../../DittoSwiftPackage" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../DittoSwiftPackage;
-		};
-		F819079B2BC74D720003C117 /* XCLocalSwiftPackageReference "../../DittoSwiftTools" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../DittoSwiftTools;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1001,6 +1020,22 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
+			};
+		};
+		F889C4202BE19A4800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getditto/DittoSwiftPackage.git";
+			requirement = {
+				kind = exactVersion;
+				version = "4.8.0-experimental-visionos-support";
+			};
+		};
+		F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
+			requirement = {
+				kind = exactVersion;
+				version = "4.8.0-experimental-visionos-support";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1054,6 +1089,56 @@
 		};
 		F81907AC2BC74D720003C117 /* DittoPresenceViewer */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = DittoPresenceViewer;
+		};
+		F889C4212BE19A4800EC6330 /* DittoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4202BE19A4800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */;
+			productName = DittoSwift;
+		};
+		F889C4242BE19AD800EC6330 /* DittoDataBrowser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoDataBrowser;
+		};
+		F889C4262BE19AD800EC6330 /* DittoDiskUsage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoDiskUsage;
+		};
+		F889C4282BE19AD800EC6330 /* DittoExportData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoExportData;
+		};
+		F889C42A2BE19AD800EC6330 /* DittoExportLogs */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoExportLogs;
+		};
+		F889C42C2BE19AD800EC6330 /* DittoHeartbeat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoHeartbeat;
+		};
+		F889C42E2BE19AD800EC6330 /* DittoPeersList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoPeersList;
+		};
+		F889C4302BE19AD800EC6330 /* DittoPermissionsHealth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoPermissionsHealth;
+		};
+		F889C4322BE19AD800EC6330 /* DittoPresenceDegradation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoPresenceDegradation;
+		};
+		F889C4342BE19AD800EC6330 /* DittoPresenceViewer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
 			productName = DittoPresenceViewer;
 		};
 /* End XCSwiftPackageProductDependency section */
