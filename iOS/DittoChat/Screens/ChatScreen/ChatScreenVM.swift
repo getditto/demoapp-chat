@@ -77,9 +77,10 @@ class ChatScreenVM: ObservableObject {
 
         Task {
             await DataManager.shared.createMessage(for: room, text: inputText)
+            await MainActor.run {
+                inputText = ""
+            }
         }
-        
-        inputText = ""
     }
     
     func sendImageMessage() async throws {
