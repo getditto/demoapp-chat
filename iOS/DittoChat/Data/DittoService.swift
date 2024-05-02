@@ -592,7 +592,7 @@ extension DittoService {
         
         do {
             let result = try await ditto.store.execute(query: "SELECT * FROM \"\(collectionId)\" WHERE _id = :id", arguments: ["id": room.id])
-            
+
             if result.items.isEmpty {
                 print("DittoService.\(#function): WARNING (except for archived private rooms)" +
                       " - expected non-nil room room.id: \(room.id)"
@@ -611,7 +611,33 @@ extension DittoService {
         return nil
 
     }
-
+    
+    func publicRooms(for rooms: [Room]) async -> (arr1: [Room], arr2: [Room]) {
+        let collectionId = publicRoomsCollectionId
+        var arr1 = [Room]()
+        var arr2 = [Room]()
+        for room in rooms {
+            do {
+                let result = try await ditto.store.execute(
+                    query: "SELECT * FROM \"\(collectionId)\" WHERE _id = :id",
+                    arguments: ["id": room.id]
+                )
+                if let resultRoom = result.items.first {
+                    arr1.append(Room(value: resultRoom.value))
+                } else {
+                    arr2.append(room)
+                }
+            } catch {
+                print("Error \(error)")
+            }
+        }
+        return (arr1, arr2)
+    }
+    
+//    func privateRooms(for rooms: [Room]) async -> (arr1: [Room], arr2: [Room]) {
+//        
+//    }
+    
     func createRoom(name: String, isPrivate: Bool) {
         let roomId = UUID().uuidString
         let messagesId = UUID().uuidString

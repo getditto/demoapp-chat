@@ -22,6 +22,7 @@ protocol LocalDataInterface {
     @discardableResult func unarchivePrivateRoom(roomId: String) -> Room?
     func deleteArchivedPrivateRoom(roomId: String)
     
+    var archivedPublicRooms: [Room] { get }
     var archivedPublicRoomIDs: [String] { get }
     var archivedPublicRoomsPublisher: AnyPublisher<[Room], Never> { get }
     func archivePublicRoom(_ room: Room)
@@ -36,6 +37,8 @@ protocol LocalDataInterface {
 
 protocol ReplicatingDataInterface {
     var publicRoomsPublisher: CurrentValueSubject<[Room], Never> { get }
+    
+    func publicRooms(for rooms: [Room]) async -> (arr1: [Room], arr2: [Room])
 
     func room(for room: Room) async -> Room?
     func createRoom(name: String, isPrivate: Bool)
@@ -87,6 +90,15 @@ extension DataManager {
             let result = await p2pStore.room(for: room)
             completion(result)
         }
+    }
+    
+    func publicRooms(for rooms: [Room]) async -> (arr1: [Room], arr2: [Room]) {
+        let (publicRooms, privateRooms) = await p2pStore.publicRooms(for: rooms)
+        return (publicRooms, privateRooms)
+    }
+    
+    func archivedPublicRooms() -> [Room] {
+        localStore.archivedPublicRooms
     }
 
     func createRoom(name: String, isPrivate: Bool) {

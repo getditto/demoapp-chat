@@ -62,7 +62,6 @@ class SettingsScreenVM: ObservableObject {
                             unRepRooms.append(privRoom)
                         }
                     }
- 
                 }
                 unRepRooms.sort { $0.createdOn > $1.createdOn }
                 self.unReplicatedPrivateRooms = unRepRooms
@@ -74,6 +73,15 @@ class SettingsScreenVM: ObservableObject {
 
         DataManager.shared.allUsersPublisher()
             .assign(to: &$users)
+    }
+
+    func fetchArchivedPublicRooms() async {
+        let pubRooms = DataManager.shared.archivedPublicRooms()
+        let (archRooms, unRepRooms) = await DataManager.shared.publicRooms(for: pubRooms)
+        await MainActor.run {
+            self.archivedPublicRooms = archRooms
+            self.unReplicatedPublicRooms = unRepRooms
+        }
     }
     
     func roomForId(_ roomId: String) -> Room? {

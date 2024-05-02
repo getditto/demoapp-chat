@@ -94,6 +94,9 @@ struct SettingsScreen: View {
                         Spacer()
                     }
                 }
+                .task {
+                    await vm.fetchArchivedPublicRooms()
+                }
                 .sheet(isPresented: $vm.showExportLogsSheet) {
                     ExportLogsView()
                 }

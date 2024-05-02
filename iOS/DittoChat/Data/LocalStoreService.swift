@@ -116,6 +116,10 @@ class LocalStoreService: LocalDataInterface {
 
     
     //MARK: Public Rooms
+    var archivedPublicRooms: [Room] {
+        defaults.decodeRoomsFromData(Array(defaults.archivedPublicRooms.values))
+    }
+
     var archivedPublicRoomsPublisher: AnyPublisher<[Room], Never> {
         archivedPublicRoomsSubject.eraseToAnyPublisher()
     }
