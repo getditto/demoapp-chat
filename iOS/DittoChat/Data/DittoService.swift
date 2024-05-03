@@ -120,6 +120,12 @@ class DittoService: ReplicatingDataInterface {
 
         createDefaultPublicRoom()
         
+        do {
+            try ditto.sync.registerSubscription(query: "SELECT * FROM \(publicRoomsCollectionId)")
+        } catch {
+            print("Error subscribing to public rooms collection: \(error)")
+        }
+        
         // kick off the public rooms findAll() liveQueryPublisher
         updateAllPublicRooms()
         
@@ -611,7 +617,6 @@ extension DittoService {
         return nil
 
     }
-
     func createRoom(name: String, isPrivate: Bool) {
         let roomId = UUID().uuidString
         let messagesId = UUID().uuidString
@@ -691,9 +696,7 @@ extension DittoService {
             } catch {
                 print("Error \(error)")
             }
-        }
-        
-        
+        }        
     }
 }
 
