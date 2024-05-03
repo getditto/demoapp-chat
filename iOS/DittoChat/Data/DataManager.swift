@@ -81,12 +81,9 @@ class DataManager {
 extension DataManager {
     
     //MARK: Ditto Public Rooms
-        
-    func room(for room: Room, completion: @escaping (Room?) -> Void) {
-        Task {
-            let result = await p2pStore.room(for: room)
-            completion(result)
-        }
+
+    func room(for room: Room) async -> Room? {
+        await p2pStore.room(for: room)
     }
 
     func createRoom(name: String, isPrivate: Bool) {
