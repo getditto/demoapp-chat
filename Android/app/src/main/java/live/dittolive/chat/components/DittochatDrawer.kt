@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,7 +45,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.QrCodeScanner
@@ -110,12 +113,18 @@ fun DittochatDrawerContent(
     // Use windowInsetsTopHeight() to add a spacer which pushes the drawer content
     // below the status bar (y-axis)
     Column(modifier = Modifier
-        .fillMaxSize()
+        .fillMaxWidth()
+        .fillMaxHeight()
         .background(MaterialTheme.colorScheme.background)) {
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         DrawerHeader()
         DividerItem()
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = CenterVertically) {
+//            DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
+//            DrawerItemHeader(stringResource(R.string.recent_profiles))
+            ProfileItem(fullName, meProfile.photo) {
+                onProfileClicked(meUserId)
+            }
             DrawerItemHeader(stringResource(R.string.chats))
             Icon(
                 imageVector = Icons.Outlined.QrCodeScanner,
@@ -149,6 +158,13 @@ fun DittochatDrawerContent(
                 contentDescription = stringResource(id = R.string.info)
             )
         }
+
+        DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
+        TextButton(onClick = {
+            onPresenceViewerClicked("Presence Viewer")
+        }) {
+            Text("Presence Viewer")
+        }
         
         DividerItem()
         DrawerItemHeader(stringResource(R.string.public_rooms))
@@ -159,17 +175,6 @@ fun DittochatDrawerContent(
         DrawerItemHeader(stringResource(R.string.private_rooms))
         PrivateRoomsList(viewModel, onChatClicked)
 
-        DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
-        DrawerItemHeader(stringResource(R.string.recent_profiles))
-        ProfileItem(fullName, meProfile.photo) {
-            onProfileClicked(meUserId)
-        }
-        DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
-        TextButton(onClick = {
-            onPresenceViewerClicked("Presence Viewer")
-        }) {
-            Text("Presence Viewer")
-        }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(sdkVersion)
         DrawerItemHeader(text = "Ditto Chat v$versionName")
@@ -189,7 +194,7 @@ fun PublicRoomsList(
         initialValue = emptyList()
     )
 
-    LazyColumn {
+    LazyColumn(Modifier.fillMaxHeight(0.4F)) {
         items(publicRooms) { publicRoom ->
             ChatItem(publicRoom.name, true) { onChatClicked(publicRoom) }
         }
@@ -208,7 +213,7 @@ fun PrivateRoomsList(
             initialValue = emptyList()
         )
 
-    LazyColumn {
+    LazyColumn(Modifier.fillMaxHeight(0.4F)) {
         items(privateRooms) { privateRoom ->
             ChatItem(privateRoom.name, false) { onChatClicked(privateRoom) }
         }
@@ -291,7 +296,7 @@ private fun ProfileItem(text: String, @DrawableRes profilePic: Int?, onProfileCl
     Row(
         modifier = Modifier
             .height(56.dp)
-            .fillMaxWidth()
+            //.fillMaxWidth()
             .padding(horizontal = 12.dp)
             .clip(CircleShape)
             .clickable(onClick = onProfileClicked),
