@@ -74,7 +74,6 @@ extension Message {
 
 extension Message: DittoDecodable {
     init(value: [String: Any?]) {
-        print("Init with id: \(String(describing: value[dbIdKey] as? String))")
         if let id = value[dbIdKey] as? String {
             self.id = id
         } else {
@@ -109,7 +108,7 @@ extension Message: DittoDecodable {
         // Attachment tokens are now a sub-dictionary under the key the attachment was saved at.
         self.largeImageToken = value[largeImageTokenKey] as? [String: Any]
         self.thumbnailImageToken = value[thumbnailImageTokenKey] as? [String: Any]
-        print("Checking thumbnailToken value \(String(describing: value[thumbnailImageTokenKey] as? [String: Any]))")
+//        print("Checking thumbnailToken value \(String(describing: value[thumbnailImageTokenKey] as? [String: Any]))")
 
     }
 }

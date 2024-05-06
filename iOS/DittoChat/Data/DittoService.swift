@@ -51,9 +51,9 @@ class DittoInstance: ObservableObject {
         }
         
         do {
-            try ditto.sync.registerSubscription(query: "SELECT * FROM \(usersKey)")
+            try ditto.sync.registerSubscription(query: "SELECT * FROM `\(usersKey)`")
         } catch {
-            print("Error \(error)")
+            print("registerSubscription Error \(error)")
         }
 
     }
@@ -119,6 +119,12 @@ class DittoService: ReplicatingDataInterface {
         self.privateStore = privateStore
 
         createDefaultPublicRoom()
+        
+        do {
+            try ditto.sync.registerSubscription(query: "SELECT * FROM `\(publicRoomsCollectionId)`")
+        } catch {
+            print("Error subscribing to public rooms collection: \(error)")
+        }
         
         // kick off the public rooms findAll() liveQueryPublisher
         updateAllPublicRooms()
@@ -203,11 +209,11 @@ extension DittoService {
         } else {
             
             do {
-                let mSub = try ditto.sync.registerSubscription(query: "SELECT * FROM \"\(room.messagesId)\"")
+                let mSub = try ditto.sync.registerSubscription(query: "SELECT * FROM `\(room.messagesId)`")
                 publicRoomMessagesSubscriptions[room.id] = mSub
 
             } catch {
-                print("Error \(error)")
+                print("addSubscriptions Error: \(error)")
             }
         }
     }
@@ -241,15 +247,13 @@ extension DittoService {
     func addPrivateRoomSubscriptions(roomId: String, collectionId: String, messagesId: String) {
         
         do {
-            let rSub = try ditto.sync.registerSubscription(query: "SELECT * FROM \"\(collectionId)\"")
+            let rSub = try ditto.sync.registerSubscription(query: "SELECT * FROM `\(collectionId)`")
             privateRoomSubscriptions[roomId] = rSub
             
-            let mSub = try ditto.sync.registerSubscription(query: "SELECT * FROM \"\(messagesId)\"")
+            let mSub = try ditto.sync.registerSubscription(query: "SELECT * FROM `\(messagesId)`")
             privateRoomMessagesSubscriptions[roomId] = mSub
-
-
         } catch {
-            print("Error \(error)")
+            print("addPrivateRoomSubscriptions Error: \(error)")
         }
     }
 }
@@ -264,7 +268,7 @@ extension DittoService {
                     return Just<User?>(nil).eraseToAnyPublisher()
                 }
 
-                return self.ditto.store.observePublisher(query: "SELECT * FROM \(usersKey) WHERE _id = :id", arguments: ["id":userId], mapTo: User.self, onlyFirst: true)
+                return self.ditto.store.observePublisher(query: "SELECT * FROM `\(usersKey)` WHERE _id = :id", arguments: ["id":userId], mapTo: User.self, onlyFirst: true)
                     .catch { error in
                         assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                         return Empty<User?, Never>()
@@ -283,16 +287,16 @@ extension DittoService {
         
         Task {
             do {
-                try await ditto.store.execute(query: "INSERT INTO \(usersKey) DOCUMENTS (:newUser) ON ID CONFLICT DO UPDATE", arguments: ["newUser": usr.docDictionary()])
+                try await ditto.store.execute(query: "INSERT INTO `\(usersKey)` DOCUMENTS (:newUser) ON ID CONFLICT DO UPDATE", arguments: ["newUser": usr.docDictionary()])
             } catch {
-                print("Error \(error)")
+                print("addUser Error: \(error)")
             }
         }
     }
 
     func allUsersPublisher() -> AnyPublisher<[User], Never>  {
 
-        return ditto.store.observePublisher(query: "SELECT * FROM \(usersKey)", mapTo: User.self)
+        return ditto.store.observePublisher(query: "SELECT * FROM `\(usersKey)`", mapTo: User.self)
             .catch { error in
                 assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                 return Empty<[User], Never>()
@@ -307,7 +311,7 @@ extension DittoService {
     
     func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never> {
         
-        let query = "SELECT * FROM COLLECTION \"\(collectionId)\" (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) WHERE _id = :id"
+        let query = "SELECT * FROM COLLECTION `\(collectionId)` (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) WHERE _id = :id"
         
         let args = ["id": msgId]
         
@@ -324,7 +328,7 @@ extension DittoService {
 
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never> {
 
-        return ditto.store.observePublisher(query: "SELECT * FROM COLLECTION \"\(room.messagesId)\" (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) ORDER BY \(createdOnKey) ASC", mapTo: Message.self)
+        return ditto.store.observePublisher(query: "SELECT * FROM COLLECTION `\(room.messagesId)` (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) ORDER BY \(createdOnKey) ASC", mapTo: Message.self)
             .catch { error in
                 assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                 return Empty<[Message], Never>()
@@ -339,10 +343,6 @@ extension DittoService {
             return
         }
         
-        guard let room = await self.room(for: room) else {
-            return
-        }
-        
         Task {
             do {
                 let doc = [
@@ -352,21 +352,20 @@ extension DittoService {
                     userIdKey: userId
                 ];
                 
-                try await ditto.store.execute(query: "INSERT INTO \"\(room.messagesId)\" DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": doc])
+                try await ditto.store.execute(query: "INSERT INTO `\(room.messagesId)` DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": doc])
 
             } catch {
-                print("Error \(error)")
+                print("createMessage Error: \(error)")
             }
-            
         }
     }
     
     func saveEditedTextMessage(_ message: Message, in room: Room) {
         Task {
             do {
-                try await ditto.store.execute(query: "UPDATE \"\(room.messagesId)\" SET \(textKey) = \'\(message.text)\' WHERE _id = :id", arguments: ["id": message.id])
+                try await ditto.store.execute(query: "UPDATE `\(room.messagesId)` SET `\(textKey)` = '\(message.text)' WHERE _id = :id", arguments: ["id": message.id])
             } catch {
-                print("Error \(error)")
+                print("saveEditedTextMessage Error: \(error)")
             }
         }
     }
@@ -375,7 +374,7 @@ extension DittoService {
 
         Task {
             do {
-                let query = "UPDATE COLLECTION \"\(room.messagesId)\" (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) SET \(thumbnailImageTokenKey) -> tombstone(), \(largeImageTokenKey) -> tombstone(), \(textKey) = :text WHERE _id = :id"
+                let query = "UPDATE COLLECTION `\(room.messagesId)` (\(thumbnailImageTokenKey) ATTACHMENT, \(largeImageTokenKey) ATTACHMENT) SET \(thumbnailImageTokenKey) -> tombstone(), \(largeImageTokenKey) -> tombstone(), \(textKey) = :text WHERE _id = :id"
                 
                 let args = [
                     "id": message.id,
@@ -384,7 +383,7 @@ extension DittoService {
                 
                 try await ditto.store.execute(query: query, arguments: args)
             } catch {
-                print("Error \(error)")
+                print("saveDeletedImageMessage Error: \(error)")
             }
         }
         
@@ -435,11 +434,11 @@ extension DittoService {
                     thumbnailImageTokenKey: thumbAttachment
                 ];
                 
-                try await ditto.store.execute(query: "INSERT INTO COLLECTION \"\(room.messagesId)\" (\(thumbnailImageTokenKey) ATTACHMENT) DOCUMENTS (:newDoc)", arguments: ["newDoc": doc, "\(thumbnailImageTokenKey)": thumbAttachment])
+                try await ditto.store.execute(query: "INSERT INTO COLLECTION `\(room.messagesId)` (\(thumbnailImageTokenKey) ATTACHMENT) DOCUMENTS (:newDoc)", arguments: ["newDoc": doc, "\(thumbnailImageTokenKey)": thumbAttachment])
    
                 try await cleanupTmpStorage(tmpStorage.deleteDirectory)
             } catch {
-                print("Error \(error)")
+                print("createImageMessage insert attachment doc Error \(error)")
                 throw error
             }
         }
@@ -469,7 +468,7 @@ extension DittoService {
         
         Task {
             do {
-                let query = "UPDATE COLLECTION \"\(room.messagesId)\" (\(largeImageTokenKey) ATTACHMENT) SET \(largeImageTokenKey) = :largeAttachment WHERE _id = :id"
+                let query = "UPDATE COLLECTION `\(room.messagesId)` (\(largeImageTokenKey) ATTACHMENT) SET \(largeImageTokenKey) = :largeAttachment WHERE _id = :id"
                 
                 let args = [
                     "id": docId,
@@ -478,10 +477,9 @@ extension DittoService {
                 
                 let _ = try await ditto.store.execute(query: query, arguments: args)
             } catch {
-                print("Error \(error)")
+                print("createImageMessage update largeAttachment Error: \(error)")
             }
         }
-        
         
         do {
             try await cleanupTmpStorage(tmpStorage.deleteDirectory)
@@ -537,12 +535,12 @@ extension DittoService {
     private func user(for userId: String) async -> User? {
        
        do {
-           let result = try await ditto.store.execute(query: "SELECT * FROM \(usersKey) WHERE _id = :id", arguments: ["id": userId])
+           let result = try await ditto.store.execute(query: "SELECT * FROM `\(usersKey)` WHERE _id = :id", arguments: ["id": userId])
            if let userValue = result.items.first?.value {
                return User(value: userValue)
            }
        } catch {
-           print("Error \(error)")
+           print("user Error: \(error)")
        }
        
        return nil
@@ -564,7 +562,7 @@ extension DittoService {
     
     private func updateAllPublicRooms() {
         
-        allPublicRoomsCancellable = ditto.store.observePublisher(query: "SELECT * FROM \(publicRoomsCollectionId) ORDER BY \(createdOnKey) ASC", mapTo: Room.self)
+        allPublicRoomsCancellable = ditto.store.observePublisher(query: "SELECT * FROM `\(publicRoomsCollectionId)` ORDER BY \(createdOnKey) ASC", mapTo: Room.self)
             .catch { error in
                 assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                 return Empty<[Room], Never>()
@@ -574,7 +572,7 @@ extension DittoService {
     
     func roomPublisher(for room: Room) -> AnyPublisher<Room?, Never> {
 
-        ditto.store.observePublisher(query: "SELECT * FROM \"\(room.isPrivate ? room.collectionId! : publicRoomsCollectionId)\" WHERE _id = :id", arguments: ["id":room.id], mapTo: Room.self, onlyFirst: true)
+        ditto.store.observePublisher(query: "SELECT * FROM `\(room.isPrivate ? room.collectionId! : publicRoomsCollectionId)` WHERE _id = :id", arguments: ["id":room.id], mapTo: Room.self, onlyFirst: true)
             .catch { error in
                 assertionFailure("ERROR with \(#function)" + error.localizedDescription)
                 return Empty<Room?, Never>()
@@ -591,7 +589,7 @@ extension DittoService {
         let collectionId = room.collectionId ?? publicRoomsCollectionId
         
         do {
-            let result = try await ditto.store.execute(query: "SELECT * FROM \"\(collectionId)\" WHERE _id = :id", arguments: ["id": room.id])
+            let result = try await ditto.store.execute(query: "SELECT * FROM `\(collectionId)` WHERE _id = :id", arguments: ["id": room.id])
             
             if result.items.isEmpty {
                 print("DittoService.\(#function): WARNING (except for archived private rooms)" +
@@ -605,13 +603,12 @@ extension DittoService {
             }
             
         } catch {
-            print("Error \(error)")
+            print("room Error: \(error)")
         }
         
         return nil
 
     }
-
     func createRoom(name: String, isPrivate: Bool) {
         let roomId = UUID().uuidString
         let messagesId = UUID().uuidString
@@ -629,9 +626,9 @@ extension DittoService {
         
         Task {
             do {
-                try await ditto.store.execute(query: "INSERT INTO \"\(collectionId)\" DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": room.docDictionary()])
+                try await ditto.store.execute(query: "INSERT INTO `\(collectionId)` DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": room.docDictionary()])
             } catch {
-                print("Error \(error)")
+                print("createRoom Error: \(error)")
             }
         }
         
@@ -670,7 +667,6 @@ extension DittoService {
     private func createDefaultPublicRoom() {
         // Only create default Public room if user does not yet exist, i.e. first launch
         if privateStore.currentUserId != nil {
-//        if allPublicRooms.count > 0 {
             return
         }
         
@@ -682,18 +678,16 @@ extension DittoService {
                     dbIdKey: publicKey,
                     nameKey: publicRoomTitleKey,
                     collectionIdKey: publicRoomsCollectionId,
-                    messagesIdKey: publicMessagesIdKey,//PUBLIC_MESSAGES_ID,
+                    messagesIdKey: publicMessagesIdKey,
                     createdOnKey: DateFormatter.isoDate.string(from: Date()),
                     isPrivateKey: false
                 ]
                 
-                try await ditto.store.execute(query: "INSERT INTO \(publicRoomsCollectionId) DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+                try await ditto.store.execute(query: "INSERT INTO `\(publicRoomsCollectionId)` DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
             } catch {
-                print("Error \(error)")
+                print("createDefaultPublicRoom Error: \(error)")
             }
-        }
-        
-        
+        }        
     }
 }
 
@@ -758,12 +752,12 @@ extension DittoService {
         
         Task {
             do {
-                guard let _ = try await ditto.store.execute(query: "SELECT * FROM \(publicRoomsCollectionId) WHERE _id = :id", arguments: ["id": room.id]).items.first else {
+                guard let _ = try await ditto.store.execute(query: "SELECT * FROM `\(publicRoomsCollectionId)` WHERE _id = :id", arguments: ["id": room.id]).items.first else {
                     print("DittoService.\(#function): ERROR - expected non-nil public room for roomId: \(room.id)")
                     return
                 }
             } catch {
-                print("Error \(error)")
+                print("unarchivePublicRoom Error: \(error)")
             }
         }
         
@@ -819,15 +813,15 @@ extension DittoService {
         Task {
             do {
                 // evict all messages in collection
-                try await ditto.store.execute(query: "EVICT FROM \"\(room.messagesId)\"")
-                try await ditto.store.execute(query: "EVICT FROM \(collectionsKey) WHERE _id = :id", arguments: ["id": room.messagesId])
+                try await ditto.store.execute(query: "EVICT FROM `\(room.messagesId)`")
+                try await ditto.store.execute(query: "EVICT FROM `\(collectionsKey)` WHERE _id = :id", arguments: ["id": room.messagesId])
                 
                 // evict room from collection
-                try await ditto.store.execute(query: "EVICT FROM \"\(collectionId)\" WHERE _id = :id", arguments: ["id": room.id])
+                try await ditto.store.execute(query: "EVICT FROM `\(collectionId)` WHERE _id = :id", arguments: ["id": room.id])
 
 
             } catch {
-                print("Error \(error)")
+                print("evictPrivateRoom Error: \(error)")
             }
         }
     }
@@ -837,18 +831,18 @@ extension DittoService {
         Task {
             do {
                 // evict all messages in collection
-                try await ditto.store.execute(query: "EVICT FROM \"\(room.messagesId)\"")
+                try await ditto.store.execute(query: "EVICT FROM `\(room.messagesId)`")
                 
                 // evict the messages collection
-                try await ditto.store.execute(query: "EVICT FROM \(collectionsKey) WHERE _id = :id", arguments: ["id": room.messagesId])
+                try await ditto.store.execute(query: "EVICT FROM `\(collectionsKey)` WHERE _id = :id", arguments: ["id": room.messagesId])
                 
             } catch {
-                print("Error \(error)")
+                print("evictPublicRoom Error: \(error)")
             }
         }
 
         // We don't need to evict a public room because it will replicate automatically anyway,
-        // but room documents are very light-weight.
+        // but room documents are very lightweight.
     }
 }
 
