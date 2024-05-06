@@ -192,7 +192,7 @@ class RepositoryImpl @Inject constructor(
             thumbnailKey to attachment
         )
 
-        val query = "INSERT INTO COLLECTION \"${room.messagesCollectionId}\" ($thumbnailKey ATTACHMENT) DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+        val query = "INSERT INTO COLLECTION `${room.messagesCollectionId}` (${thumbnailKey} ATTACHMENT) DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
         val args = mapOf("newDoc" to newDoc, "$thumbnailKey" to attachment)
 
         ditto.store.execute(query, args)
@@ -263,7 +263,7 @@ class RepositoryImpl @Inject constructor(
 //        privateRoomsSubscriptions.add(collection.findAll().subscribe())
 
 
-        privateRoomsSubscriptions.add(ditto.sync.registerSubscription("SELECT * FROM \"${privateRoomQrCode.collectionId}\""))
+        privateRoomsSubscriptions.add(ditto.sync.registerSubscription("SELECT * FROM `${privateRoomQrCode.collectionId}`"))
 
         //delete this
 //        privateRoomsSubscriptionsLiveQueries.add(
@@ -273,7 +273,7 @@ class RepositoryImpl @Inject constructor(
 //        )
 
         privateRoomsSubscriptionsLiveQueries.add(
-            ditto.store.registerObserver("SELECT * FROM \"${privateRoomQrCode.collectionId}\" WHERE _id = :id", mapOf("id" to privateRoomQrCode.roomId)) {
+            ditto.store.registerObserver("SELECT * FROM `${privateRoomQrCode.collectionId}` WHERE _id = :id", mapOf("id" to privateRoomQrCode.roomId)) {
                 _ ->
                 getPrivateRoomsFromDitto()
             }
@@ -331,7 +331,7 @@ class RepositoryImpl @Inject constructor(
 
             //delete this
 //            messagesSubscription = messagesCollection.findAll().subscribe()
-            messagesSubscription = ditto.sync.registerSubscription("SELECT * FROM \"${room.messagesCollectionId}\"")
+            messagesSubscription = ditto.sync.registerSubscription("SELECT * FROM `${room.messagesCollectionId}`")
 
 
 //            messagesLiveQuery = messagesCollection
@@ -342,7 +342,7 @@ class RepositoryImpl @Inject constructor(
 //                    allMessagesForRoom.value = docs.map { Message(it) }
 //                }
 
-            messagesLiveQuery = ditto.store.registerObserver("SELECT * FROM \"${room.messagesCollectionId}\" ($thumbnailKey ATTACHMENT) ORDER BY $createdOnKey ASC") {
+            messagesLiveQuery = ditto.store.registerObserver("SELECT * FROM COLLECTION `${room.messagesCollectionId}` ($thumbnailKey ATTACHMENT) ORDER BY $createdOnKey ASC") {
                 results ->
                 this.messagesDocs = results.items
                 allMessagesForRoom.value = results.items.map { Message(it.value) }
