@@ -48,6 +48,7 @@ import live.dittolive.chat.data.collectionIdKey
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.firstNameKey
+import live.dittolive.chat.data.isReceivedKey
 import live.dittolive.chat.data.lastNameKey
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User
@@ -167,7 +168,8 @@ class RepositoryImpl @Inject constructor(
             roomIdKey to message.roomId,
             textKey to message.text,
             userIdKey to userID,
-            thumbnailKey to attachment
+            thumbnailKey to attachment,
+            isReceivedKey to false
         )
 
         collection.upsert(doc)

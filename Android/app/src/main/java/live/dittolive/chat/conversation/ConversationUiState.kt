@@ -36,6 +36,7 @@ import live.ditto.DittoDocument
 import live.dittolive.chat.R
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
+import live.dittolive.chat.data.isReceivedKey
 import live.dittolive.chat.data.model.MessageUiModel
 import live.dittolive.chat.data.model.toInstant
 import live.dittolive.chat.data.roomIdKey
@@ -73,6 +74,7 @@ data class Message(
     val userId: String = UUID.randomUUID().toString(),
     val attachmentToken: DittoAttachmentToken?,
     // local metadata, not part of the ditto document
+    val isReceived: Boolean = false,
     val photoUri: Uri? = null,
     val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
@@ -82,6 +84,7 @@ data class Message(
         document[roomIdKey].stringValue,
         document[textKey].stringValue,
         document[userIdKey].stringValue,
-        document[thumbnailKey].attachmentToken
-    )
+        document[thumbnailKey].attachmentToken,
+        document[isReceivedKey].booleanValue,
+        )
 }

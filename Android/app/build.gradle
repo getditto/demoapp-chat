@@ -22,12 +22,12 @@ android {
             useSupportLibrary true
         }
 
-        def credsFile = rootProject.file("secure\\creds.properties")
-        def prop = new Properties()
-        prop.load(new FileInputStream(credsFile))
-        buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID'])
-        buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
-        buildConfigField('String', 'DITTO_OFFLINE_TOKEN', prop['DITTO_OFFLINE_TOKEN'])
+//        def credsFile = rootProject.file("secure\\creds.properties")
+//        def prop = new Properties()
+//        prop.load(new FileInputStream(credsFile))
+//        buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID'])
+//        buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
+//        buildConfigField('String', 'DITTO_OFFLINE_TOKEN', prop['DITTO_OFFLINE_TOKEN'])
     }
 
     buildTypes {
@@ -129,7 +129,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.4.4")
+    implementation("live.ditto:ditto:4.7.1")
 //    implementation project(":dittoinfomodule")
 
     // Load Presence Viewer from an .aar library file

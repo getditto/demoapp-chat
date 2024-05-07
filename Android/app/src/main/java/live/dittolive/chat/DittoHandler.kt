@@ -77,13 +77,18 @@ class DittoHandler {
  * [DittoIdentity.OfflinePlayground] otherwise.
  */
 private fun resolveIdentity(androidDependencies: DefaultAndroidDittoDependencies): DittoIdentity {
-    if (BuildConfig.DEBUG) return DittoIdentity.OnlinePlayground(
+//    if (BuildConfig.DEBUG) return DittoIdentity.OnlinePlayground(
+//        dependencies = androidDependencies,
+//        appId = BuildConfig.DITTO_APP_ID,
+//        token = BuildConfig.DITTO_PLAYGROUND_TOKEN
+//    )
+//
+//    return DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
+    return DittoIdentity.OnlinePlayground(
         dependencies = androidDependencies,
-        appId = BuildConfig.DITTO_APP_ID,
-        token = BuildConfig.DITTO_PLAYGROUND_TOKEN
+        appId = "<YOUR_APP_ID>",
+        token = "<YOUR_TOKEN>"
     )
-
-    return DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
 }
 
 /**
@@ -92,5 +97,5 @@ private fun resolveIdentity(androidDependencies: DefaultAndroidDittoDependencies
 private fun Ditto.setOfflineOnlyLicenseToken() {
     if (BuildConfig.DEBUG) return
 
-    setOfflineOnlyLicenseToken(BuildConfig.DITTO_OFFLINE_TOKEN)
+    //setOfflineOnlyLicenseToken(BuildConfig.DITTO_OFFLINE_TOKEN)
 }

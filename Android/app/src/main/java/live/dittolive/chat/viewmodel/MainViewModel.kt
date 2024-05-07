@@ -300,6 +300,7 @@ class MainViewModel @Inject constructor(
             messageText,
             "author_me",
             null,
+            false,
             photoUri
         )
 

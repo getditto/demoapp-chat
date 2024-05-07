@@ -28,7 +28,7 @@ package live.dittolive.chat.data
 /**
  * collection name for default public room
  */
-const val DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID = "1440174b9330e430b46da939f0b04a34a40e10ac8073671156da174fef1ffaef" //"Public Room Messages Colleciton ID"
+const val DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID = "delta" //"Public Room Messages Colleciton ID"
 const val PREFERENCE_FILE_KEY = "live.dittolive.chat.dittoChatPrefFileKey"
 
 /**
@@ -52,6 +52,7 @@ const val publicKey = "public"
 const val roomIdKey = "roomId"
 const val roomsKey = "rooms"
 const val textKey = "text"
+const val isReceivedKey = "isReceived"
 const val userIdKey = "userId"
 const val userIdsKey = "userIds"
 const val usersKey = "users"
