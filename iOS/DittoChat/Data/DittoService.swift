@@ -21,10 +21,13 @@ class DittoInstance: ObservableObject {
     let ditto: Ditto
 
     init() {
-        ditto = Ditto(identity: DittoIdentity.offlinePlayground(appID: Env.DITTO_APP_ID))
-        
-        try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
-        
+        ditto = Ditto(identity: DittoIdentity.onlinePlayground(
+            appID: "1233b95f-8b6a-436f-95a0-104318b3eb8a",
+            token: "3cdfeb05-a1ec-4dca-bc59-075ec21d5a7b"
+        ))
+
+        //try! ditto.setOfflineOnlyLicenseToken(Env.DITTO_OFFLINE_TOKEN)
+
         // make sure our log level is set _before_ starting ditto.
         self.loggingOption = Self.storedLoggingOption()
         resetLogging()
@@ -84,9 +87,9 @@ extension DittoInstance {
         default:
             DittoLogger.enabled = true
             DittoLogger.minimumLogLevel = DittoLogLevel(rawValue: logOption.rawValue)!
-            if let logFileURL = DittoLogManager.shared.logFileURL {
-                DittoLogger.setLogFileURL(logFileURL)
-            }
+            //if let logFileURL = DittoLogManager.shared.logFileURL {
+            //    DittoLogger.setLogFileURL(logFileURL)
+            //}
         }
     }
 }
@@ -307,7 +310,8 @@ extension DittoService {
                 createdOnKey: DateFormatter.isoDate.string(from: Date()),
                 roomIdKey: room.id,
                 textKey: text,
-                userIdKey: userId
+                userIdKey: userId,
+                isReceivedKey: false
             ] as [String: Any?] )
     }
     

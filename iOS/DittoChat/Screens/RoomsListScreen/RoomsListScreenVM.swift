@@ -16,6 +16,7 @@ class RoomsListScreenVM: ObservableObject {
     @Published var presentSettingsView = false
     @Published var publicRooms: [Room] = []
     @Published var privateRooms: [Room] = []
+    @Published var gameRooms: [Room] = []
     @Published var defaultPublicRoom: Room?
     
     init() {

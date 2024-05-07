@@ -83,15 +83,30 @@ struct MessageBubbleView: View {
     }
     
     private var backgroundColor: Color {
+//        if message.isReceived == true {
+//           return .teal
+//        }
         if side == .left {
-            return Color(.tertiarySystemFill)
+            //if message.isReceived {
+
+            //    return .teal
+            //}
+            //else {
+                return Color(.tertiarySystemFill)
+            //}
         }
-        return .accentColor
+        //if message.isReceived {
+        //    return .green
+        //}
+        //else {
+            return .accentColor
+        //}
     }
 
     private var textColor: Color {
         if side == .left {
             return Color(.label)
+            
         }
         return Color.white
     }
@@ -128,11 +143,10 @@ struct MessageBubbleView: View {
                     }
 
                     textContentView()
-                        .padding(textInsets)
-
-                    Text(DateFormatter.shortTime.string(from: message.createdOn))
-                        .font(.system(size: UIFont.smallSystemFontSize))
-                        .padding(textInsets)
+                    .padding(textInsets)
+                        Text(DateFormatter.shortTime.string(from: message.createdOn))
+                            .font(.system(size: UIFont.smallSystemFontSize))
+                            .padding(textInsets)
                 }
                 .background(backgroundColor)
                 .foregroundColor(textColor)
@@ -145,8 +159,14 @@ struct MessageBubbleView: View {
                     Spacer()
                 }
             }
+
             .alert(deleteMessageTitleKey, isPresented: $viewModel.presentDeleteAlert) {
                 deleteAlertContent()
+            }
+            if message.isReceived {
+                Text ("Synced")
+                    .font(.system(size: UIFont.smallSystemFontSize))
+                    .opacity(0.6)
             }
         }
         .padding(rowInsets)
@@ -158,6 +178,7 @@ struct MessageBubbleView: View {
                 }
             }
         }
+        
     }
     
     @ViewBuilder

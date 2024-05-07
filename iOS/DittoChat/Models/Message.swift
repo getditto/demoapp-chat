@@ -22,10 +22,10 @@ struct Message: Identifiable, Equatable {
     var userId: String
     var largeImageToken: DittoAttachmentToken?
     var thumbnailImageToken: DittoAttachmentToken?
-    
     var isImageMessage: Bool {
         thumbnailImageToken != nil || largeImageToken != nil
     }    
+    var isReceived: Bool
 }
 
 extension Message {
@@ -37,6 +37,7 @@ extension Message {
         self.userId = document[userIdKey].stringValue
         self.largeImageToken = document[largeImageTokenKey].attachmentToken
         self.thumbnailImageToken = document[thumbnailImageTokenKey].attachmentToken
+        self.isReceived = document[isReceivedKey].boolValue
     }
 }
 
@@ -48,7 +49,8 @@ extension Message {
         text: String? = nil,
         userId: String? = nil,
         largeImageToken: DittoAttachmentToken? = nil,
-        thumbnailImageToken: DittoAttachmentToken? = nil
+        thumbnailImageToken: DittoAttachmentToken? = nil,
+        isReceived: Bool = false
     ) {
         self.id = id ?? UUID().uuidString
         self.createdOn = createdOn ?? Date()
@@ -57,6 +59,7 @@ extension Message {
         self.userId = DataManager.shared.currentUserId ?? createdByUnknownKey
         self.largeImageToken = largeImageToken
         self.thumbnailImageToken = thumbnailImageToken
+        self.isReceived = isReceived
     }
 }
 
@@ -69,7 +72,8 @@ extension Message {
             textKey: text,
             userIdKey: userId,
             largeImageTokenKey: largeImageToken,
-            thumbnailImageTokenKey: thumbnailImageToken
+            thumbnailImageTokenKey: thumbnailImageToken,
+            isReceivedKey: isReceived
         ]
     }
 }

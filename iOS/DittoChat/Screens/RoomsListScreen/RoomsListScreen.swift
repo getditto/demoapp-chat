@@ -47,6 +47,9 @@ struct RoomsListScreen: View {
                     }
                 }
             }
+            Section( header: Text(gameRoomTitleKey) ) {
+                NavigationLink("Snake", destination: SnakeGameView())
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Room.self) { room in
