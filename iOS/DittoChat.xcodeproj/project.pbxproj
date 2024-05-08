@@ -65,6 +65,10 @@
 		14E834CC2953C7B20027D750 /* RoomEditScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */; };
 		14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CD2953C7B90027D750 /* RoomsListScreen.swift */; };
 		14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */; };
+		9FAAB13E2BEAECDE003C0422 /* SnakeGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAAB13A2BEAECDE003C0422 /* SnakeGame.swift */; };
+		9FAAB13F2BEAECDE003C0422 /* SnakeSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAAB13B2BEAECDE003C0422 /* SnakeSegment.swift */; };
+		9FAAB1402BEAECDE003C0422 /* SnakeGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAAB13C2BEAECDE003C0422 /* SnakeGameViewModel.swift */; };
+		9FAAB1412BEAECDE003C0422 /* FireworksAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAAB13D2BEAECDE003C0422 /* FireworksAnimation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +142,10 @@
 		14E834CD2953C7B90027D750 /* RoomsListScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreen.swift; sourceTree = "<group>"; };
 		14E834CE2953C7B90027D750 /* RoomsListScreenVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsListScreenVM.swift; sourceTree = "<group>"; };
 		14E834D22953C7F60027D750 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9FAAB13A2BEAECDE003C0422 /* SnakeGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnakeGame.swift; sourceTree = "<group>"; };
+		9FAAB13B2BEAECDE003C0422 /* SnakeSegment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnakeSegment.swift; sourceTree = "<group>"; };
+		9FAAB13C2BEAECDE003C0422 /* SnakeGameViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnakeGameViewModel.swift; sourceTree = "<group>"; };
+		9FAAB13D2BEAECDE003C0422 /* FireworksAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireworksAnimation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -351,6 +359,7 @@
 		14E834BC2953C6F60027D750 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				9FAAB1392BEAECDE003C0422 /* Snake */,
 				14A0B88129D60C3F00D2D625 /* MessageEditView */,
 				14E834BD2953C70B0027D750 /* ChatScreen */,
 				1493FF672978763500397DAB /* CodeScanner */,
@@ -400,6 +409,17 @@
 				14E834CA2953C7B20027D750 /* RoomEditScreenViewModel.swift */,
 			);
 			path = RoomEditScreen;
+			sourceTree = "<group>";
+		};
+		9FAAB1392BEAECDE003C0422 /* Snake */ = {
+			isa = PBXGroup;
+			children = (
+				9FAAB13A2BEAECDE003C0422 /* SnakeGame.swift */,
+				9FAAB13B2BEAECDE003C0422 /* SnakeSegment.swift */,
+				9FAAB13C2BEAECDE003C0422 /* SnakeGameViewModel.swift */,
+				9FAAB13D2BEAECDE003C0422 /* FireworksAnimation.swift */,
+			);
+			path = Snake;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -585,6 +605,7 @@
 				14E834B82953C6E60027D750 /* DittoService.swift in Sources */,
 				14E834C82953C7AB0027D750 /* ProfileScreen.swift in Sources */,
 				14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */,
+				9FAAB13F2BEAECDE003C0422 /* SnakeSegment.swift in Sources */,
 				14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */,
 				1493FF6A2978763500397DAB /* ScannerView.swift in Sources */,
 				14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */,
@@ -592,12 +613,14 @@
 				14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */,
 				14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */,
 				14B98AAF297C7CB600509E57 /* RoomDetailsView.swift in Sources */,
+				9FAAB1402BEAECDE003C0422 /* SnakeGameViewModel.swift in Sources */,
 				14CADB2E293FEBD500BED068 /* DittoChatApp.swift in Sources */,
 				14E834D02953C7B90027D750 /* RoomsListScreenVM.swift in Sources */,
 				14A0B87429D3BB8B00D2D625 /* AttachmentPreview.swift in Sources */,
 				14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */,
 				14B5F1AB2985A25D00024BE4 /* RoomView.swift in Sources */,
 				14E834B62953C6E60027D750 /* Message.swift in Sources */,
+				9FAAB13E2BEAECDE003C0422 /* SnakeGame.swift in Sources */,
 				14B4E26F297A40380069B69D /* DataManager.swift in Sources */,
 				14A0B87229D3BB5D00D2D625 /* CustomErrors.swift in Sources */,
 				14E834C42953C7A30027D750 /* ChatScreen.swift in Sources */,
@@ -609,6 +632,7 @@
 				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
 				143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */,
 				142B278E2A39290700C09751 /* Env.swift in Sources */,
+				9FAAB1412BEAECDE003C0422 /* FireworksAnimation.swift in Sources */,
 				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
 				14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */,
 				14E834CF2953C7B90027D750 /* RoomsListScreen.swift in Sources */,
@@ -781,7 +805,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
-				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				DEVELOPMENT_TEAM = Z6L7W8WM98;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DittoChat/Info.plist;
@@ -815,7 +839,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
-				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
+				DEVELOPMENT_TEAM = Z6L7W8WM98;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DittoChat/Info.plist;
