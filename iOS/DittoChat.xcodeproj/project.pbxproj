@@ -786,6 +786,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
 				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DittoChat/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
@@ -820,6 +821,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
 				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DittoChat/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";

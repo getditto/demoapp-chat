@@ -54,12 +54,17 @@ class DittoHandler {
                 DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
 
                 val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
+                val identity = DittoIdentity.OnlinePlayground(
+                    dependencies = androidDependencies,
+                    appId = BuildConfig.DITTO_APP_ID,
+                    token = BuildConfig.DITTO_PLAYGROUND_TOKEN,
+                    enableDittoCloudSync = false // Cloud sync is disabled
+                )
 
                 ditto = Ditto(
                     dependencies = androidDependencies,
-                    identity = resolveIdentity(androidDependencies)
+                    identity = identity
                 ).apply {
-                    setOfflineOnlyLicenseToken()
                     disableSyncWithV3()
                     startSync()
                 }
@@ -70,27 +75,4 @@ class DittoHandler {
             onInitialized()
         }
     }
-}
-
-/**
- * Returns [DittoIdentity.OnlinePlayground] for Debug builds,
- * [DittoIdentity.OfflinePlayground] otherwise.
- */
-private fun resolveIdentity(androidDependencies: DefaultAndroidDittoDependencies): DittoIdentity {
-    if (BuildConfig.DEBUG) return DittoIdentity.OnlinePlayground(
-        dependencies = androidDependencies,
-        appId = BuildConfig.DITTO_APP_ID,
-        token = BuildConfig.DITTO_PLAYGROUND_TOKEN
-    )
-
-    return DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
-}
-
-/**
- * Sets license token only on release build.
- */
-private fun Ditto.setOfflineOnlyLicenseToken() {
-    if (BuildConfig.DEBUG) return
-
-    setOfflineOnlyLicenseToken(BuildConfig.DITTO_OFFLINE_TOKEN)
 }
