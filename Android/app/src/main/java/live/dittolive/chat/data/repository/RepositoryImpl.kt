@@ -184,16 +184,19 @@ class RepositoryImpl @Inject constructor(
 //
 //        collection.upsert(doc)
 
-        val newDoc = mapOf(
+        val newDoc: MutableMap<String, Any?> = mutableMapOf(
             createdOnKey to dateString,
             roomIdKey to message.roomId,
             textKey to message.text,
             userIdKey to userID,
-            thumbnailKey to attachment
         )
 
+        if (attachment != null) {
+            newDoc[thumbnailKey] = attachment
+        }
+
         val query = "INSERT INTO COLLECTION `${room.messagesCollectionId}` (${thumbnailKey} ATTACHMENT) DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
-        val args = mapOf("newDoc" to newDoc, "$thumbnailKey" to attachment)
+        val args = mapOf("newDoc" to newDoc)
 
         ditto.store.execute(query, args)
 

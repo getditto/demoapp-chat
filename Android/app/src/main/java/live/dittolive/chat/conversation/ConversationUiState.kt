@@ -97,6 +97,6 @@ data class Message(
         item[roomIdKey] as String,
         item[textKey] as String,
         item[userIdKey] as String,
-        item[thumbnailKey] as DittoAttachmentToken,
+        item[thumbnailKey] as DittoAttachmentToken?,
     )
 }
