@@ -43,12 +43,6 @@ data class User(
     val lastName: String = "",
     val fullName: String = "$firstName $lastName"
 ) {
-    //delete this
-    constructor(document: DittoDocument) :this(
-        document[dbIdKey].stringValue,
-        document[firstNameKey].stringValue,
-        document[lastNameKey].stringValue
-    )
     constructor(item: Map<String, Any?>) :this(
         item[dbIdKey] as String,
         item[firstNameKey] as String,

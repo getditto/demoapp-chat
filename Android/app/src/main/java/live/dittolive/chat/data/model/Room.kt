@@ -48,17 +48,6 @@ data class Room(
     val collectionID : String?,
     val createdBy: String
 ){
-    //delete this
-    constructor(document: DittoDocument) :this(
-        document[dbIdKey].stringValue,
-        document[nameKey].stringValue,
-        document[createdOnKey].stringValue.toInstant(),
-        document[messagesIdKey].stringValue,
-        document[isPrivateKey].booleanValue,
-        document[collectionIdKey].stringValue,
-        document[createdByKey].stringValue,
-    )
-
     constructor(item: Map<String, Any?>) :this(
         item[dbIdKey] as String,
         item[nameKey] as String,

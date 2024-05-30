@@ -102,14 +102,12 @@ class RepositoryImpl @Inject constructor(
      * Messages
      */
     private var messagesDocs = listOf<DittoQueryResultItem>()
-    private lateinit var messagesCollection: DittoCollection
     private lateinit var messagesLiveQuery: DittoStoreObserver
     private lateinit var messagesSubscription: DittoSyncSubscription
 
     /**
      * Public Rooms
      */
-    private lateinit var publicRoomsCollection: DittoCollection
     private lateinit var publicRoomsSubscription: DittoSyncSubscription
     private lateinit var publicRoomsLiveQuery: DittoStoreObserver
     private var publicRoomsDocs = listOf<DittoQueryResultItem>()
@@ -125,7 +123,6 @@ class RepositoryImpl @Inject constructor(
      * Users
      */
     private var userssDocs = listOf<DittoQueryResultItem>()
-    private lateinit var usersCollection: DittoCollection
     private lateinit var usersLiveQuery: DittoStoreObserver
     private lateinit var usersSubscription: DittoSyncSubscription
 
@@ -172,18 +169,6 @@ class RepositoryImpl @Inject constructor(
         val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
         val dateString = datetimeInUtc.toIso8601String()
 
-            //delete this
-//        val collection = ditto.store.collection(room.messagesCollectionId)
-//        val doc = mapOf(
-//            createdOnKey to dateString,
-//            roomIdKey to message.roomId,
-//            textKey to message.text,
-//            userIdKey to userID,
-//            thumbnailKey to attachment
-//        )
-//
-//        collection.upsert(doc)
-
         val newDoc: MutableMap<String, Any?> = mutableMapOf(
             createdOnKey to dateString,
             roomIdKey to message.roomId,
@@ -212,17 +197,6 @@ class RepositoryImpl @Inject constructor(
 
 
     override suspend fun addUser(user: User) {
-
-//          delete this
-//        ditto.store.collection(usersKey)
-//            .upsert(
-//                mapOf(
-//                    dbIdKey to user.id,
-//                    firstNameKey to user.firstName,
-//                    lastNameKey to user.lastName
-//                )
-//            )
-
         val query = "INSERT INTO $usersKey DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
         val newDoc = mapOf(
             dbIdKey to user.id,
@@ -232,9 +206,7 @@ class RepositoryImpl @Inject constructor(
 
         val args = mapOf("newDoc" to newDoc)
 
-
         ditto.store.execute(query, args)
-
     }
 
     override suspend fun createRoom(name: String) {
@@ -261,19 +233,7 @@ class RepositoryImpl @Inject constructor(
     override suspend fun joinPrivateRoom(qrCode: String) {
         val privateRoomQrCode = parsePrivateRoomQrCode(qrCode) ?: return
 
-        //delete this
-//        val collection = ditto.store[privateRoomQrCode.collectionId]
-//        privateRoomsSubscriptions.add(collection.findAll().subscribe())
-
-
         privateRoomsSubscriptions.add(ditto.sync.registerSubscription("SELECT * FROM `${privateRoomQrCode.collectionId}`"))
-
-        //delete this
-//        privateRoomsSubscriptionsLiveQueries.add(
-//            collection.findById(privateRoomQrCode.roomId).observeLocal { _, _ ->
-//                getPrivateRoomsFromDitto()
-//            }
-//        )
 
         privateRoomsSubscriptionsLiveQueries.add(
             ditto.store.registerObserver("SELECT * FROM `${privateRoomQrCode.collectionId}` WHERE _id = :id", mapOf("id" to privateRoomQrCode.roomId)) {
@@ -282,13 +242,9 @@ class RepositoryImpl @Inject constructor(
             }
         )
 
-        //delete this
-//        ditto.store.collection(privateRoomsKey).upsert(privateRoomQrCode.toMap())
-
         val query = "INSERT INTO $privateRoomsKey DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
         val args = mapOf("newDoc" to privateRoomQrCode.toMap())
         ditto.store.execute(query, args)
-
     }
 
     override suspend fun privateRoomForId(roomId: String, collectionId: String): Room? {
@@ -328,22 +284,7 @@ class RepositoryImpl @Inject constructor(
 
     private fun getAllMessagesForRoomFromDitto(room: Room) {
         ditto.let { ditto: Ditto ->
-
-            //delete this
-//            messagesCollection = ditto.store.collection(room.messagesCollectionId)
-
-            //delete this
-//            messagesSubscription = messagesCollection.findAll().subscribe()
             messagesSubscription = ditto.sync.registerSubscription("SELECT * FROM `${room.messagesCollectionId}`")
-
-
-//            messagesLiveQuery = messagesCollection
-//                .findAll()
-//                .sort(createdOnKey, DittoSortDirection.Ascending)
-//                .observeLocal { docs, _ ->
-//                    this.messagesDocs = docs
-//                    allMessagesForRoom.value = docs.map { Message(it) }
-//                }
 
             messagesLiveQuery = ditto.store.registerObserver("SELECT * FROM COLLECTION `${room.messagesCollectionId}` ($thumbnailKey ATTACHMENT) ORDER BY $createdOnKey ASC") {
                 results ->
@@ -357,45 +298,19 @@ class RepositoryImpl @Inject constructor(
 
     private fun getPublicRoomsFromDitto() {
         ditto.let { ditto: Ditto ->
-
-            //delete this
-//            publicRoomsCollection = ditto.store.collection(roomsKey)
-//            publicRoomsSubscription = publicRoomsCollection.findAll().subscribe()
-
             publicRoomsSubscription = ditto.sync.registerSubscription("SELECT * FROM $roomsKey")
-
-            //delete this
-//            publicRoomsLiveQuery = publicRoomsCollection
-//                .findAll()
-//                .observeLocal { docs, _ ->
-//                    this.publicRoomsDocs = docs
-//                    allPublicRooms.value = docs.map { Room(it) }
-//                }
 
             publicRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM $roomsKey") {
                 results ->
                 this.publicRoomsDocs = results.items
                 allPublicRooms.value = results.items.map { Room(it.value) }
             }
-
         }
     }
 
     private fun getPrivateRoomsFromDitto() {
         ditto.let { ditto: Ditto ->
             privateRoomsLiveQuery?.close()
-
-//            privateRoomsLiveQuery = ditto.store.collection(privateRoomsKey)
-//                .findAll()
-//                .observeLocal { docs, _ ->
-//                    val roomsList: List<List<Room>> = docs.map { doc ->
-//                        val collectionId = doc[collectionIdKey].stringValue
-//
-//                        ditto.store[collectionId].findAll().exec().map { Room(it) }
-//                    }
-//
-//                    allPrivateRooms.value = roomsList.flatten()
-//                }
 
             privateRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM \"$privateRoomsKey\"") { results ->
                 val roomsList: List<List<Room>> = runBlocking {
@@ -413,23 +328,13 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun publicRoomForId(roomId: String): Room {
-        //delete this
-//        val document = ditto.store.collection(roomsKey).findById(roomId).exec()
-
         val query = "SELECT * FROM $roomsKey WHERE _id = :id"
         val args = mapOf("id" to roomId)
         val result = ditto.store.execute(query, args)
 
-        //delete this
-//        document?.let {
-//            val room = Room(document)
-//            return room
-//        }
-
         if (result.items.isNotEmpty()) {
             return Room(result.items.first().value)
         }
-
 
         return Room(
             id = publicKey,
@@ -448,25 +353,13 @@ class RepositoryImpl @Inject constructor(
 
     private fun getAllUsersFromDitto() {
         ditto.let { ditto: Ditto ->
-
-            //delete this
-//            usersCollection = ditto.store.collection(usersKey)
-//            usersSubscription = usersCollection.findAll().subscribe()
-
             usersSubscription = ditto.sync.registerSubscription("SELECT * FROM $usersKey")
-
-            //delete this
-//            usersLiveQuery = usersCollection.findAll().observeLocal { docs, _ ->
-//                this.userssDocs = docs
-//                allUsers.value = docs.map { User(it) }
-//            }
 
             usersLiveQuery = ditto.store.registerObserver("SElECT * FROM $usersKey") {
                 results ->
                 this.userssDocs = results.items
                 allUsers.value = results.items.map { User(it.value) }
             }
-
         }
     }
 

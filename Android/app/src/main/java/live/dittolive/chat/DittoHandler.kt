@@ -54,6 +54,8 @@ class DittoHandler {
                 DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
 
                 val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
+
+                // Please get your Ditto App ID and Playground Token from Portal: https://portal.ditto.live/
                 val identity = DittoIdentity.OnlinePlayground(
                     dependencies = androidDependencies,
                     appId = BuildConfig.DITTO_APP_ID,
