@@ -1,7 +1,9 @@
 # ChatDemo-Android
+
 Android version of the Chat App Demo
 
 ## Features
+
 - Dependency Injection via Hilt
 - Coroutines
 - LiveData
@@ -10,6 +12,7 @@ Android version of the Chat App Demo
 - Reactive Architecture
 
 ## Known Issues
+
 - Only default public room available on Android at this time
 - changing user profile photo is not yet supported
 - file attachments are not yet supported
@@ -18,20 +21,24 @@ Android version of the Chat App Demo
 
 You need to setup some environment variables in order to build this project:
 
-1. In your project root, create a directory called **secure**
-2. Add a file to that directory called **creds.properties**, for the build variants as defined in the app **build.gradle** file.
-Add the following environment variables to the credential file, substituting your own values:
+1. Copy the provided `env.properties.example` file to `env.properties`
+2. Create an app in the Ditto Cloud Portal - https://portal.ditto.live
+3. Update the ignored `env.properties` file adding the corresponding values from your app:
+
 ```
-    # Environment Variables  
-    
-    DITTO_APP_ID = "replace with your app id"
-    DITTO_PLAYGROUND_TOKEN = "replace with your playground token"
+# Environment Variables  
+
+DITTO_APP_ID = replace_with_your_app_id
+DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
 ```
 
-* `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the app in order for them to see each other, including across different platforms.
-* `DITTO_PLAYGROUND_TOKEN` is the online playground token. This is used when using the online playground identity type.
+- `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the
+  app in order for them to see each other, including across different platforms.
+- `DITTO_PLAYGROUND_TOKEN` is the online playground token. This is used when using the online
+  playground identity type.
 
- ## Copyright
+## Copyright
+
 Copyright (c) 2022 DittoLive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -22,11 +22,17 @@ android {
             useSupportLibrary true
         }
 
-        def credsFile = rootProject.file("secure\\creds.properties")
-        def prop = new Properties()
-        prop.load(new FileInputStream(credsFile))
-        buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID'])
-        buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', prop['DITTO_PLAYGROUND_TOKEN'])
+        def envFile = rootProject.file("env.properties")
+        if (!envFile.exists()) {
+            throw new Exception("Missing env.properties file. Please copy the env.properties.example template and fill in with your app details.")
+        }
+        def env = new Properties()
+        env.load(new FileInputStream(envFile))
+
+        // Explicit double-quotes are needed in the string value in order to be a valid string in
+        // the generated BuildConfig.java file.
+        buildConfigField('String', 'DITTO_APP_ID', '"' + env['DITTO_APP_ID'] + '"')
+        buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', '"' + env['DITTO_PLAYGROUND_TOKEN'] + '"')
     }
 
     buildTypes {
