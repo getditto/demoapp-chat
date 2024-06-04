@@ -14,7 +14,7 @@ import SwiftUI
 
 class DittoInstance: ObservableObject {
     @Published var loggingOption: DittoLogger.LoggingOptions
-    private static let defaultLoggingOption: DittoLogger.LoggingOptions = .error    
+    private static let defaultLoggingOption: DittoLogger.LoggingOptions = .debug
     private var cancellables = Set<AnyCancellable>()
     
     static var shared = DittoInstance()
@@ -108,6 +108,7 @@ class DittoService: ReplicatingDataInterface {
     @Published fileprivate private(set) var allPublicRooms: [Room] = []
     private var allPublicRoomsCancellable: AnyCancellable = AnyCancellable({})
     private var cancellables = Set<AnyCancellable>()
+    private var usersSubscription: DittoSubscription
     
     // private in-memory stores of subscriptions for rooms and messages
     private var privateRoomSubscriptions = [String: DittoSyncSubscription]()
@@ -121,6 +122,7 @@ class DittoService: ReplicatingDataInterface {
     
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
+        self.usersSubscription = ditto.store[usersKey].findAll().subscribe()
 
         createDefaultPublicRoom()
         
