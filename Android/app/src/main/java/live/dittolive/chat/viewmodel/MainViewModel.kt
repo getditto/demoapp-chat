@@ -50,7 +50,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import live.ditto.DittoAttachmentFetcher
-import live.ditto.DittoAttachmentToken
 import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
@@ -345,10 +344,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun getAttachment(message: Message, callback: (Any) -> Unit) {
-        val fetchers: MutableMap<DittoAttachmentToken, DittoAttachmentFetcher> = mutableMapOf()
+        val fetchers: MutableMap<Map<String, Any>, DittoAttachmentFetcher> = mutableMapOf()
         message.attachmentToken?.let { token ->
             fetchers[token] =
-                DittoHandler.ditto.store.collection(currentRoom.value.messagesCollectionId ).fetchAttachment(token, callback)
+                DittoHandler.ditto.store.fetchAttachment(token, callback)
         }
     }
 
