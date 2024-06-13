@@ -31,7 +31,6 @@ import androidx.compose.runtime.toMutableStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import live.ditto.DittoDocument
 import live.dittolive.chat.R
 import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
@@ -65,22 +64,22 @@ class ConversationUiState(
  */
 @Immutable
 data class Message(
-    val _id: String = UUID.randomUUID().toString(),
-    val createdOn: Instant? = Clock.System.now(),
-    val roomId: String = "public", // "public" is the roomID for the default public chat room
-    val text: String = "test",
-    val userId: String = UUID.randomUUID().toString(),
-    val attachmentToken:  Map<String, Any>?,
+    var _id: String = UUID.randomUUID().toString(),
+    var createdOn: Instant? = Clock.System.now(),
+    var roomId: String = "public", // "public" is the roomID for the default public chat room
+    var text: String = "test",
+    var userId: String = UUID.randomUUID().toString(),
+    var attachmentToken:  Map<String, Any>? = null,
     // local metadata, not part of the ditto document
     val photoUri: Uri? = null,
-    val authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
+    var authorImage: Int = if (userId == "me") R.drawable.profile_photo_android_developer else R.drawable.someone_else
 ) {
     constructor(item: Map<String, Any?>) :this(
         item[dbIdKey] as String,
         (item[createdOnKey] as String).toInstant(),
         item[roomIdKey] as String,
-        item[textKey] as String,
+        item[textKey] as? String ?: "",
         item[userIdKey] as String,
-        item[thumbnailKey] as Map<String, Any>?,
+        item[thumbnailKey] as? Map<String, Any>?,
     )
 }
