@@ -67,7 +67,9 @@ class DittoHandler {
                     dependencies = androidDependencies,
                     identity = identity
                 ).apply {
+                    // Disable sync with V3 Ditto
                     disableSyncWithV3()
+                    // Start sync
                     startSync()
                 }
             } catch (e: Throwable) {

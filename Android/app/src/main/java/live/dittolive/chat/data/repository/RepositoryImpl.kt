@@ -363,6 +363,11 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun alterSystems() {
+        // Disable avoid_redundant_bluetooth
+        ditto.store.execute("ALTER SYSTEM SET mesh_chooser_avoid_redundant_bluetooth = false")
+    }
+
     /**
      * Only create default Public room if user does not yet exist, i.e. first launch
      */

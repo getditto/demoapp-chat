@@ -70,4 +70,6 @@ interface Repository {
     suspend fun deletePrivateRoom(room: Room)
 
     fun onCleared()
+
+    suspend fun alterSystems()
 }

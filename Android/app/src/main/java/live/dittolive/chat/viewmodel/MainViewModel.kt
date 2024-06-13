@@ -190,6 +190,10 @@ class MainViewModel @Inject constructor(
             _currentRoom.value = getDefaultPublicRoom()
         }
 
+        viewModelScope.launch {
+            repository.alterSystems()
+        }
+
         val user = getCurrentUser()
         if (user?.firstName == null) {
             // temporary user initialziation - if user name hasn't been set by the user yet, we use the device name

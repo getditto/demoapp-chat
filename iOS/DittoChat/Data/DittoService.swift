@@ -40,10 +40,16 @@ class DittoInstance: ObservableObject {
                 self?.resetLogging()
             }
             .store(in: &cancellables)            
-        
-        // v4 AddWins
+
         do {
+            // Disable sync with V3 Ditto
             try ditto.disableSyncWithV3()
+            // Disable avoid_redundant_bluetooth
+            Task {
+                try await ditto.store.execute(
+                    query: "ALTER SYSTEM SET mesh_chooser_avoid_redundant_bluetooth = false"
+                )
+            }
         } catch let error {
             print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
         }
