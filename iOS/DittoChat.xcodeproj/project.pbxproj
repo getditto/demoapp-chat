@@ -1027,7 +1027,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage.git";
 			requirement = {
 				kind = exactVersion;
-				version = "4.8.0-experimental-visionos-support";
+				version = "4.8.0-visionos-beta.1";
 			};
 		};
 		F889C4232BE19AD800EC6330 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */ = {
@@ -1035,7 +1035,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
 			requirement = {
 				kind = exactVersion;
-				version = "4.8.0-experimental-visionos-support";
+				version = "4.8.0-visionos-beta.1";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -1,5 +1,5 @@
 {
-  "originHash" : "fda8ebad4505a013a4ffcce2175da01db0b8ea667f7a7ee753397260947b0428",
+  "originHash" : "54a5037c9ce9e37ba3e66f462a05b6eff9902ce5cb2f68fa20147a678577e325",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftPackage",
       "state" : {
-        "revision" : "f4179cecc59e6cb58a044d89572f4b95146eb57c",
-        "version" : "4.8.0-experimental-visionos-support"
+        "revision" : "7964986665af7acd1065cf7c8fcab584ec580bbd",
+        "version" : "4.8.0-visionos-beta.1"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftTools.git",
       "state" : {
-        "revision" : "8f2a65cc7fcd7f98e05ca7bfdc31aa5b5011c038",
-        "version" : "4.8.0-experimental-visionos-support"
+        "revision" : "ad84a398fb5f8878066f3c556c12493d989b8949",
+        "version" : "4.8.0-visionos-beta.1"
       }
     },
     {
