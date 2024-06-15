@@ -110,7 +110,7 @@ struct ImageAttachmentFetcher {
     typealias ProgressHandler = (CompletionRatio) -> Void
     typealias CompletionHandler = (Result<ImageMetadataTuple, Error>) -> Void
 
-    func fetch(with token: DittoAttachmentToken?,
+    func fetch(with token: [String: Any]?,
                from collectionId: String,
                onProgress: @escaping ProgressHandler,
                onComplete: @escaping CompletionHandler
@@ -120,7 +120,7 @@ struct ImageAttachmentFetcher {
         // Fetch the thumbnail data from Ditto, calling the progress handler to
         // report the operation's ongoing progress.
         let ditto = DittoInstance.shared.ditto
-        let _ = ditto.store[collectionId].fetchAttachment(token: token) { event in
+        let _ = try? ditto.store.fetchAttachment(token: token) { event in
             switch event {
             case .progress(let downloadedBytes, let totalBytes):
                 let percent = Double(downloadedBytes) / Double(totalBytes)
@@ -128,7 +128,7 @@ struct ImageAttachmentFetcher {
 
             case .completed(let attachment):
                 do {
-                    let data = try attachment.getData()
+                    let data = try attachment.data()
                     if let uiImage = UIImage(data: data) {
                         onComplete(.success( (image: uiImage, metadata: attachment.metadata) ))
                     }

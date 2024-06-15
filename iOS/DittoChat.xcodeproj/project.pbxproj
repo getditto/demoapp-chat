@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0ED7E4382B520DE5007C8E52 /* Publishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED7E4372B520DE5007C8E52 /* Publishers.swift */; };
 		142B278E2A39290700C09751 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142B278D2A39290700C09751 /* Env.swift */; };
 		143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */; };
 		143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */ = {isa = PBXBuildFile; productRef = 143FFCC32B20F4840085A2EF /* DittoExportData */; };
@@ -85,6 +86,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0ED7E4372B520DE5007C8E52 /* Publishers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publishers.swift; sourceTree = "<group>"; };
 		142B278D2A39290700C09751 /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DittoToolsListItem.swift; sourceTree = "<group>"; };
 		1493FF682978763500397DAB /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 				14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */,
 				14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */,
 				14D902EA2954ED1B006B54E3 /* Utils.swift */,
+				0ED7E4372B520DE5007C8E52 /* Publishers.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -588,6 +591,7 @@
 				14B98AAB297C774300509E57 /* SettingsScreenVM.swift in Sources */,
 				1493FF6A2978763500397DAB /* ScannerView.swift in Sources */,
 				14D902EB2954ED1B006B54E3 /* Utils.swift in Sources */,
+				0ED7E4382B520DE5007C8E52 /* Publishers.swift in Sources */,
 				14A0B87E29D3BC4100D2D625 /* UIImage+Rotation.swift in Sources */,
 				14A0B87D29D3BC4100D2D625 /* TemporaryFile.swift in Sources */,
 				14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */,
@@ -783,6 +787,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
 				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DittoChat/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
@@ -817,6 +822,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"DittoChat/Preview Content\"";
 				DEVELOPMENT_TEAM = 3T2VMFZPPQ;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DittoChat/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Uses Bluetooth to connect and sync with nearby devices";
@@ -980,7 +986,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.0;
+				minimumVersion = 4.7.0;
 			};
 		};
 		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {

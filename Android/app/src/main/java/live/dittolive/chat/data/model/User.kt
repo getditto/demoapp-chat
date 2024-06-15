@@ -26,20 +26,26 @@
 package live.dittolive.chat.data.model
 
 import live.ditto.DittoDocument
+import live.dittolive.chat.data.collectionIdKey
+import live.dittolive.chat.data.createdByKey
+import live.dittolive.chat.data.createdOnKey
 import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.firstNameKey
+import live.dittolive.chat.data.isPrivateKey
 import live.dittolive.chat.data.lastNameKey
+import live.dittolive.chat.data.messagesIdKey
+import live.dittolive.chat.data.nameKey
 import java.util.UUID
 
 data class User(
     val id: String = UUID.randomUUID().toString(),
     val firstName: String = "",
     val lastName: String = "",
-    val fullName: String = firstName + " " + lastName
+    val fullName: String = "$firstName $lastName"
 ) {
-    constructor(document: DittoDocument) :this(
-        document[dbIdKey].stringValue,
-        document[firstNameKey].stringValue,
-        document[lastNameKey].stringValue
+    constructor(item: Map<String, Any?>) :this(
+        item[dbIdKey] as String,
+        item[firstNameKey] as String,
+        item[lastNameKey] as String
     )
 }

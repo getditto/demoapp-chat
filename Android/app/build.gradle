@@ -33,13 +33,13 @@ android {
         // the generated BuildConfig.java file.
         buildConfigField('String', 'DITTO_APP_ID', '"' + env['DITTO_APP_ID'] + '"')
         buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', '"' + env['DITTO_PLAYGROUND_TOKEN'] + '"')
-        buildConfigField('String', 'DITTO_OFFLINE_TOKEN', '"' + env['DITTO_OFFLINE_TOKEN'] + '"')
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -135,8 +135,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.4.4")
-//    implementation project(":dittoinfomodule")
+    implementation("live.ditto:ditto:4.7.2")
 
     // Load Presence Viewer from an .aar library file
     implementation fileTree(dir: "${rootDir}/android-libs", include: ["*.aar"])

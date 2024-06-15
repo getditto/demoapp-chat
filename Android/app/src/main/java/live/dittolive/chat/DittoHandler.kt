@@ -55,12 +55,21 @@ class DittoHandler {
 
                 val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
 
+                // Please get your Ditto App ID and Playground Token from Portal: https://portal.ditto.live/
+                val identity = DittoIdentity.OnlinePlayground(
+                    dependencies = androidDependencies,
+                    appId = BuildConfig.DITTO_APP_ID,
+                    token = BuildConfig.DITTO_PLAYGROUND_TOKEN,
+                    enableDittoCloudSync = false // Cloud sync is disabled
+                )
+
                 ditto = Ditto(
                     dependencies = androidDependencies,
-                    identity = resolveIdentity(androidDependencies)
+                    identity = identity
                 ).apply {
-                    setOfflineOnlyLicenseToken()
+                    // Disable sync with V3 Ditto
                     disableSyncWithV3()
+                    // Start sync
                     startSync()
                 }
             } catch (e: Throwable) {
@@ -70,27 +79,4 @@ class DittoHandler {
             onInitialized()
         }
     }
-}
-
-/**
- * Returns [DittoIdentity.OnlinePlayground] for Debug builds,
- * [DittoIdentity.OfflinePlayground] otherwise.
- */
-private fun resolveIdentity(androidDependencies: DefaultAndroidDittoDependencies): DittoIdentity {
-    if (BuildConfig.DEBUG) return DittoIdentity.OnlinePlayground(
-        dependencies = androidDependencies,
-        appId = BuildConfig.DITTO_APP_ID,
-        token = BuildConfig.DITTO_PLAYGROUND_TOKEN
-    )
-
-    return DittoIdentity.OfflinePlayground(androidDependencies, BuildConfig.DITTO_APP_ID)
-}
-
-/**
- * Sets license token only on release build.
- */
-private fun Ditto.setOfflineOnlyLicenseToken() {
-    if (BuildConfig.DEBUG) return
-
-    setOfflineOnlyLicenseToken(BuildConfig.DITTO_OFFLINE_TOKEN)
 }

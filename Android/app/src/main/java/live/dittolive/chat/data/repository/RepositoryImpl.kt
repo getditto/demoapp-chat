@@ -39,8 +39,11 @@ import live.ditto.DittoAttachment
 import live.ditto.DittoCollection
 import live.ditto.DittoDocument
 import live.ditto.DittoLiveQuery
+import live.ditto.DittoQueryResultItem
 import live.ditto.DittoSortDirection
+import live.ditto.DittoStoreObserver
 import live.ditto.DittoSubscription
+import live.ditto.DittoSyncSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
@@ -65,6 +68,13 @@ import live.dittolive.chat.utilities.parsePrivateRoomQrCode
 import live.dittolive.chat.utilities.toMap
 import java.util.UUID
 import javax.inject.Inject
+import javax.inject.Scope
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+
 
 // Constructor-injected, because Hilt needs to know how to
 // provide instances of RepositoryImpl, too.
@@ -91,33 +101,30 @@ class RepositoryImpl @Inject constructor(
     /**
      * Messages
      */
-    private var messagesDocs = listOf<DittoDocument>()
-    private lateinit var messagesCollection: DittoCollection
-    private lateinit var messagesLiveQuery: DittoLiveQuery
-    private lateinit var messagesSubscription: DittoSubscription
+    private var messagesDocs = listOf<DittoQueryResultItem>()
+    private lateinit var messagesLiveQuery: DittoStoreObserver
+    private lateinit var messagesSubscription: DittoSyncSubscription
 
     /**
      * Public Rooms
      */
-    private lateinit var publicRoomsCollection: DittoCollection
-    private lateinit var publicRoomsSubscription: DittoSubscription
-    private lateinit var publicRoomsLiveQuery: DittoLiveQuery
-    private var publicRoomsDocs = listOf<DittoDocument>()
+    private lateinit var publicRoomsSubscription: DittoSyncSubscription
+    private lateinit var publicRoomsLiveQuery: DittoStoreObserver
+    private var publicRoomsDocs = listOf<DittoQueryResultItem>()
 
     /**
      * Private Rooms
      */
-    private var privateRoomsLiveQuery: DittoLiveQuery? = null
-    private val privateRoomsSubscriptions: MutableList<DittoSubscription> = mutableListOf()
-    private val privateRoomsSubscriptionsLiveQueries: MutableList<DittoLiveQuery> = mutableListOf()
+    private var privateRoomsLiveQuery: DittoStoreObserver? = null
+    private val privateRoomsSubscriptions: MutableList<DittoSyncSubscription> = mutableListOf()
+    private val privateRoomsSubscriptionsLiveQueries: MutableList<DittoStoreObserver> = mutableListOf()
 
     /**
      * Users
      */
-    private var userssDocs = listOf<DittoDocument>()
-    private lateinit var usersCollection: DittoCollection
-    private lateinit var usersLiveQuery: DittoLiveQuery
-    private lateinit var usersSubscription: DittoSubscription
+    private var userssDocs = listOf<DittoQueryResultItem>()
+    private lateinit var usersLiveQuery: DittoStoreObserver
+    private lateinit var usersSubscription: DittoSyncSubscription
 
     init {
         initDatabase(this::postInitActions)
@@ -161,16 +168,23 @@ class RepositoryImpl @Inject constructor(
         val currentMoment: Instant = Clock.System.now()
         val datetimeInUtc: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
         val dateString = datetimeInUtc.toIso8601String()
-        val collection = ditto.store.collection(room.messagesCollectionId)
-        val doc = mapOf(
+
+        val newDoc: MutableMap<String, Any?> = mutableMapOf(
             createdOnKey to dateString,
             roomIdKey to message.roomId,
             textKey to message.text,
             userIdKey to userID,
-            thumbnailKey to attachment
         )
 
-        collection.upsert(doc)
+        if (attachment != null) {
+            newDoc[thumbnailKey] = attachment
+        }
+
+        val query = "INSERT INTO COLLECTION `${room.messagesCollectionId}` (${thumbnailKey} ATTACHMENT) DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+        val args = mapOf("newDoc" to newDoc)
+
+        ditto.store.execute(query, args)
+
     }
 
     override suspend fun deleteMessage(id: Long) {
@@ -183,14 +197,16 @@ class RepositoryImpl @Inject constructor(
 
 
     override suspend fun addUser(user: User) {
-        ditto.store.collection(usersKey)
-            .upsert(
-                mapOf(
-                    dbIdKey to user.id,
-                    firstNameKey to user.firstName,
-                    lastNameKey to user.lastName
-                )
-            )
+        val query = "INSERT INTO $usersKey DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+        val newDoc = mapOf(
+            dbIdKey to user.id,
+            firstNameKey to user.firstName,
+            lastNameKey to user.lastName
+        )
+
+        val args = mapOf("newDoc" to newDoc)
+
+        ditto.store.execute(query, args)
     }
 
     override suspend fun createRoom(name: String) {
@@ -217,16 +233,18 @@ class RepositoryImpl @Inject constructor(
     override suspend fun joinPrivateRoom(qrCode: String) {
         val privateRoomQrCode = parsePrivateRoomQrCode(qrCode) ?: return
 
-        val collection = ditto.store[privateRoomQrCode.collectionId]
-        privateRoomsSubscriptions.add(collection.findAll().subscribe())
+        privateRoomsSubscriptions.add(ditto.sync.registerSubscription("SELECT * FROM `${privateRoomQrCode.collectionId}`"))
 
         privateRoomsSubscriptionsLiveQueries.add(
-            collection.findById(privateRoomQrCode.roomId).observeLocal { _, _ ->
+            ditto.store.registerObserver("SELECT * FROM `${privateRoomQrCode.collectionId}` WHERE _id = :id", mapOf("id" to privateRoomQrCode.roomId)) {
+                _ ->
                 getPrivateRoomsFromDitto()
             }
         )
 
-        ditto.store.collection(privateRoomsKey).upsert(privateRoomQrCode.toMap())
+        val query = "INSERT INTO $privateRoomsKey DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+        val args = mapOf("newDoc" to privateRoomQrCode.toMap())
+        ditto.store.execute(query, args)
     }
 
     override suspend fun privateRoomForId(roomId: String, collectionId: String): Room? {
@@ -266,57 +284,59 @@ class RepositoryImpl @Inject constructor(
 
     private fun getAllMessagesForRoomFromDitto(room: Room) {
         ditto.let { ditto: Ditto ->
-            messagesCollection = ditto.store.collection(room.messagesCollectionId)
-            messagesSubscription = messagesCollection.findAll().subscribe()
-            messagesLiveQuery = messagesCollection
-                .findAll()
-                .sort(createdOnKey, DittoSortDirection.Ascending)
-                .observeLocal { docs, _ ->
-                    this.messagesDocs = docs
-                    allMessagesForRoom.value = docs.map { Message(it) }
-                }
+            messagesSubscription = ditto.sync.registerSubscription("SELECT * FROM `${room.messagesCollectionId}`")
+
+            messagesLiveQuery = ditto.store.registerObserver("SELECT * FROM COLLECTION `${room.messagesCollectionId}` ($thumbnailKey ATTACHMENT) ORDER BY $createdOnKey ASC") {
+                results ->
+                this.messagesDocs = results.items
+                allMessagesForRoom.value = results.items.map { Message(it.value) }
+            }
+
         }
 
     }
 
     private fun getPublicRoomsFromDitto() {
         ditto.let { ditto: Ditto ->
-            publicRoomsCollection = ditto.store.collection(roomsKey)
-            publicRoomsSubscription = publicRoomsCollection.findAll().subscribe()
-            publicRoomsLiveQuery = publicRoomsCollection
-                .findAll()
-                .observeLocal { docs, _ ->
-                    this.publicRoomsDocs = docs
-                    allPublicRooms.value = docs.map { Room(it) }
-                }
+            publicRoomsSubscription = ditto.sync.registerSubscription("SELECT * FROM $roomsKey")
 
+            publicRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM $roomsKey") {
+                results ->
+                this.publicRoomsDocs = results.items
+                allPublicRooms.value = results.items.map { Room(it.value) }
+            }
         }
     }
 
     private fun getPrivateRoomsFromDitto() {
         ditto.let { ditto: Ditto ->
             privateRoomsLiveQuery?.close()
-            privateRoomsLiveQuery = ditto.store.collection(privateRoomsKey)
-                .findAll()
-                .observeLocal { docs, _ ->
-                    val roomsList: List<List<Room>> = docs.map { doc ->
-                        val collectionId = doc[collectionIdKey].stringValue
 
-                        ditto.store[collectionId].findAll().exec().map { Room(it) }
-                    }
-
-                    allPrivateRooms.value = roomsList.flatten()
+            privateRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM \"$privateRoomsKey\"") { results ->
+                val roomsList: List<List<Room>> = runBlocking {
+                    results.items.map { item ->
+                        val collectionId = item.value[collectionIdKey] as String
+                        async {
+                            ditto.store.execute("SELECT * FROM $collectionId").items.map { Room(it.value) }
+                        }
+                    }.map { it.await() }
                 }
+                allPrivateRooms.value = roomsList.flatten()
+            }
+
         }
     }
 
     override suspend fun publicRoomForId(roomId: String): Room {
-        val document = ditto.store.collection(roomsKey).findById(roomId).exec()
-        document?.let {
-            val room = Room(document)
-            return room
+        val query = "SELECT * FROM $roomsKey WHERE _id = :id"
+        val args = mapOf("id" to roomId)
+        val result = ditto.store.execute(query, args)
+
+        if (result.items.isNotEmpty()) {
+            return Room(result.items.first().value)
         }
-        val emptyRoom = Room(
+
+        return Room(
             id = publicKey,
             name = publicRoomTitleKey,
             createdOn = Clock.System.now(),
@@ -325,7 +345,6 @@ class RepositoryImpl @Inject constructor(
             collectionID = publicKey,
             createdBy = "Ditto System"
         )
-        return emptyRoom
     }
 
     override fun getDittoSdkVersion(): String {
@@ -334,13 +353,19 @@ class RepositoryImpl @Inject constructor(
 
     private fun getAllUsersFromDitto() {
         ditto.let { ditto: Ditto ->
-            usersCollection = ditto.store.collection(usersKey)
-            usersSubscription = usersCollection.findAll().subscribe()
-            usersLiveQuery = usersCollection.findAll().observeLocal { docs, _ ->
-                this.userssDocs = docs
-                allUsers.value = docs.map { User(it) }
+            usersSubscription = ditto.sync.registerSubscription("SELECT * FROM $usersKey")
+
+            usersLiveQuery = ditto.store.registerObserver("SElECT * FROM $usersKey") {
+                results ->
+                this.userssDocs = results.items
+                allUsers.value = results.items.map { User(it.value) }
             }
         }
+    }
+
+    override suspend fun alterSystems() {
+        // Disable avoid_redundant_bluetooth
+        ditto.store.execute("ALTER SYSTEM SET mesh_chooser_avoid_redundant_bluetooth = false")
     }
 
     /**

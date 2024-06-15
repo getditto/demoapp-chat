@@ -75,9 +75,12 @@ class ChatScreenVM: ObservableObject {
         // only allow non-empty string messages
         guard !inputText.isEmpty else { return }
 
-        DataManager.shared.createMessage(for: room, text: inputText)
-        
-        inputText = ""
+        Task {
+            await DataManager.shared.createMessage(for: room, text: inputText)
+            await MainActor.run {
+                inputText = ""
+            }
+        }
     }
     
     func sendImageMessage() async throws {

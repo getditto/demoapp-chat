@@ -22,55 +22,63 @@ class SettingsScreenVM: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        
-        DataManager.shared.archivedPublicRoomsPublisher()
-            .map { pubRooms in
-                var rooms = [Room]()
-                var unRepRooms = [Room]()
 
-                pubRooms.forEach { room in
-                    if let r = DataManager.shared.room(for: room) {
-                        rooms.append(r)
-                    } else {
-                        unRepRooms.append(room)
-                    }
-                }
-                unRepRooms.sort { $0.createdOn > $1.createdOn }
-                self.unReplicatedPublicRooms = unRepRooms
-                
-                rooms.sort { $0.createdOn > $1.createdOn }
-                return rooms
+        DataManager.shared.archivedPublicRoomsPublisher()
+            .flatMap { [weak self] rooms in
+                self?.gatherRoomsPublisher(rooms, isPrivate: false) ?? Empty().eraseToAnyPublisher()
             }
+            .receive(on: DispatchQueue.main)
             .assign(to: &$archivedPublicRooms)
 
         DataManager.shared.archivedPrivateRoomsPublisher()
-            .handleEvents(receiveOutput: {[weak self] _ in
-                self?.archivedPrivateRooms = []
-                self?.unReplicatedPrivateRooms = []
-            })
-            .map { rooms in
-                var privRooms = [Room]()
-                var unRepRooms = [Room]()
-                
-                rooms.forEach { privRoom in
-                    if let r = DataManager.shared.room(for: privRoom) {
-                        privRooms.append(r)
-                    } else {
-                        unRepRooms.append(privRoom)
-                    }
-                }
-                unRepRooms.sort { $0.createdOn > $1.createdOn }
-                self.unReplicatedPrivateRooms = unRepRooms
-                
-                privRooms.sort { $0.createdOn > $1.createdOn }
-                return privRooms
+            .flatMap { [weak self] rooms in
+                self?.gatherRoomsPublisher(rooms, isPrivate: true) ?? Empty().eraseToAnyPublisher()
             }
+            .receive(on: DispatchQueue.main)
             .assign(to: &$archivedPrivateRooms)
 
         DataManager.shared.allUsersPublisher()
             .assign(to: &$users)
     }
-    
+
+    func gatherRoomsPublisher(_ rooms: [Room], isPrivate: Bool) -> AnyPublisher<[Room], Never> {
+        Future { [weak self] promise in
+            guard let self = self else { return }
+            Task {
+                let rooms = await self.processRooms(rooms: rooms, isPrivate: isPrivate)
+                promise(.success(rooms))
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
+    func processRooms(rooms: [Room], isPrivate: Bool) async -> [Room] {
+        var (replicated, unreplicated) = ([Room](), [Room]())
+
+        for room in rooms {
+            let result = await DataManager.shared.room(for: room)
+            if let r = result {
+                replicated.append(r)
+            } else {
+                unreplicated.append(room)
+            }
+        }
+
+        unreplicated.sort { $0.createdOn > $1.createdOn }
+        replicated.sort { $0.createdOn > $1.createdOn }
+
+        let unrep = unreplicated
+        await MainActor.run { [weak self] in
+            if isPrivate {
+                self?.unReplicatedPrivateRooms = unrep
+            } else {
+                self?.unReplicatedPublicRooms = unrep
+            }
+        }
+
+        return replicated
+    }
+
     func roomForId(_ roomId: String) -> Room? {
         archivedPublicRooms.first(where: { $0.id == roomId} )
     }

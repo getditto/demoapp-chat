@@ -36,6 +36,7 @@ import live.dittolive.chat.data.dbIdKey
 import live.dittolive.chat.data.isPrivateKey
 import live.dittolive.chat.data.messagesIdKey
 import live.dittolive.chat.data.nameKey
+import live.dittolive.chat.data.userIdKey
 
 @Immutable
 data class Room(
@@ -47,14 +48,14 @@ data class Room(
     val collectionID : String?,
     val createdBy: String
 ){
-    constructor(document: DittoDocument) :this(
-        document[dbIdKey].stringValue,
-        document[nameKey].stringValue,
-        document[createdOnKey].stringValue.toInstant(),
-        document[messagesIdKey].stringValue,
-        document[isPrivateKey].booleanValue,
-        document[collectionIdKey].stringValue,
-        document[createdByKey].stringValue,
+    constructor(item: Map<String, Any?>) :this(
+        item[dbIdKey] as String,
+        item[nameKey] as String,
+        (item[createdOnKey] as String).toInstant(),
+        item[messagesIdKey] as String,
+        item[isPrivateKey] as Boolean,
+        item[collectionIdKey] as String,
+        item[createdByKey] as String? ?: ""
     )
 }
 
