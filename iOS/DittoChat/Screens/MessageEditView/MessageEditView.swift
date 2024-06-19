@@ -79,7 +79,9 @@ struct MessageEditView: View {
                     }
                     
                 }
+#if !os(visionOS)
                 .scrollDismissesKeyboard(.interactively)
+#endif
                 .onAppear {
                     DispatchQueue.main.async {
                         withAnimation {

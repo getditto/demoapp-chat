@@ -56,6 +56,7 @@ struct RoomsListScreen: View {
         .sheet(isPresented: $viewModel.presentProfileScreen) {
             ProfileScreen()
         }
+#if !os(visionOS)
         .sheet(isPresented: $viewModel.presentScannerView) {
             ScannerView(
                 successAction: { code in
@@ -63,6 +64,7 @@ struct RoomsListScreen: View {
                 }
             )
         }
+#endif
         .sheet(isPresented: $viewModel.presentCreateRoomScreen) {
             RoomEditScreen()
         }

@@ -6,6 +6,8 @@
 //
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
+// AVMetadataObject is unavailable in visionOS
+#if !os(visionOS)
 import CodeScanner
 import SwiftUI
 
@@ -72,3 +74,5 @@ struct ScannerView_Previews: PreviewProvider {
         ScannerView()
     }
 }
+
+#endif
