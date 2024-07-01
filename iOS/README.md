@@ -8,8 +8,8 @@ settings to your Apple developer account credentials to provision building to yo
 3. In Terminal, run `cp .env.template .env` in the iOS directory  
 4. Edit `.env` to add environment variables as in the following example:  
 ```
-APP_ID=a01b2c34-5d6e-7fgh-ijkl-8mno9p0q12r3
-DITTO_OFFLINE_TOKEN=a01b2c34-5d6e-7fgh-ijkl-8mno9p0q12r3
+DITTO_APP_ID=replace_with_your_app_id
+DITTO_PLAYGROUND_TOKEN=replace_with_your_playground_token
 ```
 5. Clean (**Command + Shift + K**), then build (**Command + B**). This will generate `Env.swift` in
 the project directory  
