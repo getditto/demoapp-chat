@@ -970,7 +970,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.4.0;
+				minimumVersion = 4.7.4;
 			};
 		};
 		14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */ = {

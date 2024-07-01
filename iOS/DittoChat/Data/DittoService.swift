@@ -101,7 +101,7 @@ extension DittoInstance {
         default:
             DittoLogger.enabled = true
             DittoLogger.minimumLogLevel = DittoLogLevel(rawValue: logOption.rawValue)!
-            if let logFileURL = DittoLogManager.shared.logFileURL {
+            if let logFileURL = DittoLogManager.shared.createLogsZip() {
                 DittoLogger.setLogFileURL(logFileURL)
             }
         }
