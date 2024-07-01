@@ -651,29 +651,33 @@ extension DittoService {
     
     func joinPrivateRoom(qrCode: String) {
         let parts = qrCode.split(separator: "\n")
-        guard parts.count == 7 else {
-            print("DittoService.\(#function): Error - expected 7 parts to QR code: \(qrCode) --> RETURN")
+        guard parts.count == 3 else {
+            print("DittoService.\(#function): Error - expected 3 parts to QR code: \(qrCode) --> RETURN")
             return
         }
         // parse qrCode for roomId, collectionId, messagesId
         let roomId = String(parts[0])
         let collectionId = String(parts[1])
         let messagesId = String(parts[2])
-        let roomName = String(parts[3])
-        let isPrivate = Bool(String(parts[4])) ?? true
-        let createdBy = String(parts[5])
-        let createdOn = DateFormatter.isoDate.date(from: String(parts[6]))
-        
+
         addPrivateRoomSubscriptions(
             roomId: roomId,
             collectionId: collectionId,
             messagesId: messagesId
         )
-        
-        let room = Room(id: roomId, name: roomName, messagesId: messagesId, isPrivate: isPrivate, collectionId: collectionId, createdBy: createdBy, createdOn: createdOn)
-        
-        self.privateStore.addPrivateRoom(room)
-        
+
+        joinRoomQuery = ditto.store.collection(collectionId).findByID(roomId).observeLocal { [unowned self] doc, _ in
+            if let roomDoc = doc  {
+                let room = Room(document: roomDoc)
+                self.privateStore.addPrivateRoom(room)
+                
+                // NOTE: the core ditto engine retains the local observer once it's initialized, and
+                // here the observer MUST be stopped after the add operation or else every
+                // subsequent update to this document, local or remote, will fire this closure.
+                self.joinRoomQuery?.stop()
+                self.joinRoomQuery = nil
+            }
+        }
     }
     
     private func createDefaultPublicRoom() {
