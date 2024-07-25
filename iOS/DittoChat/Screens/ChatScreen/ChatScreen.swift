@@ -43,7 +43,9 @@ struct ChatScreen: View {
                         }
                     }
                 }
+#if !os(visionOS)
                 .scrollDismissesKeyboard(.interactively)
+#endif
                 .onAppear {
                     DispatchQueue.main.async {
                         scrollToBottom(proxy: proxy)
