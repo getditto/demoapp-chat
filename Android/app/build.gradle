@@ -135,7 +135,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.7.2")
+    implementation("live.ditto:ditto:4.7.4")
 
     // Load Presence Viewer from an .aar library file
     implementation fileTree(dir: "${rootDir}/android-libs", include: ["*.aar"])
