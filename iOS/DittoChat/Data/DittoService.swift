@@ -124,8 +124,8 @@ class DittoService: ReplicatingDataInterface {
     private let ditto = DittoInstance.shared.ditto
     private var privateStore: LocalDataInterface
     
-    private var joinRoomQuery: DittoSwift.DittoLiveQuery?
-    
+    private var joinRoomObserver: DittoStoreObserver?
+
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
         self.usersSubscription = ditto.store[usersKey].findAll().subscribe()
@@ -666,26 +666,30 @@ extension DittoService {
             messagesId: messagesId
         )
 
-        joinRoomQuery = ditto.store.collection(collectionId).findByID(roomId).observeLocal { [unowned self] doc, _ in
-            if let roomDoc = doc  {
-                let room = Room(document: roomDoc)
-                self.privateStore.addPrivateRoom(room)
-                
-                // NOTE: the core ditto engine retains the local observer once it's initialized, and
-                // here the observer MUST be stopped after the add operation or else every
-                // subsequent update to this document, local or remote, will fire this closure.
-                self.joinRoomQuery?.stop()
-                self.joinRoomQuery = nil
+        do {
+            let query = "SELECT * FROM `\(collectionId)` WHERE _id = '\(roomId)'"
+            joinRoomObserver = try ditto.store.registerObserver(query: query) { result in
+                if let value = result.items.first?.value {
+                    let room = Room(value: value)
+                    self.privateStore.addPrivateRoom(room)
+
+                    // We need to clear this observer after creating a private room;
+                    // otherwise, this will trigger the callback every time the room data changes.
+                    self.joinRoomObserver?.cancel()
+                    self.joinRoomObserver = nil
+                }
             }
+        } catch {
+            assertionFailure(error.localizedDescription)
         }
     }
-    
+
     private func createDefaultPublicRoom() {
         // Only create default Public room if user does not yet exist, i.e. first launch
         if privateStore.currentUserId != nil {
             return
         }
-        
+
         // Create default Public room with pre-configured id, messagesId
         
         Task {

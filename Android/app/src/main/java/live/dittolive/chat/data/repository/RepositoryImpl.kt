@@ -317,7 +317,7 @@ class RepositoryImpl @Inject constructor(
                     results.items.map { item ->
                         val collectionId = item.value[collectionIdKey] as String
                         async {
-                            ditto.store.execute("SELECT * FROM $collectionId").items.map { Room(it.value) }
+                            ditto.store.execute("SELECT * FROM `$collectionId`").items.map { Room(it.value) }
                         }
                     }.map { it.await() }
                 }
