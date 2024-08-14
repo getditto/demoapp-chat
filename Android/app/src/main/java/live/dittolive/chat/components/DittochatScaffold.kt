@@ -43,7 +43,7 @@ fun DittochatDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (Room) -> Unit,
     onScanSucceeded: (String) -> Unit,
-    onPresenceViewerClicked: (String) -> Unit,
+    onToolsViewerClicked: (String) -> Unit,
     dittoSdkVersion: String,
     viewModel: MainViewModel,
     content: @Composable () -> Unit
@@ -57,7 +57,7 @@ fun DittochatDrawer(
                         onProfileClicked = onProfileClicked,
                         onChatClicked = onChatClicked,
                         onScanSucceeded = onScanSucceeded,
-                        onPresenceViewerClicked = onPresenceViewerClicked,
+                        onToolsViewerClicked = onToolsViewerClicked,
                         sdkVersion = dittoSdkVersion,
                         viewModel = viewModel
                     )

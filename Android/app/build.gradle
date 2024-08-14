@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace "live.dittolive.chat"
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "live.dittolive.chat"
@@ -137,8 +137,11 @@ dependencies {
     // Ditto
     implementation("live.ditto:ditto:4.7.4")
 
-    // Load Presence Viewer from an .aar library file
-    implementation fileTree(dir: "${rootDir}/android-libs", include: ["*.aar"])
+    // Ditto Presence Viewer Tool
+//    implementation("live.ditto:dittopresenceviewer:SNAPSHOT")
+
+    // Ditto Tools Viewer
+    implementation("live.ditto:dittotoolsviewer:SNAPSHOT")
 
     // Date Time Library - the latest way to handle dates in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
