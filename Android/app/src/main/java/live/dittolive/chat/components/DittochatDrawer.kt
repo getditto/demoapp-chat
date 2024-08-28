@@ -116,7 +116,6 @@ fun DittochatDrawerContent(
         DrawerHeader()
         DividerItem()
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = CenterVertically) {
-            DrawerItemHeader(stringResource(R.string.chats))
             Icon(
                 imageVector = Icons.Outlined.QrCodeScanner,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -139,27 +138,13 @@ fun DittochatDrawerContent(
                     .height(24.dp),
                 contentDescription = stringResource(id = R.string.info)
             )
-            Icon(
-                imageVector = Icons.Outlined.Message,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .clickable(onClick = { /* TODO */ })
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
-                    .height(24.dp),
-                contentDescription = stringResource(id = R.string.info)
-            )
         }
         
-        DividerItem()
-        DrawerItemHeader(stringResource(R.string.public_rooms))
-        //list of public rooms
+        // list of public rooms
         PublicRoomsList(viewModel, onChatClicked)
-
-        DividerItem()
-        DrawerItemHeader(stringResource(R.string.private_rooms))
+        // list of private rooms
         PrivateRoomsList(viewModel, onChatClicked)
 
-        DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(stringResource(R.string.recent_profiles))
         ProfileItem(fullName, meProfile.photo) {
             onProfileClicked(meUserId)

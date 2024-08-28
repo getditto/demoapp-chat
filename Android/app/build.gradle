@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace "live.dittolive.chat"
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "live.dittolive.chat"
         minSdk 29
-        targetSdk 33
-        versionCode 27
-        versionName "1.0"
+        targetSdk 34
+        versionCode 33
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
