@@ -29,10 +29,9 @@
     app:startDestination="@id/nav_home"
     >
     <activity
-        android:id="@+id/presenceViewerActivity"
-        android:name="live.dittolive.chat.presenceviewer.PresenceViewerActivity"
-        android:label="PresenceViewerActivity"
-        />
+        android:id="@+id/dittoToolsViewerActivity"
+        android:name="live.dittolive.chat.dittotoolsviewer.DittoToolsViewerActivity"
+        android:label="DittoTools" />
     <fragment
         android:id="@+id/nav_profile"
         android:name="live.dittolive.chat.profile.ProfileFragment"

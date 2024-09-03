@@ -151,8 +151,8 @@ class NavActivity: AppCompatActivity() {
                                     onScanSucceeded = {
                                         viewModel.onScanSucceeded(it)
                                     },
-                                    onPresenceViewerClicked = {
-                                        findNavController().navigate(R.id.presenceViewerActivity)
+                                    onToolsViewerClicked = {
+                                        findNavController().navigate(R.id.dittoToolsViewerActivity)
                                         scope.launch {
                                             drawerState.close()
                                         }

@@ -84,7 +84,7 @@ fun DittochatDrawerContent(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (Room) -> Unit,
     onScanSucceeded: (String) -> Unit,
-    onPresenceViewerClicked: (String) -> Unit,
+    onToolsViewerClicked: (String) -> Unit,
     sdkVersion : String,
     viewModel: MainViewModel
 ) {
@@ -151,9 +151,9 @@ fun DittochatDrawerContent(
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         TextButton(onClick = {
-            onPresenceViewerClicked("Presence Viewer")
+            onToolsViewerClicked("Ditto Tools Viewer")
         }) {
-            Text("Presence Viewer")
+            Text("Ditto Tools Viewer")
         }
         DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
         DrawerItemHeader(sdkVersion)

@@ -95,7 +95,7 @@ class ConversationFragment : Fragment() {
                                 )
                             },
                             navigateToPresenceViewer = {
-                                findNavController().navigate(R.id.presenceViewerActivity)
+                                findNavController().navigate(R.id.dittoToolsViewerActivity)
                             },
                             onNavIconPressed = {
                                 activityViewModel.openDrawer()
