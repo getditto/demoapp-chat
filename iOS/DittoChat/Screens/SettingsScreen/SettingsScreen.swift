@@ -6,12 +6,12 @@
 //
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
-import DittoDataBrowser
-import DittoDiskUsage
-import DittoExportData
-import DittoExportLogs
-import DittoPeersList
-import DittoPresenceViewer
+//import DittoDataBrowser
+//import DittoDiskUsage
+//import DittoExportData
+//import DittoExportLogs
+//import DittoPeersList
+//import DittoPresenceViewer
 import DittoSwift
 import SwiftUI
 
@@ -48,25 +48,25 @@ struct SettingsScreen: View {
                 }
                 // DittoSwiftTools
                 Section {
-                    NavigationLink(destination: DataBrowser(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Data Browser", systemImage: "photo", color: .orange)
-                    }
-                    
-                    NavigationLink(destination: PeersListView(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Peers List", systemImage: "network", color: .blue)
-                    }
-                    
-                    NavigationLink(destination: PresenceView(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Presence Viewer", systemImage: "network", color: .pink)
-                    }
-                    
-                    NavigationLink(destination: DittoDiskUsageView(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Disk Usage", systemImage: "opticaldiscdrive", color: .secondary)
-                    }
-
-                    NavigationLink(destination: LoggingDetailsView(loggingOption: $dittoInstance.loggingOption)) {
-                        DittoToolsListItem(title: "Logging", systemImage: "square.split.1x2", color: .green)
-                    }
+//                    NavigationLink(destination: DataBrowser(ditto: dittoInstance.ditto)) {
+//                        DittoToolsListItem(title: "Data Browser", systemImage: "photo", color: .orange)
+//                    }
+//                    
+//                    NavigationLink(destination: PeersListView(ditto: dittoInstance.ditto)) {
+//                        DittoToolsListItem(title: "Peers List", systemImage: "network", color: .blue)
+//                    }
+//                    
+//                    NavigationLink(destination: PresenceView(ditto: dittoInstance.ditto)) {
+//                        DittoToolsListItem(title: "Presence Viewer", systemImage: "network", color: .pink)
+//                    }
+//                    
+//                    NavigationLink(destination: DittoDiskUsageView(ditto: dittoInstance.ditto)) {
+//                        DittoToolsListItem(title: "Disk Usage", systemImage: "opticaldiscdrive", color: .secondary)
+//                    }
+//
+//                    NavigationLink(destination: LoggingDetailsView(loggingOption: $dittoInstance.loggingOption)) {
+//                        DittoToolsListItem(title: "Logging", systemImage: "square.split.1x2", color: .green)
+//                    }
 
                     // Export Ditto db Directory
                     // N.B. The export Logs feature is in DittoSwiftTools pkg, DittoExportLogs module,
@@ -82,9 +82,9 @@ struct SettingsScreen: View {
                     }
                     .foregroundColor(textColor)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .sheet(isPresented: $vm.presentExportDataShare) {
-                        ExportData(ditto: dittoInstance.ditto)
-                    }
+//                    .sheet(isPresented: $vm.presentExportDataShare) {
+//                        ExportData(ditto: dittoInstance.ditto)
+//                    }
                 } header: {
                     Text(dittoToolsKey)
                 } footer: {

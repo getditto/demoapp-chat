@@ -32,14 +32,42 @@ struct ChatScreen: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(viewModel.messagesWithUsers) { usrMsg in
-                            MessageBubbleView(
-                                messageWithUser: usrMsg,
-                                messagesId: viewModel.room.messagesId,
-                                messageOpCallback: viewModel.messageOperationCallback,
-                                isEditing: $viewModel.isEditing
-                            )
-                            .id(usrMsg.message.id)
-                            .transition(.slide)
+                            
+                            if(usrMsg.message.thumbnailImageToken == nil && usrMsg.message.largeImageToken == nil) {
+                                MessageBubbleView(
+                                    messageWithUser: usrMsg,
+                                    messagesId: viewModel.room.messagesId,
+                                    messageOpCallback: viewModel.messageOperationCallback,
+                                    isEditing: $viewModel.isEditing
+                                )
+                                .id(usrMsg.message.id)
+                                .transition(.slide)
+                            } else {
+                                if viewModel.fetchedMessageIds.contains(usrMsg.message.id) {
+                                    MessageBubbleView(
+                                        messageWithUser: usrMsg,
+                                        messagesId: viewModel.room.messagesId,
+                                        messageOpCallback: viewModel.messageOperationCallback,
+                                        isEditing: $viewModel.isEditing
+                                    )
+                                    .id(usrMsg.message.id)
+                                    .transition(.slide)
+                                } else {
+                                    Button("Fetch Image") {
+                                        viewModel.fetchImage(for: usrMsg.message.id)
+//                                        viewModel.fetchedMessageIds.insert(usrMsg.message.id)
+//                                        
+//                                        MessageBubbleView(
+//                                            messageWithUser: usrMsg,
+//                                            messagesId: viewModel.room.messagesId,
+//                                            messageOpCallback: viewModel.messageOperationCallback,
+//                                            isEditing: $viewModel.isEditing
+//                                        )
+//                                        .id(usrMsg.message.id)
+//                                        .transition(.slide)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

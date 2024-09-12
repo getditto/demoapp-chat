@@ -15,6 +15,9 @@ enum MessageOperation {
 }
 
 class ChatScreenVM: ObservableObject {
+
+    @Published var fetchedMessageIds: Set<String> = []
+
     @Published var inputText: String = ""
     @Published var roomName: String = ""
     @Published var messagesWithUsers = [MessageWithUser]()
@@ -81,6 +84,12 @@ class ChatScreenVM: ObservableObject {
                 inputText = ""
             }
         }
+    }
+    
+    func fetchImage(for messageId: String) {
+        // Fetch the image data or mark it as fetched
+        // For now, we'll just mark it as fetched to update the UI
+        fetchedMessageIds.insert(messageId)
     }
     
     func sendImageMessage() async throws {
