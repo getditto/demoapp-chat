@@ -135,10 +135,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.8.0")
+    implementation("live.ditto:ditto:4.9.0")
 
     // Ditto Tools Viewer
-    implementation("live.ditto:dittotoolsviewer:2.1.0")
+    implementation("live.ditto:dittotoolsviewer:3.0.1")
 
     // Date Time Library - the latest way to handle dates in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
