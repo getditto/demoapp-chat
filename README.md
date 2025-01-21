@@ -12,6 +12,7 @@ For support, please contact Ditto Support (<support@ditto.live>).
 - [iOS Download](https://apps.apple.com/us/app/dittochat/id1450111256)
 - [Android Download](https://play.google.com/store/apps/details?id=live.dittolive.chat)
 
+Compatible with Android Automotive OS (AAOS)
 
 ## Features
 
