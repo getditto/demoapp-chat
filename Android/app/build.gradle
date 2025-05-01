@@ -4,6 +4,7 @@ plugins {
     id "kotlin-kapt"
     id "com.google.dagger.hilt.android"
     id "androidx.navigation.safeargs.kotlin"
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 android {
@@ -54,7 +55,7 @@ android {
         viewBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.4.7"
+        kotlinCompilerExtensionVersion "1.6.11"
     }
     packagingOptions {
         resources {
@@ -64,6 +65,8 @@ android {
 }
 
 dependencies {
+    kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
+
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
@@ -135,10 +138,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.0.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.9.0")
+    implementation("live.ditto:ditto:4.10.2")
 
-    // Ditto Tools Viewer
-    implementation("live.ditto:dittotoolsviewer:3.0.1")
+    // Ditto Tools
+    implementation("live.ditto:ditto-tools-android:4.0.2")
 
     // Date Time Library - the latest way to handle dates in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
