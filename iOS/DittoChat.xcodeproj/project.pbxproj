@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0ED7E4382B520DE5007C8E52 /* Publishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED7E4372B520DE5007C8E52 /* Publishers.swift */; };
+		117F6ADC2DC3ABC9006F0F4C /* DittoAllToolsMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 117F6ADB2DC3ABC9006F0F4C /* DittoAllToolsMenu */; };
 		142B278E2A39290700C09751 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142B278D2A39290700C09751 /* Env.swift */; };
 		143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143FFCBE2B20F39C0085A2EF /* DittoToolsListItem.swift */; };
 		143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */ = {isa = PBXBuildFile; productRef = 143FFCC32B20F4840085A2EF /* DittoExportData */; };
@@ -27,7 +28,6 @@
 		14A2B746298987D300E0FF86 /* DittoDiskUsage in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B745298987D300E0FF86 /* DittoDiskUsage */; };
 		14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B747298987D300E0FF86 /* DittoExportLogs */; };
 		14A2B74A298987D400E0FF86 /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 14A2B749298987D400E0FF86 /* DittoPresenceViewer */; };
-		14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */; };
 		14B4E2602978F2350069B69D /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E25F2978F2350069B69D /* ChatInputView.swift */; };
 		14B4E2622978F23E0069B69D /* ExpandingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2612978F23E0069B69D /* ExpandingTextView.swift */; };
 		14B4E2652978F25D0069B69D /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B4E2642978F25D0069B69D /* AvatarView.swift */; };
@@ -100,7 +100,6 @@
 		14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Rotation.swift"; sourceTree = "<group>"; };
 		14A0B87F29D49E7200D2D625 /* GeneralErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralErrorView.swift; sourceTree = "<group>"; };
 		14A0B88229D60C6800D2D625 /* MessageEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEditView.swift; sourceTree = "<group>"; };
-		14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DittoToolsUtilities.swift; sourceTree = "<group>"; };
 		14B4E25F2978F2350069B69D /* ChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
 		14B4E2612978F23E0069B69D /* ExpandingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingTextView.swift; sourceTree = "<group>"; };
 		14B4E2642978F25D0069B69D /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -153,6 +152,7 @@
 				14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */,
 				143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */,
 				14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */,
+				117F6ADC2DC3ABC9006F0F4C /* DittoAllToolsMenu in Frameworks */,
 				14CADB60293FF00700BED068 /* Fakery in Frameworks */,
 				14A2B74A298987D400E0FF86 /* DittoPresenceViewer in Frameworks */,
 				14A2B744298987D300E0FF86 /* DittoDataBrowser in Frameworks */,
@@ -331,7 +331,6 @@
 		14D902E72954DF82006B54E3 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				14A2B74B29899ABF00E0FF86 /* DittoToolsUtilities.swift */,
 				14D902E82954DFC8006B54E3 /* StringKeys.swift */,
 				14A0B87B29D3BC4100D2D625 /* TemporaryFile.swift */,
 				14A0B87C29D3BC4100D2D625 /* UIImage+Rotation.swift */,
@@ -433,6 +432,7 @@
 				14A2B749298987D400E0FF86 /* DittoPresenceViewer */,
 				143FFCC32B20F4840085A2EF /* DittoExportData */,
 				143FFCC52B20F4840085A2EF /* DittoPeersList */,
+				117F6ADB2DC3ABC9006F0F4C /* DittoAllToolsMenu */,
 			);
 			productName = DittoChat;
 			productReference = 14CADB2A293FEBD500BED068 /* DittoChat.app */;
@@ -610,7 +610,6 @@
 				14A0B87829D3BBB400D2D625 /* MessageBubbleVM.swift in Sources */,
 				14A0B87A29D3BBC400D2D625 /* DittoProgressView.swift in Sources */,
 				14E57BB629D8AA2700D71154 /* EditMessageBubbleView.swift in Sources */,
-				14A2B74C29899ABF00E0FF86 /* DittoToolsUtilities.swift in Sources */,
 				143FFCC02B20F39C0085A2EF /* DittoToolsListItem.swift in Sources */,
 				142B278E2A39290700C09751 /* Env.swift in Sources */,
 				14BB526429A010790072C4AD /* RoomsListRowItem.swift in Sources */,
@@ -970,7 +969,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
+				minimumVersion = 8.0.0;
 			};
 		};
 		14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
@@ -986,7 +985,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.8.0;
+				minimumVersion = 4.10.0;
 			};
 		};
 		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {
@@ -1000,6 +999,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		117F6ADB2DC3ABC9006F0F4C /* DittoAllToolsMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoAllToolsMenu;
+		};
 		143FFCC32B20F4840085A2EF /* DittoExportData */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 14A2B73F2989825000E0FF86 /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;

@@ -7,14 +7,11 @@
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
 import Combine
-import DittoExportLogs
 import DittoSwift
 import SwiftUI
 
 
 class DittoInstance: ObservableObject {
-    @Published var loggingOption: DittoLogger.LoggingOptions
-    private static let defaultLoggingOption: DittoLogger.LoggingOptions = .debug
     private var cancellables = Set<AnyCancellable>()
     
     static var shared = DittoInstance()
@@ -28,18 +25,6 @@ class DittoInstance: ObservableObject {
                 enableDittoCloudSync: false // Cloud sync is disabled
             )
         )
-
-        // make sure our log level is set _before_ starting ditto.
-        self.loggingOption = Self.storedLoggingOption()
-        resetLogging()
-        
-        $loggingOption
-            .dropFirst()
-            .sink { [weak self] option in
-                self?.saveLoggingOption(option)
-                self?.resetLogging()
-            }
-            .store(in: &cancellables)            
 
         do {
             // Disable sync with V3 Ditto
@@ -68,43 +53,6 @@ class DittoInstance: ObservableObject {
 
     }
 }
-extension DittoInstance {
-    enum UserDefaultsKeys: String {
-        case loggingOption = "live.ditto.CountDataFetch.userDefaults.loggingOption"
-    }
-}
-
-extension DittoInstance {
-    fileprivate func storedLoggingOption() -> DittoLogger.LoggingOptions {
-        return Self.storedLoggingOption()
-    }
-    // static function for use in init() at launch
-    fileprivate static func storedLoggingOption() -> DittoLogger.LoggingOptions {
-        if let logOption = UserDefaults.standard.object(
-            forKey: UserDefaultsKeys.loggingOption.rawValue
-        ) as? Int {
-            return DittoLogger.LoggingOptions(rawValue: logOption)!
-        } else {
-            return DittoLogger.LoggingOptions(rawValue: defaultLoggingOption.rawValue)!
-        }
-    }
-    
-    fileprivate func saveLoggingOption(_ option: DittoLogger.LoggingOptions) {
-        UserDefaults.standard.set(option.rawValue, forKey: UserDefaultsKeys.loggingOption.rawValue)
-    }
-
-    fileprivate func resetLogging() {
-        let logOption = Self.storedLoggingOption()
-        switch logOption {
-        case .disabled:
-            DittoLogger.enabled = false
-        default:
-            DittoLogger.enabled = true
-            DittoLogger.minimumLogLevel = DittoLogLevel(rawValue: logOption.rawValue)!
-        }
-    }
-}
-
 
 class DittoService: ReplicatingDataInterface {
     @Published var publicRoomsPublisher = CurrentValueSubject<[Room], Never>([])

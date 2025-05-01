@@ -6,12 +6,7 @@
 //
 //  Copyright © 2023 DittoLive Incorporated. All rights reserved.
 
-import DittoDataBrowser
-import DittoDiskUsage
-import DittoExportData
-import DittoExportLogs
-import DittoPeersList
-import DittoPresenceViewer
+import DittoAllToolsMenu
 import DittoSwift
 import SwiftUI
 
@@ -48,42 +43,8 @@ struct SettingsScreen: View {
                 }
                 // DittoSwiftTools
                 Section {
-                    NavigationLink(destination: DataBrowser(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Data Browser", systemImage: "photo", color: .orange)
-                    }
-                    
-                    NavigationLink(destination: PeersListView(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Peers List", systemImage: "network", color: .blue)
-                    }
-                    
-                    NavigationLink(destination: PresenceView(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Presence Viewer", systemImage: "network", color: .pink)
-                    }
-                    
-                    NavigationLink(destination: DittoDiskUsageView(ditto: dittoInstance.ditto)) {
-                        DittoToolsListItem(title: "Disk Usage", systemImage: "opticaldiscdrive", color: .secondary)
-                    }
-
-                    NavigationLink(destination: LoggingDetailsView(loggingOption: $dittoInstance.loggingOption)) {
-                        DittoToolsListItem(title: "Logging", systemImage: "square.split.1x2", color: .green)
-                    }
-
-                    // Export Ditto db Directory
-                    // N.B. The export Logs feature is in DittoSwiftTools pkg, DittoExportLogs module,
-                    // exposed in LoggingDetailsView ^^
-                    Button(action: {
-                        vm.presentExportDataAlert.toggle()
-                    }) {
-                        HStack {
-                            DittoToolsListItem(title: "Export Data Directory", systemImage: "square.and.arrow.up", color: .green)
-                            Spacer()
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                    }
-                    .foregroundColor(textColor)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .sheet(isPresented: $vm.presentExportDataShare) {
-                        ExportData(ditto: dittoInstance.ditto)
+                    NavigationLink(destination: AllToolsMenu(ditto: dittoInstance.ditto)) {
+                        DittoToolsListItem(title: "Ditto Tools", systemImage: "network", color: .orange)
                     }
                 } header: {
                     Text(dittoToolsKey)
@@ -94,18 +55,6 @@ struct SettingsScreen: View {
                         Spacer()
                     }
                 }
-                .sheet(isPresented: $vm.showExportLogsSheet) {
-                    ExportLogsView()
-                }
-                .alert("Export Ditto Directory", isPresented: $vm.presentExportDataAlert) {
-                    Button("Export") {
-                        vm.presentExportDataShare = true
-                    }
-                    Button("Cancel", role: .cancel) {}
-
-                    } message: {
-                        Text("Compressing log data may take a while.")
-                    }
                 
                 // Public Rooms
                 if vm.archivedPublicRooms.count > 0 {
