@@ -49,6 +49,7 @@ import javax.inject.Singleton
 @Module
 object DataStoreModule {
 
+    @JvmStatic
     @Singleton
     @Provides
     fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
