@@ -15,8 +15,8 @@ android {
         applicationId "live.dittolive.chat"
         minSdk 29
         targetSdk 34
-        versionCode 34
-        versionName "1.0.1"
+        versionCode 36
+        versionName "36"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
