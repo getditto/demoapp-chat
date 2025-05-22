@@ -24,9 +24,16 @@ extension DittoStore {
         return Future { promise in
             Task.init {
                 do {
-                    let result = try await self.execute(query: query, arguments: arguments)
-                    let items = result.items.compactMap { T(value: $0.value) }
-                    promise(.success(items))
+                    if let args = arguments {
+                        let result = try await self.execute(query: query, arguments: args)
+                        let items = result.items.compactMap { T(value: $0.value) }
+                        promise(.success(items))
+
+                    } else {
+                        let result = try await self.execute(query: query)
+                        let items = result.items.compactMap { T(value: $0.value) }
+                        promise(.success(items))
+                    }
                 } catch {
                     promise(.failure(error))
                 }
@@ -39,10 +46,17 @@ extension DittoStore {
         return Future { promise in
             Task.init {
                 do {
-                    let result = try await self.execute(query: query, arguments: arguments)
-                    guard let first = result.items.first else { return promise(.success(nil)) }
-                    let item = T(value: first.value)
-                    promise(.success(item))
+                    if let args = arguments {
+                        let result = try await self.execute(query: query, arguments: args)
+                        guard let first = result.items.first else { return promise(.success(nil)) }
+                        let item = T(value: first.value)
+                        promise(.success(item))
+                    } else {
+                        let result = try await self.execute(query: query)
+                        guard let first = result.items.first else { return promise(.success(nil)) }
+                        let item = T(value: first.value)
+                        promise(.success(item))
+                    }
                 } catch {
                     promise(.failure(error))
                 }
