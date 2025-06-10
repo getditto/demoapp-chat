@@ -24,16 +24,15 @@ extension DittoStore {
         return Future { promise in
             Task.init {
                 do {
+                    var dittoResult: DittoQueryResult?
                     if let args = arguments {
-                        let result = try await self.execute(query: query, arguments: args)
-                        let items = result.items.compactMap { T(value: $0.value) }
-                        promise(.success(items))
-
+                        dittoResult = try await self.execute(query: query, arguments: args)
                     } else {
-                        let result = try await self.execute(query: query)
-                        let items = result.items.compactMap { T(value: $0.value) }
-                        promise(.success(items))
+                        dittoResult = try await self.execute(query: query)
                     }
+                    guard let result = dittoResult else { return promise(.success([])) }
+                    let items = result.items.compactMap { T(value: $0.value) }
+                    promise(.success(items))
                 } catch {
                     promise(.failure(error))
                 }
@@ -46,17 +45,17 @@ extension DittoStore {
         return Future { promise in
             Task.init {
                 do {
+                    var dittoResult: DittoQueryResult?
                     if let args = arguments {
-                        let result = try await self.execute(query: query, arguments: args)
-                        guard let first = result.items.first else { return promise(.success(nil)) }
-                        let item = T(value: first.value)
-                        promise(.success(item))
+                        dittoResult = try await self.execute(query: query, arguments: args)
+                        
                     } else {
-                        let result = try await self.execute(query: query)
-                        guard let first = result.items.first else { return promise(.success(nil)) }
-                        let item = T(value: first.value)
-                        promise(.success(item))
+                        dittoResult = try await self.execute(query: query)
                     }
+                    guard let result = dittoResult,
+                          let first = result.items.first else { return promise(.success(nil)) }
+                    let item = T(value: first.value)
+                    promise(.success(item))
                 } catch {
                     promise(.failure(error))
                 }
