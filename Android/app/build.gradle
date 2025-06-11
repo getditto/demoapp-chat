@@ -34,6 +34,8 @@ android {
         // the generated BuildConfig.java file.
         buildConfigField('String', 'DITTO_APP_ID', '"' + env['DITTO_APP_ID'] + '"')
         buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', '"' + env['DITTO_PLAYGROUND_TOKEN'] + '"')
+        buildConfigField('String', 'DITTO_WEBSOCKET_URL', '"' + env['DITTO_WEBSOCKET_URL'] + '"')
+
     }
 
     buildTypes {
@@ -53,6 +55,7 @@ android {
     buildFeatures {
         compose true
         viewBinding true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion "1.6.11"

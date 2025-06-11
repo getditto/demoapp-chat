@@ -31,6 +31,7 @@ import live.ditto.DittoIdentity
 import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
 import live.ditto.android.DefaultAndroidDittoDependencies
+import live.ditto.transports.DittoTransportConfig
 
 class DittoHandler {
     companion object {
@@ -70,6 +71,12 @@ class DittoHandler {
                     // Disable sync with V3 Ditto
                     disableSyncWithV3()
                 }
+
+                // Set up Ditto Websocket URL
+                val transportConfig = DittoTransportConfig()
+                transportConfig.connect.websocketUrls.add(BuildConfig.DITTO_WEBSOCKET_URL)
+                ditto.transportConfig = transportConfig
+
                 // Disable avoid_redundant_bluetooth
                 // https://docs.ditto.live/sdk/latest/sync/managing-redundant-bluetooth-le-connections#disabling-redundant-connections
                 ditto.store.execute("ALTER SYSTEM SET mesh_chooser_avoid_redundant_bluetooth = false")
