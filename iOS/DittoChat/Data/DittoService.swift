@@ -32,13 +32,8 @@ class DittoInstance: ObservableObject {
             try ditto.disableSyncWithV3()
             // Disable avoid_redundant_bluetooth
             Task {
-                // https://docs.ditto.live/sdk/latest/sync/managing-redundant-bluetooth-le-connections#disabling-redundant-connections
-                try await ditto.store.execute(
-                    query: "ALTER SYSTEM SET mesh_chooser_avoid_redundant_bluetooth = false"
-                )
-                
                 // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
-                // TODO - insert doc link
+                // https://docs.ditto.live/dql/strict-mode 
                 try await ditto.store.execute(query: "ALTER SYSTEM SET DQL_STRICT_MODE = false")
             }
         } catch let error {
