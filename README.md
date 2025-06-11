@@ -32,6 +32,31 @@ Compatible with Android Automotive OS (AAOS)
 #### Delete and edit sent messages
 * Delete or edit chat messages after they have already been sent
 
+## Setup
+
+### iOS
+
+1. Run the following command in the root directory:
+```bash
+cp .env.template .env
+```
+2. Open `.env` in a text editor or IDE such as VSCode and add the following environment variables, substituting your own values (`.env` will not show up in Xcode and is not to be mistaken for `Env.swift`)
+```bash
+DITTO_APP_ID=22389e28-9590-4cbf-b683-b3ac5ab2269e
+DITTO_PLAYGROUND_TOKEN=62479eb9-9f23-46cf-907b-ab5309d46369
+DITTO_WEBSOCKET_URL=wss://22389e28-9590-4cbf-b683-b3ac5ab2269e.cloud.ditto.live
+```
+3. Open the app project on Xcode and clean `(Command + Shift + K)`
+4. Build the project `(Command + B)` (This will generate the `Env.swift`)
+
+### Android
+
+In your root directory, create a new file `env.properties` and add the following environment variables, substituting your own values:
+```bash
+DITTO_APP_ID = 22389e28-9590-4cbf-b683-b3ac5ab2269e
+DITTO_PLAYGROUND_TOKEN = 62479eb9-9f23-46cf-907b-ab5309d46369
+DITTO_WEBSOCKET_URL = wss://22389e28-9590-4cbf-b683-b3ac5ab2269e.cloud.ditto.live
+```
 
 ## License
 
