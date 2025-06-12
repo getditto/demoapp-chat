@@ -73,9 +73,9 @@ class DittoHandler {
                 }
 
                 // Set up Ditto Websocket URL
-                val transportConfig = DittoTransportConfig()
-                transportConfig.connect.websocketUrls.add(BuildConfig.DITTO_WEBSOCKET_URL)
-                ditto.transportConfig = transportConfig
+                ditto.updateTransportConfig {
+                    it.connect.websocketUrls.add(BuildConfig.DITTO_WEBSOCKET_URL)
+                }
 
                 // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
                 // https://docs.ditto.live/dql/strict-mode
