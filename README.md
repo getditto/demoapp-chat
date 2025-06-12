@@ -38,7 +38,7 @@ Create an app in the Ditto Cloud Portal - https://portal.ditto.live
 
 ### iOS
 
-1. Run the following command in the root directory:
+1. Run the following command in the root directory of the iOS app:
 ```bash
 cp .env.template .env
 ```
@@ -53,7 +53,7 @@ DITTO_WEBSOCKET_URL=wss://22389e28-9590-4cbf-b683-b3ac5ab2269e.cloud.ditto.live
 
 ### Android
 
-In your root directory, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
+In the root directory of the Android app, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
 ```bash
 DITTO_APP_ID = 22389e28-9590-4cbf-b683-b3ac5ab2269e
 DITTO_PLAYGROUND_TOKEN = 62479eb9-9f23-46cf-907b-ab5309d46369
