@@ -43,7 +43,7 @@ class DittoHandler {
          * @param onInitialized: Invoke when Ditto is initialized
          * @param onError: Invoke on any error during initialization
          */
-        fun setupAndStartSync(
+        suspend fun setupAndStartSync(
             applicationContext: Context,
             onInitialized: () -> Unit,
             onError: (error: Throwable) -> Unit,
@@ -69,9 +69,14 @@ class DittoHandler {
                 ).apply {
                     // Disable sync with V3 Ditto
                     disableSyncWithV3()
-                    // Start sync
-                    startSync()
                 }
+                // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
+                // https://docs.ditto.live/dql/strict-mode
+                ditto.store.execute("ALTER SYSTEM SET DQL_STRICT_MODE = false")
+
+                // https://docs.ditto.live/sdk/latest/sync/start-and-stop-sync
+                ditto.startSync()
+
             } catch (e: Throwable) {
                 return onError(e)
             }

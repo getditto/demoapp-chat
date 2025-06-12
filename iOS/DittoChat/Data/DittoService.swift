@@ -18,6 +18,7 @@ class DittoInstance: ObservableObject {
     let ditto: Ditto
 
     init() {
+        // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
         ditto = Ditto(
             identity: .onlinePlayground(
                 appID: Env.DITTO_APP_ID,
@@ -31,9 +32,9 @@ class DittoInstance: ObservableObject {
             try ditto.disableSyncWithV3()
             // Disable avoid_redundant_bluetooth
             Task {
-                try await ditto.store.execute(
-                    query: "ALTER SYSTEM SET mesh_chooser_avoid_redundant_bluetooth = false"
-                )
+                // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
+                // https://docs.ditto.live/dql/strict-mode 
+                try await ditto.store.execute(query: "ALTER SYSTEM SET DQL_STRICT_MODE = false")
             }
         } catch let error {
             print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")

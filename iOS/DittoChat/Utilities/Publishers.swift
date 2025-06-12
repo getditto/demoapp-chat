@@ -24,7 +24,13 @@ extension DittoStore {
         return Future { promise in
             Task.init {
                 do {
-                    let result = try await self.execute(query: query, arguments: arguments)
+                    var dittoResult: DittoQueryResult?
+                    if let args = arguments {
+                        dittoResult = try await self.execute(query: query, arguments: args)
+                    } else {
+                        dittoResult = try await self.execute(query: query)
+                    }
+                    guard let result = dittoResult else { return promise(.success([])) }
                     let items = result.items.compactMap { T(value: $0.value) }
                     promise(.success(items))
                 } catch {
@@ -39,8 +45,15 @@ extension DittoStore {
         return Future { promise in
             Task.init {
                 do {
-                    let result = try await self.execute(query: query, arguments: arguments)
-                    guard let first = result.items.first else { return promise(.success(nil)) }
+                    var dittoResult: DittoQueryResult?
+                    if let args = arguments {
+                        dittoResult = try await self.execute(query: query, arguments: args)
+                        
+                    } else {
+                        dittoResult = try await self.execute(query: query)
+                    }
+                    guard let result = dittoResult,
+                          let first = result.items.first else { return promise(.success(nil)) }
                     let item = T(value: first.value)
                     promise(.success(item))
                 } catch {

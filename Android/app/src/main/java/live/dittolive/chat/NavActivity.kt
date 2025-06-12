@@ -46,6 +46,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -80,14 +81,16 @@ class NavActivity: AppCompatActivity() {
             return@setKeepOnScreenCondition !isDittoInitialized
         }
 
-        DittoHandler.setupAndStartSync(
-            applicationContext = applicationContext,
-            onInitialized = { isDittoInitialized = true },
-            onError = { error ->
-                // Maybe we want to communicate this error instead of crashing
-                throw error
-            }
-        )
+        lifecycleScope.launch {
+            DittoHandler.setupAndStartSync(
+                applicationContext = applicationContext,
+                onInitialized = { isDittoInitialized = true },
+                onError = { error ->
+                    // Maybe we want to communicate this error instead of crashing
+                    throw error
+                }
+            )
+        }
 
         super.onCreate(savedInstanceState)
 
