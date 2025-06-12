@@ -44,20 +44,22 @@ cp .env.template .env
 ```
 2. Open `.env` in a text editor or IDE such as VSCode and add the following environment variables, substituting your own values from the portal (`.env` will not show up in Xcode and is not to be mistaken for `Env.swift`)
 ```bash
-DITTO_APP_ID=22389e28-9590-4cbf-b683-b3ac5ab2269e
-DITTO_PLAYGROUND_TOKEN=62479eb9-9f23-46cf-907b-ab5309d46369
-DITTO_WEBSOCKET_URL=wss://22389e28-9590-4cbf-b683-b3ac5ab2269e.cloud.ditto.live
+DITTO_APP_ID=replace_with_your_app_id
+DITTO_PLAYGROUND_TOKEN=replace_with_your_playground_token
+DITTO_WEBSOCKET_URL=replace_with_your_websocket_url
 ```
 3. Open the app project on Xcode and clean `(Command + Shift + K)`
-4. Build the project `(Command + B)` (This will generate the `Env.swift`)
+4. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
+settings to your Apple developer account credentials to provision building to your device
+5. Build the project `(Command + B)` (This will generate the `Env.swift`)
 
 ### Android
 
 In the root directory of the Android app, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
 ```bash
-DITTO_APP_ID = 22389e28-9590-4cbf-b683-b3ac5ab2269e
-DITTO_PLAYGROUND_TOKEN = 62479eb9-9f23-46cf-907b-ab5309d46369
-DITTO_WEBSOCKET_URL = wss://22389e28-9590-4cbf-b683-b3ac5ab2269e.cloud.ditto.live
+DITTO_APP_ID = replace_with_your_app_id
+DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
+DITTO_WEBSOCKET_URL = replace_with_your_websocket_url
 ```
 
 ## License

@@ -1,8 +1,18 @@
 # ChatDemo-Android
 
-Android version of the Chat App Demo
+## Basic Chat application written with Ditto and Kotlin
 
-## Features
+### Setup
+
+1. Create an app in the Ditto Cloud Portal - https://portal.ditto.live
+2. In the root directory of the Android app, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
+```bash
+DITTO_APP_ID = replace_with_your_app_id
+DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
+DITTO_WEBSOCKET_URL = replace_with_your_websocket_url
+```
+
+### Features
 
 - Dependency Injection via Hilt
 - Coroutines
@@ -11,33 +21,13 @@ Android version of the Chat App Demo
 - Compose
 - Reactive Architecture
 
-## Known Issues
+### Known Issues
 
 - Only default public room available on Android at this time
 - changing user profile photo is not yet supported
 - file attachments are not yet supported
 
-## Building the App
-
-You need to setup some environment variables in order to build this project:
-
-1. Copy the provided `env.properties.example` file to `env.properties`
-2. Create an app in the Ditto Cloud Portal - https://portal.ditto.live
-3. Update the ignored `env.properties` file adding the corresponding values from your app:
-
-```
-# Environment Variables  
-
-DITTO_APP_ID = replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
-```
-
-- `DITTO_APP_ID` is the App ID used by Ditto; this needs to be the same on each device running the
-  app in order for them to see each other, including across different platforms.
-- `DITTO_PLAYGROUND_TOKEN` is the online playground token. This is used when using the online
-  playground identity type.
-
-## Copyright
+### Copyright
 
 Copyright (c) 2022 DittoLive
 
