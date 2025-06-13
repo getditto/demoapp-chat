@@ -31,6 +31,7 @@ import live.ditto.DittoIdentity
 import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger
 import live.ditto.android.DefaultAndroidDittoDependencies
+import live.ditto.transports.DittoTransportConfig
 
 class DittoHandler {
     companion object {
@@ -70,6 +71,12 @@ class DittoHandler {
                     // Disable sync with V3 Ditto
                     disableSyncWithV3()
                 }
+
+                // Set up Ditto Websocket URL
+                ditto.updateTransportConfig {
+                    it.connect.websocketUrls.add(BuildConfig.DITTO_WEBSOCKET_URL)
+                }
+
                 // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
                 // https://docs.ditto.live/dql/strict-mode
                 ditto.store.execute("ALTER SYSTEM SET DQL_STRICT_MODE = false")

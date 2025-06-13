@@ -27,6 +27,11 @@ class DittoInstance: ObservableObject {
             )
         )
 
+        ditto.updateTransportConfig { transportConfig in
+            // Set the Ditto Websocket URL
+            transportConfig.connect.webSocketURLs.insert(Env.DITTO_WEBSOCKET_URL)
+        }
+
         do {
             // Disable sync with V3 Ditto
             try ditto.disableSyncWithV3()
