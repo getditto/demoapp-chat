@@ -123,6 +123,12 @@ class MainViewModel @Inject constructor(
     private val _isUserLoggedIn = MutableStateFlow(true)
     val isUserLoggedIn = _isUserLoggedIn.asStateFlow()
 
+    /**
+     * Flag for whether the profile setup is needed on first launch
+     */
+    private val _needsProfileSetup = MutableStateFlow(false)
+    val needsProfileSetup = _needsProfileSetup.asStateFlow()
+
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
     }
@@ -195,11 +201,8 @@ class MainViewModel @Inject constructor(
         }
 
         val user = getCurrentUser()
-        if (user?.firstName == null) {
-            // temporary user initialziation - if user name hasn't been set by the user yet, we use the device name
-            val firstName = "My"
-            val lastName = android.os.Build.MODEL
-            updateUserInfo(firstName, lastName)
+        if (user?.firstName == null || user.firstName.isEmpty()) {
+            _needsProfileSetup.value = true
         }
 
         _dittoSdkVersion.value = repository.getDittoSdkVersion()
@@ -208,6 +211,9 @@ class MainViewModel @Inject constructor(
     fun updateUserInfo(firstName: String = this.firstName, lastName: String = this.lastName) {
         viewModelScope.launch {
             repository.saveCurrentUser(firstName, lastName)
+            if (firstName.isNotEmpty() && lastName.isNotEmpty()) {
+                _needsProfileSetup.value = false
+            }
         }
     }
 

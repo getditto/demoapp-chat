@@ -44,8 +44,8 @@ data class User(
     val fullName: String = "$firstName $lastName"
 ) {
     constructor(item: Map<String, Any?>) :this(
-        item[dbIdKey] as String,
-        item[firstNameKey] as String,
-        item[lastNameKey] as String
+        item[dbIdKey] as? String ?: UUID.randomUUID().toString(),
+        item[firstNameKey] as? String ?: "",
+        item[lastNameKey] as? String ?: ""
     )
 }
