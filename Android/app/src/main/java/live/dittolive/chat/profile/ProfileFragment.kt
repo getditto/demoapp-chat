@@ -122,7 +122,7 @@ class ProfileFragment : Fragment() {
                 LaunchedEffect(shouldCloseProfile.value) {
                     if (shouldCloseProfile.value) {
                         profileViewModel.resetCloseSignal()
-                        activity?.onBackPressed()
+                        activity?.onBackPressedDispatcher?.onBackPressed()
                     }
                 }
 
