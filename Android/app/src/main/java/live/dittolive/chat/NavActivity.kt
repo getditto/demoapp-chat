@@ -111,6 +111,17 @@ class NavActivity: AppCompatActivity() {
                                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                                 val drawerOpen by viewModel.drawerShouldBeOpened
                                     .collectAsStateWithLifecycle()
+                                val needsProfileSetup by viewModel.needsProfileSetup
+                                    .collectAsStateWithLifecycle()
+                                LaunchedEffect(needsProfileSetup) {
+                                    if (needsProfileSetup) {
+                                        val bundle = bundleOf(
+                                            "userId" to viewModel.currentUserId.value,
+                                            "isFirstTimeSetup" to true
+                                        )
+                                        findNavController().navigate(R.id.nav_profile, bundle)
+                                    }
+                                }
 
                                 if (drawerOpen) {
                                     // Open drawer and reset state in VM.

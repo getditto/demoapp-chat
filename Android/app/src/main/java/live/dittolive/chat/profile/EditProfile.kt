@@ -123,8 +123,7 @@ fun EditProfileScreen(
                     //TODO : save profile data
                     userViewModel.updateUserInfo()
 
-                    // switch back to non-edit mode
-                    viewModel.changeEditMode()
+                    viewModel.onProfileSaved()
                 }
             }
         )

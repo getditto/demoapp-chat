@@ -42,6 +42,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(): ViewModel() {
 
     private var userId: String = ""
+    private var isFirstTimeSetup: Boolean = false
 
     //whether the profile screen is in edit mode
     private val _isEditMode= MutableStateFlow(false)
@@ -50,11 +51,15 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
     private val _userData = MutableLiveData<ProfileScreenState>()
     val userData: LiveData<ProfileScreenState> = _userData
 
+    private val _shouldCloseProfile = MutableStateFlow(false)
+    val shouldCloseProfile: StateFlow<Boolean> = _shouldCloseProfile.asStateFlow()
+
     /**
      * This is used in the `onAttach` of the [ProfileFragment]
      * @param newUserId the id of the user who's profile was tapped on
+     * @param isFirstTimeSetup whether this is the first time setup
      */
-    fun setUserId(newUserId: String?) {
+    fun setUserId(newUserId: String?, isFirstTimeSetup: Boolean = false) {
         if (newUserId != userId) {
             userId = newUserId ?: meProfile.userId
         }
@@ -64,10 +69,27 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
         } else {
             meProfile
         }
+
+        this.isFirstTimeSetup = isFirstTimeSetup
+        if (isFirstTimeSetup) {
+            _isEditMode.value = true
+        }
     }
 
     fun changeEditMode() {
         _isEditMode.value = !(_isEditMode.value)
+    }
+
+    fun onProfileSaved() {
+        if (isFirstTimeSetup) {
+            _shouldCloseProfile.value = true
+        } else {
+            changeEditMode()
+        }
+    }
+
+    fun resetCloseSignal() {
+        _shouldCloseProfile.value = false
     }
 
 }

@@ -38,6 +38,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -68,7 +69,8 @@ class ProfileFragment : Fragment() {
         super.onAttach(context)
         // Consider using safe args plugin
         val userId = arguments?.getString("userId")
-        profileViewModel.setUserId(userId)
+        val isFirstTimeSetup = arguments?.getBoolean("isFirstTimeSetup", false) ?: false
+        profileViewModel.setUserId(userId, isFirstTimeSetup)
         activityViewModel.setUserId(userId)
     }
 
@@ -115,7 +117,14 @@ class ProfileFragment : Fragment() {
                 val userData by profileViewModel.userData.observeAsState()
                 val nestedScrollInteropConnection = rememberNestedScrollInteropConnection()
                 val isEditMode = profileViewModel.isEditMode.collectAsStateWithLifecycle()
+                val shouldCloseProfile = profileViewModel.shouldCloseProfile.collectAsStateWithLifecycle()
 
+                LaunchedEffect(shouldCloseProfile.value) {
+                    if (shouldCloseProfile.value) {
+                        profileViewModel.resetCloseSignal()
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                }
 
                 DittochatTheme {
                     if (userData == null) {
