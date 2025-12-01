@@ -27,10 +27,13 @@ class DittoInstance: ObservableObject {
             )
         )
 
-        ditto.updateTransportConfig { transportConfig in
+        // 💡 WebSocket (cloud sync) has been disabled for this demo because it's shared among many users, and we don't want messages to get mixed up across public rooms.
+        //
+        /* ditto.updateTransportConfig { transportConfig in
             // Set the Ditto Websocket URL
             transportConfig.connect.webSocketURLs.insert(Env.DITTO_WEBSOCKET_URL)
-        }
+        } */
+
 
         do {
             // Disable sync with V3 Ditto
