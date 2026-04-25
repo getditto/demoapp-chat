@@ -6,7 +6,7 @@ This chat room demo showcases public and private chat rooms using Ditto.
 
 Powered by [Ditto](https://ditto.live/).
 
-For support, please contact Ditto Support (<support@ditto.live>).
+For support, please contact Ditto Support (<support@ditto.com>).
 
 - [Video Demo]() - pending
 - [iOS Download](https://apps.apple.com/us/app/dittochat/id1450111256)
