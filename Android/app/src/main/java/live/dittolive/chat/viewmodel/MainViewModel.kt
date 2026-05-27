@@ -331,9 +331,7 @@ class MainViewModel @Inject constructor(
                     val tempFile: File?
                     try {
                         tempFile = saveBitmapToTempFile(appContext, downsampledBitmap, quality)
-                        val collectionId = currentRoom.value.collectionID ?: DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
-                        val collection = DittoHandler.ditto.store.collection(collectionId)
-                        val attachment = collection.newAttachment(
+                        val attachment = DittoHandler.ditto.store.newAttachment(
                             tempFile.inputStream(), mapOf(
                                 metadataFilenameKey to message.userId + "_thumbnail_" + timestamp + ".jpg",
                                 metadataFileformatKey to ".jpg",

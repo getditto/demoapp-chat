@@ -25,7 +25,6 @@
 
 package live.dittolive.chat.data.model
 
-import live.ditto.DittoDocument
 import live.dittolive.chat.data.collectionIdKey
 import live.dittolive.chat.data.createdByKey
 import live.dittolive.chat.data.createdOnKey

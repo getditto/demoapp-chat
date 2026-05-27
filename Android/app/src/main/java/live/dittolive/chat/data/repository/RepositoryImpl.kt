@@ -36,13 +36,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import live.ditto.Ditto
 import live.ditto.DittoAttachment
-import live.ditto.DittoCollection
-import live.ditto.DittoDocument
-import live.ditto.DittoLiveQuery
 import live.ditto.DittoQueryResultItem
-import live.ditto.DittoSortDirection
 import live.ditto.DittoStoreObserver
-import live.ditto.DittoSubscription
 import live.ditto.DittoSyncSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
 import live.dittolive.chat.conversation.Message

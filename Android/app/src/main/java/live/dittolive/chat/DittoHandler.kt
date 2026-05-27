@@ -72,14 +72,15 @@ class DittoHandler {
                     disableSyncWithV3()
                 }
 
-                // 💡WebSocket (cloud sync) has been disabled for this demo because it's shared among many users,
+                // 💡 WebSocket (cloud sync) has been disabled for this demo because it's shared among many users,
                 // and we don't want messages to get mixed up across public rooms.
                 //
                 /* ditto.updateTransportConfig {
                     it.connect.websocketUrls.add(BuildConfig.DITTO_WEBSOCKET_URL)
                 } */
 
-                // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
+                // Disable strict mode so objects are treated as CRDT MAPs with field-level merging
+                // rather than REGISTERs with last-write-wins. Must be called before startSync.
                 // https://docs.ditto.live/dql/strict-mode
                 ditto.store.execute("ALTER SYSTEM SET DQL_STRICT_MODE = false")
 

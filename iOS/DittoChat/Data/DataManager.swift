@@ -193,7 +193,7 @@ extension DataManager {
 
 extension DataManager {
     var sdkVersion: String {
-        DittoInstance.shared.ditto.sdkVersion
+        Ditto.version
     }
     
     var appInfo: String {
