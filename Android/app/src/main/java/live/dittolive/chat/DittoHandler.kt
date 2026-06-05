@@ -61,7 +61,8 @@ class DittoHandler {
                     dependencies = androidDependencies,
                     appId = BuildConfig.DITTO_APP_ID,
                     token = BuildConfig.DITTO_PLAYGROUND_TOKEN,
-                    enableDittoCloudSync = false // Cloud sync is disabled
+                    enableDittoCloudSync = false, // Cloud sync is disabled
+                    customAuthUrl = BuildConfig.DITTO_AUTH_URL
                 )
 
                 ditto = Ditto(

@@ -23,7 +23,8 @@ class DittoInstance: ObservableObject {
             identity: .onlinePlayground(
                 appID: Env.DITTO_APP_ID,
                 token: Env.DITTO_PLAYGROUND_TOKEN,
-                enableDittoCloudSync: false // Cloud sync is disabled
+                enableDittoCloudSync: false, // Cloud sync is disabled
+                customAuthURL: URL(string: Env.DITTO_AUTH_URL)
             )
         )
 
