@@ -15,6 +15,7 @@ cp .env.template .env
 DITTO_APP_ID=replace_with_your_app_id
 DITTO_PLAYGROUND_TOKEN=replace_with_your_playground_token
 DITTO_WEBSOCKET_URL=replace_with_your_websocket_url
+DITTO_AUTH_URL=replace_with_your_auth_url
 ```
 4. Open the app project on Xcode and clean `(Command + Shift + K)`
 5. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 

@@ -35,6 +35,7 @@ android {
         buildConfigField('String', 'DITTO_APP_ID', '"' + env['DITTO_APP_ID'] + '"')
         buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', '"' + env['DITTO_PLAYGROUND_TOKEN'] + '"')
         buildConfigField('String', 'DITTO_WEBSOCKET_URL', '"' + env['DITTO_WEBSOCKET_URL'] + '"')
+        buildConfigField('String', 'DITTO_AUTH_URL', '"' + env['DITTO_AUTH_URL'] + '"')
 
     }
 
