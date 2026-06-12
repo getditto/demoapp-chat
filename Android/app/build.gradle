@@ -23,9 +23,9 @@ android {
             useSupportLibrary true
         }
 
-        def envFile = rootProject.file("env.properties")
+        def envFile = rootProject.file("../.env")
         if (!envFile.exists()) {
-            throw new Exception("Missing env.properties file. Please copy the env.properties.example template and fill in with your app details.")
+            throw new Exception("Missing .env file at the repository root. Please copy .env.example to .env and fill in with your app details.")
         }
         def env = new Properties()
         env.load(new FileInputStream(envFile))

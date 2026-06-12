@@ -557,7 +557,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/buildEnv.sh",
-				"${SRCROOT}/.env",
+				"${SRCROOT}/../.env",
 			);
 			name = "Generate Env.swift";
 			outputFileListPaths = (
@@ -567,7 +567,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/buildEnv.sh\" \"${SRCROOT}/.env\" \"${SRCROOT}/${PROJECT}\"\n";
+			shellScript = "\"${SRCROOT}/buildEnv.sh\" \"${SRCROOT}/../.env\" \"${SRCROOT}/${PROJECT}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

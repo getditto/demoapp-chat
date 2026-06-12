@@ -116,7 +116,6 @@ out/
 # Gradle files
 .gradle/
 build/
-env.properties
 
 # Local configuration file (sdk path, etc)
 local.properties
