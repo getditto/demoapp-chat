@@ -118,7 +118,6 @@ import androidx.compose.ui.unit.dp
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
-import live.ditto.DittoAttachmentFetchEvent
 import live.dittolive.chat.R
 import live.dittolive.chat.components.DittochatAppBar
 import live.dittolive.chat.data.model.MessageUiModel
@@ -335,51 +334,43 @@ fun MessageUi(
     var fetchProgress by remember { mutableDoubleStateOf(1.0) }
 
     LaunchedEffect(key1 = msg.message._id) {
-        viewModel.getAttachment(msg.message) { it ->
-            when (it) {
-                is DittoAttachmentFetchEvent.Completed -> {
-                    var rotatedBitmap: Bitmap? = null
-                    try {
-                        val byteArray = it.attachment.getInputStream().readBytes()
-                        val exifInterface =
-                            runCatching { ExifInterface(ByteArrayInputStream(byteArray)) }.getOrNull()
-                        val orientation = exifInterface?.getAttributeInt(
-                            ExifInterface.TAG_ORIENTATION,
-                            ExifInterface.ORIENTATION_UNDEFINED
-                        ) ?: ExifInterface.ORIENTATION_UNDEFINED
+        viewModel.getAttachment(
+            message = msg.message,
+            onProgress = { progress -> fetchProgress = progress }
+        ) { byteArray ->
+            if (byteArray == null) {
+                thumbnail = null
+                fetchProgress = 1.0
+            } else {
+                var rotatedBitmap: Bitmap? = null
+                try {
+                    val exifInterface =
+                        runCatching { ExifInterface(ByteArrayInputStream(byteArray)) }.getOrNull()
+                    val orientation = exifInterface?.getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED
+                    ) ?: ExifInterface.ORIENTATION_UNDEFINED
 
-                        val rotationDegrees = when (orientation) {
-                            ExifInterface.ORIENTATION_ROTATE_90 -> 90
-                            ExifInterface.ORIENTATION_ROTATE_180 -> 180
-                            ExifInterface.ORIENTATION_ROTATE_270 -> 270
-                            else -> 0
-                        }
-                        val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(byteArray))
-
-                        bitmap?.let {
-                            val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
-                            rotatedBitmap =
-                                Bitmap.createBitmap(bitmap, 0, 0, it.width, it.height, matrix, true)
-                        }
-                    } catch (err: Error) {
-                        // TODO: catch error
+                    val rotationDegrees = when (orientation) {
+                        ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                        ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                        ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                        else -> 0
                     }
-                    rotatedBitmap?.let {
-                        thumbnail = rotatedBitmap?.asImageBitmap()
+                    val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(byteArray))
+
+                    bitmap?.let {
+                        val matrix = Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+                        rotatedBitmap =
+                            Bitmap.createBitmap(bitmap, 0, 0, it.width, it.height, matrix, true)
                     }
-                    fetchProgress = 1.0
+                } catch (err: Error) {
+                    // TODO: catch error
                 }
-
-                is DittoAttachmentFetchEvent.Progress -> {
-                    val percentage =
-                        it.downloadedBytes.toDouble() / it.totalBytes.toDouble()
-                    fetchProgress = percentage
+                rotatedBitmap?.let {
+                    thumbnail = rotatedBitmap?.asImageBitmap()
                 }
-
-                is DittoAttachmentFetchEvent.Deleted -> {
-                    thumbnail = null
-                    fetchProgress = 1.0
-                }
+                fetchProgress = 1.0
             }
         }
     }

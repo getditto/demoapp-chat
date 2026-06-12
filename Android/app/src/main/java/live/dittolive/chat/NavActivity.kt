@@ -55,7 +55,7 @@ import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import live.ditto.transports.DittoSyncPermissions
+import com.ditto.kotlin.transports.DittoSyncPermissions
 import live.dittolive.chat.components.DittochatDrawer
 import live.dittolive.chat.conversation.BackPressHandler
 import live.dittolive.chat.conversation.LocalBackPressedDispatcher
@@ -83,7 +83,6 @@ class NavActivity: AppCompatActivity() {
 
         lifecycleScope.launch {
             DittoHandler.setupAndStartSync(
-                applicationContext = applicationContext,
                 onInitialized = { isDittoInitialized = true },
                 onError = { error ->
                     // Maybe we want to communicate this error instead of crashing
@@ -223,7 +222,8 @@ class NavActivity: AppCompatActivity() {
         val lifecycleObserver = remember {
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START) {
-                    val missing = DittoSyncPermissions(this).missingPermissions()
+                    val permissions = DittoSyncPermissions(this)
+                    val missing = permissions.missingPermissions(permissions.requiredPermissions())
                     if (missing.isNotEmpty()) {
                         this.requestPermissions(missing, 0)
                     }

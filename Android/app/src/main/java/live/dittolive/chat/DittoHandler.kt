@@ -25,68 +25,60 @@
 
 package live.dittolive.chat
 
-import android.content.Context
-import live.ditto.Ditto
-import live.ditto.DittoIdentity
-import live.ditto.DittoLogLevel
-import live.ditto.DittoLogger
-import live.ditto.android.DefaultAndroidDittoDependencies
-import live.ditto.transports.DittoTransportConfig
+import com.ditto.kotlin.Ditto
+import com.ditto.kotlin.DittoAuthenticationProvider
+import com.ditto.kotlin.DittoConfig
+import com.ditto.kotlin.DittoFactory
+import com.ditto.kotlin.DittoLogLevel
+import com.ditto.kotlin.DittoLogger
 
 class DittoHandler {
     companion object {
         lateinit var ditto: Ditto
 
         /**
-         * Configures Ditto and starts the sync process
+         * Configures Ditto and starts the sync process.
          *
-         * @param applicationContext: The application context
          * @param onInitialized: Invoke when Ditto is initialized
          * @param onError: Invoke on any error during initialization
          */
         suspend fun setupAndStartSync(
-            applicationContext: Context,
             onInitialized: () -> Unit,
             onError: (error: Throwable) -> Unit,
         ) {
             if (::ditto.isInitialized) return onInitialized()
 
             try {
-                DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
+                DittoLogger.minimumLogLevel = DittoLogLevel.Debug
 
-                val androidDependencies = DefaultAndroidDittoDependencies(applicationContext)
-
-                // Please get your Ditto App ID and Playground Token from Portal: https://portal.ditto.live/
-                val identity = DittoIdentity.OnlinePlayground(
-                    dependencies = androidDependencies,
-                    appId = BuildConfig.DITTO_APP_ID,
-                    token = BuildConfig.DITTO_PLAYGROUND_TOKEN,
-                    enableDittoCloudSync = false, // Cloud sync is disabled
-                    customAuthUrl = BuildConfig.DITTO_AUTH_URL
+                // Get your Database ID and URL from the Ditto Portal: https://portal.ditto.live/
+                val config = DittoConfig(
+                    databaseId = BuildConfig.DITTO_DATABASE_ID,
+                    connect = DittoConfig.Connect.Server(BuildConfig.DITTO_URL)
                 )
 
-                ditto = Ditto(
-                    dependencies = androidDependencies,
-                    identity = identity
-                ).apply {
-                    // Disable sync with V3 Ditto
-                    disableSyncWithV3()
+                // The Android context is supplied internally via AndroidX App Startup.
+                ditto = DittoFactory.create(config)
+
+                // The development token authenticates this device against the online playground.
+                // The handler runs once at launch and again before the token expires, and must be
+                // set before sync starts.
+                ditto.auth?.expirationHandler = { dittoInstance, _ ->
+                    dittoInstance.auth?.login(
+                        BuildConfig.DITTO_DEVELOPMENT_TOKEN,
+                        DittoAuthenticationProvider.development()
+                    )
                 }
 
-                // 💡 WebSocket (cloud sync) has been disabled for this demo because it's shared among many users,
-                // and we don't want messages to get mixed up across public rooms.
-                //
-                /* ditto.updateTransportConfig {
-                    it.connect.websocketUrls.add(BuildConfig.DITTO_WEBSOCKET_URL)
-                } */
-
-                // Disable strict mode so objects are treated as CRDT MAPs with field-level merging
-                // rather than REGISTERs with last-write-wins. Must be called before startSync.
-                // https://docs.ditto.live/dql/strict-mode
-                ditto.store.execute("ALTER SYSTEM SET DQL_STRICT_MODE = false")
+                // Sync is peer-to-peer only. This demo is shared among many users, so the WebSocket
+                // (cloud) connection list is left empty to keep public-room messages from mixing
+                // through a shared Big Peer.
+                ditto.updateTransportConfig { transportConfig ->
+                    transportConfig.connect.websocketUrls = mutableSetOf()
+                }
 
                 // https://docs.ditto.live/sdk/latest/sync/start-and-stop-sync
-                ditto.startSync()
+                ditto.sync.start()
 
             } catch (e: Throwable) {
                 return onError(e)

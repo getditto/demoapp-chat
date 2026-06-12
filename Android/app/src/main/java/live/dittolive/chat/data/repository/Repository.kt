@@ -26,7 +26,7 @@
 package live.dittolive.chat.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import live.ditto.DittoAttachment
+import com.ditto.kotlin.DittoAttachment
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.model.Room
 import live.dittolive.chat.data.model.User

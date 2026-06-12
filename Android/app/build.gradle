@@ -32,10 +32,9 @@ android {
 
         // Explicit double-quotes are needed in the string value in order to be a valid string in
         // the generated BuildConfig.java file.
-        buildConfigField('String', 'DITTO_APP_ID', '"' + env['DITTO_APP_ID'] + '"')
-        buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', '"' + env['DITTO_PLAYGROUND_TOKEN'] + '"')
-        buildConfigField('String', 'DITTO_WEBSOCKET_URL', '"' + env['DITTO_WEBSOCKET_URL'] + '"')
-        buildConfigField('String', 'DITTO_AUTH_URL', '"' + env['DITTO_AUTH_URL'] + '"')
+        buildConfigField('String', 'DITTO_DATABASE_ID', '"' + env['DITTO_DATABASE_ID'] + '"')
+        buildConfigField('String', 'DITTO_DEVELOPMENT_TOKEN', '"' + env['DITTO_DEVELOPMENT_TOKEN'] + '"')
+        buildConfigField('String', 'DITTO_URL', '"' + env['DITTO_URL'] + '"')
 
     }
 
@@ -142,10 +141,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.14.4")
+    implementation("com.ditto:ditto-kotlin-android:5.0.1")
 
     // Ditto Tools
-    implementation("live.ditto:ditto-tools-android:5.0.2")
+    implementation("live.ditto:ditto-tools-android:6.0.1-rc.1")
 
     // Date Time Library - the latest way to handle dates in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
