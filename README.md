@@ -44,9 +44,9 @@ cp .env.template .env
 ```
 2. Open `.env` in a text editor or IDE such as VSCode and add the following environment variables, substituting your own values from the portal (`.env` will not show up in Xcode and is not to be mistaken for `Env.swift`)
 ```bash
-DITTO_APP_ID=replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN=replace_with_your_playground_token
-DITTO_WEBSOCKET_URL=replace_with_your_websocket_url
+DITTO_DATABASE_ID=replace_with_your_database_id
+DITTO_DEVELOPMENT_TOKEN=replace_with_your_development_token
+DITTO_URL=replace_with_your_url
 ```
 3. Open the app project on Xcode and clean `(Command + Shift + K)`
 4. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
@@ -57,9 +57,9 @@ settings to your Apple developer account credentials to provision building to yo
 
 In the root directory of the Android app, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
 ```bash
-DITTO_APP_ID = replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
-DITTO_WEBSOCKET_URL = replace_with_your_websocket_url
+DITTO_DATABASE_ID = replace_with_your_database_id
+DITTO_DEVELOPMENT_TOKEN = replace_with_your_development_token
+DITTO_URL = replace_with_your_url
 ```
 
 ## License

@@ -20,8 +20,8 @@ class DittoInstance: ObservableObject {
     init() {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
         let config = DittoConfig(
-            databaseID: Env.DITTO_APP_ID,
-            connect: .server(url: URL(string: Env.DITTO_AUTH_URL)!)
+            databaseID: Env.DITTO_DATABASE_ID,
+            connect: .server(url: URL(string: Env.DITTO_URL)!)
         )
 
         do {
@@ -30,11 +30,11 @@ class DittoInstance: ObservableObject {
             fatalError("ERROR: Ditto.openSync(config:) failed with error \"\(error)\"")
         }
 
-        // Authenticate against the online playground. The expiration handler is invoked once at
-        // launch (timeUntilExpiration == 0) to perform the initial login, and again whenever the
-        // token is about to expire. It must be set before sync.start().
+        // The development token authenticates this device against the online playground. The
+        // expiration handler runs once at launch (timeUntilExpiration == 0) for the initial login
+        // and again before the token expires, and must be set before sync starts.
         ditto.auth?.expirationHandler = { ditto, _ in
-            ditto.auth?.login(token: Env.DITTO_PLAYGROUND_TOKEN, provider: .development) { _, error in
+            ditto.auth?.login(token: Env.DITTO_DEVELOPMENT_TOKEN, provider: .development) { _, error in
                 if let error {
                     print("ERROR: Ditto login failed with error \"\(error)\"")
                 }
@@ -42,15 +42,11 @@ class DittoInstance: ObservableObject {
         }
 
         // 💡 WebSocket (cloud sync) is disabled for this demo because it's shared among many users,
-        // and we don't want messages to get mixed up across public rooms. Clearing webSocketURLs
+        // and we don't want messages to get mixed up across public rooms. An empty webSocketURLs set
         // keeps the app peer-to-peer only (LAN/Bluetooth/AWDL) while still authenticating online.
         ditto.updateTransportConfig { transportConfig in
             transportConfig.connect.webSocketURLs.removeAll()
         }
-
-        // Note: v5 defaults to DQL_STRICT_MODE = false, so objects are already treated as CRDT MAPs
-        // with field-level merging rather than REGISTERs with last-write-wins. No ALTER needed.
-        // https://docs.ditto.live/dql/strict-mode
 
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
         let isPreview: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
