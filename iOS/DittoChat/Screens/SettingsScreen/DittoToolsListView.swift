@@ -89,7 +89,7 @@ struct DittoToolsListView: View {
         Spacer()
     
         VStack {
-            Text("SDK Version: \(ditto.sdkVersion)")
+            Text("SDK Version: \(Ditto.version)")
         }.padding()
     }
 }

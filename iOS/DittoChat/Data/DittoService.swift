@@ -19,33 +19,38 @@ class DittoInstance: ObservableObject {
 
     init() {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
-        ditto = Ditto(
-            identity: .onlinePlayground(
-                appID: Env.DITTO_APP_ID,
-                token: Env.DITTO_PLAYGROUND_TOKEN,
-                enableDittoCloudSync: false, // Cloud sync is disabled
-                customAuthURL: URL(string: Env.DITTO_AUTH_URL)
-            )
+        let config = DittoConfig(
+            databaseID: Env.DITTO_APP_ID,
+            connect: .server(url: URL(string: Env.DITTO_AUTH_URL)!)
         )
 
-        // 💡 WebSocket (cloud sync) has been disabled for this demo because it's shared among many users, and we don't want messages to get mixed up across public rooms.
-        //
-        /* ditto.updateTransportConfig { transportConfig in
-            transportConfig.connect.webSocketURLs.insert(Env.DITTO_WEBSOCKET_URL)
-        } */
-
         do {
-            // Disable sync with V3 Ditto
-            try ditto.disableSyncWithV3()
-            Task {
-                // Disable strict mode so objects are treated as CRDT MAPs with field-level merging
-                // rather than REGISTERs with last-write-wins. Must be called before startSync.
-                // https://docs.ditto.live/dql/strict-mode
-                try await ditto.store.execute(query: "ALTER SYSTEM SET DQL_STRICT_MODE = false")
-            }
+            ditto = try Ditto.openSync(config: config)
         } catch let error {
-            print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
+            fatalError("ERROR: Ditto.openSync(config:) failed with error \"\(error)\"")
         }
+
+        // Authenticate against the online playground. The expiration handler is invoked once at
+        // launch (timeUntilExpiration == 0) to perform the initial login, and again whenever the
+        // token is about to expire. It must be set before sync.start().
+        ditto.auth?.expirationHandler = { ditto, _ in
+            ditto.auth?.login(token: Env.DITTO_PLAYGROUND_TOKEN, provider: .development) { _, error in
+                if let error {
+                    print("ERROR: Ditto login failed with error \"\(error)\"")
+                }
+            }
+        }
+
+        // 💡 WebSocket (cloud sync) is disabled for this demo because it's shared among many users,
+        // and we don't want messages to get mixed up across public rooms. Clearing webSocketURLs
+        // keeps the app peer-to-peer only (LAN/Bluetooth/AWDL) while still authenticating online.
+        ditto.updateTransportConfig { transportConfig in
+            transportConfig.connect.webSocketURLs.removeAll()
+        }
+
+        // Note: v5 defaults to DQL_STRICT_MODE = false, so objects are already treated as CRDT MAPs
+        // with field-level merging rather than REGISTERs with last-write-wins. No ALTER needed.
+        // https://docs.ditto.live/dql/strict-mode
 
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
         let isPreview: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
@@ -509,7 +514,7 @@ extension DittoService {
     
     /* DISUSED BECAUSE PROGRESS PUBLISHER BUG (refactored in BubbleViewVM */
     func attachmentPublisher(
-        for token: DittoAttachmentToken,
+        for token: [String: Any],
         in collectionId: String
     ) -> DittoSwift.DittoStore.FetchAttachmentPublisher {
         ditto.store.fetchAttachmentPublisher(attachmentToken: token)
