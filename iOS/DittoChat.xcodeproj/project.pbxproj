@@ -982,7 +982,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 5.0.1;
+				minimumVersion = 5.0.2;
 			};
 		};
 		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {
