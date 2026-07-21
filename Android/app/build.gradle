@@ -67,6 +67,15 @@ android {
     }
 }
 
+// Credentials are baked into BuildConfig fields from ../.env at configuration time.
+// Declare that file as an input so BuildConfig regenerates when .env changes —
+// otherwise the task stays up-to-date and ships stale values until a clean build.
+tasks.configureEach { task ->
+    if (task.name ==~ /generate.*BuildConfig/) {
+        task.inputs.file(rootProject.file("../.env")).optional().withPropertyName('dotEnv')
+    }
+}
+
 dependencies {
     kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
 
