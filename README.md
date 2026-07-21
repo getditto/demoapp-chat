@@ -46,7 +46,7 @@ cp .env.template .env
 ```bash
 DITTO_DATABASE_ID=replace_with_your_database_id
 DITTO_DEVELOPMENT_TOKEN=replace_with_your_development_token
-DITTO_URL=replace_with_your_url
+DITTO_SERVER_URL=replace_with_your_url
 ```
 3. Open the app project on Xcode and clean `(Command + Shift + K)`
 4. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
@@ -59,7 +59,7 @@ In the root directory of the Android app, create a new file `env.properties` and
 ```bash
 DITTO_DATABASE_ID = replace_with_your_database_id
 DITTO_DEVELOPMENT_TOKEN = replace_with_your_development_token
-DITTO_URL = replace_with_your_url
+DITTO_SERVER_URL = replace_with_your_url
 ```
 
 ## License

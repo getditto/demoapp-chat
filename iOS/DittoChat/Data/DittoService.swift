@@ -21,7 +21,7 @@ class DittoInstance: ObservableObject {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
         let config = DittoConfig(
             databaseID: Env.DITTO_DATABASE_ID,
-            connect: .server(url: URL(string: Env.DITTO_URL)!)
+            connect: .server(url: URL(string: Env.DITTO_SERVER_URL)!)
         )
 
         do {

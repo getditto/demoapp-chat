@@ -54,7 +54,7 @@ class DittoHandler {
                 // Get your Database ID and URL from the Ditto Portal: https://portal.ditto.live/
                 val config = DittoConfig(
                     databaseId = BuildConfig.DITTO_DATABASE_ID,
-                    connect = DittoConfig.Connect.Server(BuildConfig.DITTO_URL)
+                    connect = DittoConfig.Connect.Server(BuildConfig.DITTO_SERVER_URL)
                 )
 
                 // The Android context is supplied internally via AndroidX App Startup.

@@ -34,7 +34,7 @@ android {
         // the generated BuildConfig.java file.
         buildConfigField('String', 'DITTO_DATABASE_ID', '"' + env['DITTO_DATABASE_ID'] + '"')
         buildConfigField('String', 'DITTO_DEVELOPMENT_TOKEN', '"' + env['DITTO_DEVELOPMENT_TOKEN'] + '"')
-        buildConfigField('String', 'DITTO_URL', '"' + env['DITTO_URL'] + '"')
+        buildConfigField('String', 'DITTO_SERVER_URL', '"' + env['DITTO_SERVER_URL'] + '"')
 
     }
 
