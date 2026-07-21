@@ -19,9 +19,14 @@ class DittoInstance: ObservableObject {
 
     init() {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
+        precondition(!Env.DITTO_DATABASE_ID.isEmpty, "DITTO_DATABASE_ID is missing. Set it in .env before building.")
+        precondition(!Env.DITTO_DEVELOPMENT_TOKEN.isEmpty, "DITTO_DEVELOPMENT_TOKEN is missing. Set it in .env before building.")
+        guard let serverURL = URL(string: Env.DITTO_SERVER_URL) else {
+            fatalError("DITTO_SERVER_URL is missing or invalid: \"\(Env.DITTO_SERVER_URL)\". Set it in .env before building.")
+        }
         let config = DittoConfig(
             databaseID: Env.DITTO_DATABASE_ID,
-            connect: .server(url: URL(string: Env.DITTO_SERVER_URL)!)
+            connect: .server(url: serverURL)
         )
 
         do {

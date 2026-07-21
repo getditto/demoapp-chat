@@ -51,6 +51,12 @@ class DittoHandler {
             try {
                 DittoLogger.minimumLogLevel = DittoLogLevel.Debug
 
+                require(BuildConfig.DITTO_DATABASE_ID.isNotBlank()) { "DITTO_DATABASE_ID is missing. Set it in .env before building." }
+                require(BuildConfig.DITTO_DEVELOPMENT_TOKEN.isNotBlank()) { "DITTO_DEVELOPMENT_TOKEN is missing. Set it in .env before building." }
+                require(BuildConfig.DITTO_SERVER_URL.isNotBlank()) {
+                    "DITTO_SERVER_URL is missing or invalid: \"${BuildConfig.DITTO_SERVER_URL}\". Set it in .env before building."
+                }
+
                 // Get your Database ID and URL from the Ditto Portal: https://portal.ditto.live/
                 val config = DittoConfig(
                     databaseId = BuildConfig.DITTO_DATABASE_ID,
