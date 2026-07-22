@@ -1,9 +1,9 @@
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates
-# Scoped to Ditto's first-party packages (SDK, DittoTools, and any future ones)
-# via wildcards, so their updates arrive as PRs without noise from third-party deps.
+# Dependabot — automated update PRs for Ditto first-party packages only
+# (SDK + tools), both platforms. https://docs.github.com/code-security/dependabot
+# iOS uses the Xcode project's SwiftPM pins and needs a committed Package.resolved.
 version: 2
 updates:
-  # Android (Gradle) — all com.ditto / live.ditto artifacts
+  # Android — Gradle (com.ditto / live.ditto artifacts)
   - package-ecosystem: "gradle"
     directory: "/Android"
     schedule:
@@ -14,12 +14,12 @@ updates:
     commit-message:
       prefix: "deps"
 
-  # iOS (Swift Package Manager, resolved through the Xcode project) — all Ditto* packages
+  # iOS — Swift Package Manager via the Xcode project
   - package-ecosystem: "swift"
     directory: "/iOS"
     schedule:
       interval: "weekly"
     allow:
-      - dependency-name: "Ditto*"
+      - dependency-name: "ditto*"
     commit-message:
       prefix: "deps"
