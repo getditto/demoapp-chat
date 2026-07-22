@@ -33,12 +33,12 @@ def dittoEnv(String key) {
 
 android {
     namespace "live.dittolive.chat"
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "live.dittolive.chat"
         minSdk 29
-        targetSdk 35
+        targetSdk 36
         versionCode 37
         versionName "1"
 
