@@ -1,0 +1,25 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates
+# Scoped to Ditto's first-party packages (SDK, DittoTools, and any future ones)
+# via wildcards, so their updates arrive as PRs without noise from third-party deps.
+version: 2
+updates:
+  # Android (Gradle) — all com.ditto / live.ditto artifacts
+  - package-ecosystem: "gradle"
+    directory: "/Android"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-name: "com.ditto:*"
+      - dependency-name: "live.ditto:*"
+    commit-message:
+      prefix: "deps"
+
+  # iOS (Swift Package Manager, resolved through the Xcode project) — all Ditto* packages
+  - package-ecosystem: "swift"
+    directory: "/iOS"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-name: "Ditto*"
+    commit-message:
+      prefix: "deps"
