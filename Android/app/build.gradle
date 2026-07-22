@@ -141,7 +141,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
     // Ditto
-    implementation("com.ditto:ditto-kotlin-android:5.0.2")
+    implementation("com.ditto:ditto-kotlin:5.0.2")
 
     // Ditto Tools
     implementation("live.ditto:ditto-tools-android:6.0.1-rc.1")
