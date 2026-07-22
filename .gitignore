@@ -73,9 +73,10 @@ Carthage/Build/
 Dependencies/
 .accio/
 
-# iOS Environment Variable
+# Credentials (never commit)
 .env
 Env.swift
+env.properties
 
 # Android Secret Keys
 secure/*
