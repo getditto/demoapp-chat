@@ -1,25 +1,24 @@
 # Dependabot — automated update PRs for Ditto first-party packages only
-# (SDK + tools), both platforms. https://docs.github.com/code-security/dependabot
+# (SDK + tools). Both platforms are combined into ONE PR per release via a
+# multi-ecosystem group. https://docs.github.com/code-security/dependabot
 # iOS uses the Xcode project's SwiftPM pins and needs a committed Package.resolved.
 version: 2
+multi-ecosystem-groups:
+  ditto:
+    schedule:
+      interval: "weekly"
 updates:
   # Android — Gradle (com.ditto / live.ditto artifacts)
   - package-ecosystem: "gradle"
     directory: "/Android"
-    schedule:
-      interval: "weekly"
-    allow:
-      - dependency-name: "com.ditto:*"
-      - dependency-name: "live.ditto:*"
-    commit-message:
-      prefix: "deps"
+    multi-ecosystem-group: "ditto"
+    patterns:
+      - "com.ditto:*"
+      - "live.ditto:*"
 
   # iOS — Swift Package Manager via the Xcode project
   - package-ecosystem: "swift"
     directory: "/iOS"
-    schedule:
-      interval: "weekly"
-    allow:
-      - dependency-name: "ditto*"
-    commit-message:
-      prefix: "deps"
+    multi-ecosystem-group: "ditto"
+    patterns:
+      - "ditto*"
