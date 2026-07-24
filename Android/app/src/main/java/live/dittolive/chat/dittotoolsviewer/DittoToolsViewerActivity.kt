@@ -28,7 +28,7 @@ package live.dittolive.chat.dittotoolsviewer
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import live.ditto.tools.toolsviewer.DittoToolsViewer
+import com.ditto.tools.toolsviewer.DittoToolsViewer
 import live.dittolive.chat.DittoHandler.Companion.ditto
 
 
