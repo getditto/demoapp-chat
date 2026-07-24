@@ -8,13 +8,12 @@ multi-ecosystem-groups:
     schedule:
       interval: "weekly"
 updates:
-  # Android — Gradle (com.ditto / live.ditto artifacts)
+  # Android — Gradle (com.ditto artifacts: SDK + tools)
   - package-ecosystem: "gradle"
     directory: "/Android"
     multi-ecosystem-group: "ditto"
     patterns:
       - "com.ditto:*"
-      - "live.ditto:*"
 
   # iOS — Swift Package Manager via the Xcode project
   - package-ecosystem: "swift"
