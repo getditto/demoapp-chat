@@ -8,7 +8,7 @@ multi-ecosystem-groups:
     schedule:
       interval: "weekly"
 updates:
-  # Android — Gradle (com.ditto artifacts: SDK + tools)
+  # Android — Gradle (com.ditto: SDK + tools)
   - package-ecosystem: "gradle"
     directory: "/Android"
     multi-ecosystem-group: "ditto"
