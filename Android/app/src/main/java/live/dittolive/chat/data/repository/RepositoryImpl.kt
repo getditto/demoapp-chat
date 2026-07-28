@@ -308,7 +308,7 @@ class RepositoryImpl @Inject constructor(
         ditto.let { ditto: Ditto ->
             privateRoomsLiveQuery?.close()
 
-            privateRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM \"$privateRoomsKey\"") { results ->
+            privateRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM `$privateRoomsKey`") { results ->
                 val roomsList: List<List<Room>> = runBlocking {
                     results.items.map { item ->
                         val collectionId = item.toFieldMap()[collectionIdKey] as String
