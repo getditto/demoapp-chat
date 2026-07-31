@@ -966,7 +966,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
 			requirement = {
 				kind = exactVersion;
-				version = "10.0.0-rc.14";
+				version = "10.0.0-rc.15";
 			};
 		};
 		14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
