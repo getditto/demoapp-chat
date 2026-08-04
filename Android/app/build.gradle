@@ -144,7 +144,7 @@ dependencies {
     implementation("com.ditto:ditto-kotlin:5.0.3")
 
     // Ditto Tools
-    implementation("com.ditto:ditto-tools-android:6.0.0-rc.14")
+    implementation("com.ditto:ditto-tools-android:6.0.0")
 
     // Date Time Library - the latest way to handle dates in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
