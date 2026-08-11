@@ -41,7 +41,7 @@ repository root. From the repository root:
 
 1. Copy the template:
 ```bash
-cp .env.example .env
+cp .env.template .env
 ```
 2. Open `.env` and substitute your own values from the portal:
 ```bash

@@ -20,7 +20,7 @@ fi
 # Fail loudly if the shared .env is missing rather than emitting an empty Env.swift,
 # which would surface downstream as a confusing "Type 'Env' has no member" build error.
 if [ ! -f "$1" ]; then
-  echo "Ditto .env not found at \"$1\". Copy .env.example to .env at the repo root and fill it in." 1>&2
+  echo "Ditto .env not found at \"$1\". Copy .env.template to .env at the repo root and fill it in." 1>&2
   exit 1
 fi
 

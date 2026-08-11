@@ -11,13 +11,13 @@ plugins {
 // Ditto credentials across the iOS and Android apps. Values are unquoted. Fails
 // the build with a clear message when the file or key is missing or blank, so a
 // stale .env (the v4->v5 upgrade case, where the old keys are absent) or a
-// half-filled .env.example breaks at configuration time instead of writing a
+// half-filled .env.template breaks at configuration time instead of writing a
 // bad value ("null" or "") into BuildConfig that then fails opaquely inside the SDK.
 def dittoEnv(String key) {
     def envFile = rootProject.file("../.env")
     if (!envFile.isFile()) {
         throw new GradleException(
-            "Shared .env not found at ${envFile.absolutePath}. Copy .env.example to .env at the repo root before building."
+            "Shared .env not found at ${envFile.absolutePath}. Copy .env.template to .env at the repo root before building."
         )
     }
     def props = new Properties()
@@ -25,7 +25,7 @@ def dittoEnv(String key) {
     def value = props.getProperty(key)?.trim()
     if (!value) {
         throw new GradleException(
-            "Missing or blank \"$key\" in ${envFile.absolutePath}. Fill in every value from .env.example before building."
+            "Missing or blank \"$key\" in ${envFile.absolutePath}. Fill in every value from .env.template before building."
         )
     }
     return value
