@@ -21,10 +21,8 @@ class DittoInstance: ObservableObject {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
         precondition(!Env.DITTO_DATABASE_ID.isEmpty, "DITTO_DATABASE_ID is missing. Set it in .env before building.")
         precondition(!Env.DITTO_DEVELOPMENT_TOKEN.isEmpty, "DITTO_DEVELOPMENT_TOKEN is missing. Set it in .env before building.")
-        // URL(string:) accepts almost any non-empty string as a relative URL, so also require a
-        // scheme to reject placeholders like "replace_with_your_url" rather than passing them to openSync.
-        guard let serverURL = URL(string: Env.DITTO_SERVER_URL), serverURL.scheme != nil else {
-            fatalError("DITTO_SERVER_URL is missing or invalid: \"\(Env.DITTO_SERVER_URL)\". Set it in .env before building.")
+        guard let serverURL = URL(string: Env.DITTO_SERVER_URL), serverURL.scheme == "https" else {
+            fatalError("DITTO_SERVER_URL must be an https:// URL (the v5 portal \"Connect via SDK\" URL): \"\(Env.DITTO_SERVER_URL)\"")
         }
         let config = DittoConfig(
             databaseID: Env.DITTO_DATABASE_ID,

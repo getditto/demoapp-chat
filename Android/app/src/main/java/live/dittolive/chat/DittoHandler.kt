@@ -53,8 +53,8 @@ class DittoHandler {
 
                 require(BuildConfig.DITTO_DATABASE_ID.isNotBlank()) { "DITTO_DATABASE_ID is missing. Set it in .env before building." }
                 require(BuildConfig.DITTO_DEVELOPMENT_TOKEN.isNotBlank()) { "DITTO_DEVELOPMENT_TOKEN is missing. Set it in .env before building." }
-                require(BuildConfig.DITTO_SERVER_URL.isNotBlank()) {
-                    "DITTO_SERVER_URL is missing or invalid: \"${BuildConfig.DITTO_SERVER_URL}\". Set it in .env before building."
+                require(BuildConfig.DITTO_SERVER_URL.startsWith("https://")) {
+                    "DITTO_SERVER_URL must be an https:// URL (the v5 portal \"Connect via SDK\" URL): \"${BuildConfig.DITTO_SERVER_URL}\""
                 }
 
                 // Get your Database ID and URL from the Ditto Portal: https://portal.ditto.live/
