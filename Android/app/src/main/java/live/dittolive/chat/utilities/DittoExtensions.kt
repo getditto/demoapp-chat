@@ -23,24 +23,33 @@
  * THE SOFTWARE.
  */
 
-package live.dittolive.chat.dittotoolsviewer
+package live.dittolive.chat.utilities
 
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import com.ditto.tools.toolsviewer.DittoToolsViewer
-import live.dittolive.chat.DittoHandler.Companion.ditto
+import com.ditto.kotlin.DittoQueryResultItem
+import org.json.JSONArray
+import org.json.JSONObject
 
+/**
+ * Returns the document as a plain [Map] keyed by field name. The query result item exposes its
+ * fields as a CBOR dictionary; the model constructors consume a string-keyed map, so the document
+ * is read through its JSON representation. Nested objects become [Map]s and arrays become [List]s.
+ */
+fun DittoQueryResultItem.toFieldMap(): Map<String, Any?> = JSONObject(jsonString()).toFieldMap()
 
-class DittoToolsViewerActivity : AppCompatActivity() {
+fun JSONObject.toFieldMap(): Map<String, Any?> = keys().asSequence().associateWith { key ->
+    when (val value = get(key)) {
+        is JSONObject -> value.toFieldMap()
+        is JSONArray -> value.toValueList()
+        JSONObject.NULL -> null
+        else -> value
+    }
+}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            DittoToolsViewer(
-                ditto = ditto,
-                onExitTools = { finish() }
-            )
-        }
+fun JSONArray.toValueList(): List<Any?> = (0 until length()).map { index ->
+    when (val value = get(index)) {
+        is JSONObject -> value.toFieldMap()
+        is JSONArray -> value.toValueList()
+        JSONObject.NULL -> null
+        else -> value
     }
 }

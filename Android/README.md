@@ -4,14 +4,11 @@
 
 ### Setup
 
-1. Create an app in the Ditto Cloud Portal - https://portal.ditto.live
-2. In the root directory of the Android app, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
-```bash
-DITTO_APP_ID = replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
-DITTO_WEBSOCKET_URL = replace_with_your_websocket_url
-DITTO_AUTH_URL = replace_with_your_auth_url
-```
+Credentials live in a single `.env` at the repository root, shared by both apps. See the
+[root README](../README.md#setup) to create a database in the
+[Ditto Cloud Portal](https://portal.ditto.live) and fill in `.env`. Then open the `Android`
+project in Android Studio and build/run — the Gradle build reads the root `.env` automatically.
+Credentials no longer go in `env.properties` or `local.properties`.
 
 ### Features
 
