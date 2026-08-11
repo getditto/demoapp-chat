@@ -4,23 +4,15 @@
 
 ### Setup
 
+Credentials live in a single `.env` at the repository root, shared by both apps. See the
+[root README](../README.md#setup) to create a database in the
+[Ditto Cloud Portal](https://portal.ditto.live) and fill in `.env`. Then build the iOS app:
 
-1. Create an app in the Ditto Cloud Portal - https://portal.ditto.live
-2. Run the following command in the root directory of the iOS app:
-```bash
-cp .env.template .env
-```
-3. Open `.env` in a text editor or IDE such as VSCode and add the following environment variables, substituting your own values from the portal (`.env` will not show up in Xcode and is not to be mistaken for `Env.swift`)
-```bash
-DITTO_APP_ID=replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN=replace_with_your_playground_token
-DITTO_WEBSOCKET_URL=replace_with_your_websocket_url
-DITTO_AUTH_URL=replace_with_your_auth_url
-```
-4. Open the app project on Xcode and clean `(Command + Shift + K)`
-5. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
-settings to your Apple developer account credentials to provision building to your device
-6. Build the project `(Command + B)` (This will generate the `Env.swift`)
+1. Open the app project in Xcode and clean `(Command + Shift + K)`.
+2. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier
+settings to your Apple developer account credentials to provision building to your device.
+3. Build the project `(Command + B)`. The build reads the root `.env` and generates `Env.swift`
+(which is not to be mistaken for `.env` and does not show up in Xcode).
 
 ### Features
 

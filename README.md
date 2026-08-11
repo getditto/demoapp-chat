@@ -34,7 +34,7 @@ Compatible with Android Automotive OS (AAOS)
 
 ## Setup
 
-Create an app in the Ditto Cloud Portal - https://portal.ditto.live
+Create a database in the Ditto Cloud Portal - https://portal.ditto.live
 
 Both the iOS and Android apps read their credentials from a single `.env` file in the
 repository root. From the repository root:
