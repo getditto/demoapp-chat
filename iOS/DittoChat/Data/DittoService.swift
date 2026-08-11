@@ -21,7 +21,9 @@ class DittoInstance: ObservableObject {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
         precondition(!Env.DITTO_DATABASE_ID.isEmpty, "DITTO_DATABASE_ID is missing. Set it in .env before building.")
         precondition(!Env.DITTO_DEVELOPMENT_TOKEN.isEmpty, "DITTO_DEVELOPMENT_TOKEN is missing. Set it in .env before building.")
-        guard let serverURL = URL(string: Env.DITTO_SERVER_URL) else {
+        // URL(string:) accepts almost any non-empty string as a relative URL, so also require a
+        // scheme to reject placeholders like "replace_with_your_url" rather than passing them to openSync.
+        guard let serverURL = URL(string: Env.DITTO_SERVER_URL), serverURL.scheme != nil else {
             fatalError("DITTO_SERVER_URL is missing or invalid: \"\(Env.DITTO_SERVER_URL)\". Set it in .env before building.")
         }
         let config = DittoConfig(
@@ -49,6 +51,8 @@ class DittoInstance: ObservableObject {
         // 💡 WebSocket (cloud sync) is disabled for this demo because it's shared among many users,
         // and we don't want messages to get mixed up across public rooms. An empty webSocketURLs set
         // keeps the app peer-to-peer only (LAN/Bluetooth/AWDL) while still authenticating online.
+        // The SDK logs a repeating "Transport configuration incomplete: webSocketURLs is empty" WARN
+        // as a result — that's expected with this setup and safe to ignore.
         ditto.updateTransportConfig { transportConfig in
             transportConfig.connect.webSocketURLs.removeAll()
         }

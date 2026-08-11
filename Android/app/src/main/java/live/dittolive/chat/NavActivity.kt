@@ -222,8 +222,7 @@ class NavActivity: AppCompatActivity() {
         val lifecycleObserver = remember {
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START) {
-                    val permissions = DittoSyncPermissions(this)
-                    val missing = permissions.missingPermissions(permissions.requiredPermissions())
+                    val missing = DittoSyncPermissions(this).missingPermissions()
                     if (missing.isNotEmpty()) {
                         this.requestPermissions(missing, 0)
                     }

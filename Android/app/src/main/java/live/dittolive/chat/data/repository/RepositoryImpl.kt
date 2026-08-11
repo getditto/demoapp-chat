@@ -36,7 +36,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import com.ditto.kotlin.Ditto
 import com.ditto.kotlin.DittoAttachment
-import com.ditto.kotlin.DittoQueryResultItem
 import com.ditto.kotlin.DittoStoreObserver
 import com.ditto.kotlin.DittoSyncSubscription
 import live.dittolive.chat.DittoHandler.Companion.ditto
@@ -97,7 +96,6 @@ class RepositoryImpl @Inject constructor(
     /**
      * Messages
      */
-    private var messagesDocs = listOf<DittoQueryResultItem>()
     private lateinit var messagesLiveQuery: DittoStoreObserver
     private lateinit var messagesSubscription: DittoSyncSubscription
 
@@ -106,7 +104,6 @@ class RepositoryImpl @Inject constructor(
      */
     private lateinit var publicRoomsSubscription: DittoSyncSubscription
     private lateinit var publicRoomsLiveQuery: DittoStoreObserver
-    private var publicRoomsDocs = listOf<DittoQueryResultItem>()
 
     /**
      * Private Rooms
@@ -118,7 +115,6 @@ class RepositoryImpl @Inject constructor(
     /**
      * Users
      */
-    private var userssDocs = listOf<DittoQueryResultItem>()
     private lateinit var usersLiveQuery: DittoStoreObserver
     private lateinit var usersSubscription: DittoSyncSubscription
 
@@ -284,7 +280,6 @@ class RepositoryImpl @Inject constructor(
 
             messagesLiveQuery = ditto.store.registerObserver("SELECT * FROM COLLECTION `${room.messagesCollectionId}` ($thumbnailKey ATTACHMENT) ORDER BY $createdOnKey ASC") {
                 results ->
-                this.messagesDocs = results.items
                 allMessagesForRoom.value = results.items.map { Message(it.toFieldMap()) }
             }
 
@@ -298,7 +293,6 @@ class RepositoryImpl @Inject constructor(
 
             publicRoomsLiveQuery = ditto.store.registerObserver("SELECT * FROM $roomsKey") {
                 results ->
-                this.publicRoomsDocs = results.items
                 allPublicRooms.value = results.items.map { Room(it.toFieldMap()) }
             }
         }
@@ -357,7 +351,6 @@ class RepositoryImpl @Inject constructor(
 
             usersLiveQuery = ditto.store.registerObserver("SElECT * FROM $usersKey") {
                 results ->
-                this.userssDocs = results.items
                 allUsers.value = results.items.map { User(it.toFieldMap()) }
             }
         }
