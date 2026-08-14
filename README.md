@@ -4,9 +4,9 @@ Internet-less cross platform chat application
 
 This chat room demo showcases public and private chat rooms using Ditto.
 
-Powered by [Ditto](https://ditto.live/).
+Powered by [Ditto](https://www.ditto.com/).
 
-For support, please contact Ditto Support (<support@ditto.live>).
+For support, please contact Ditto Support (<support@ditto.com>).
 
 - [Video Demo]() - pending
 - [iOS Download](https://apps.apple.com/us/app/dittochat/id1450111256)
@@ -34,33 +34,34 @@ Compatible with Android Automotive OS (AAOS)
 
 ## Setup
 
-Create an app in the Ditto Cloud Portal - https://portal.ditto.live
+Create a database in the Ditto Cloud Portal - https://portal.ditto.live
 
-### iOS
+Both the iOS and Android apps read their credentials from a single `.env` file in the
+repository root. From the repository root:
 
-1. Run the following command in the root directory of the iOS app:
+1. Copy the template:
 ```bash
 cp .env.template .env
 ```
-2. Open `.env` in a text editor or IDE such as VSCode and add the following environment variables, substituting your own values from the portal (`.env` will not show up in Xcode and is not to be mistaken for `Env.swift`)
+2. Open `.env` and substitute your own values from the portal:
 ```bash
-DITTO_APP_ID=replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN=replace_with_your_playground_token
-DITTO_WEBSOCKET_URL=replace_with_your_websocket_url
+DITTO_DATABASE_ID=replace_with_your_database_id
+DITTO_DEVELOPMENT_TOKEN=replace_with_your_development_token
+DITTO_SERVER_URL=replace_with_your_url
 ```
-3. Open the app project on Xcode and clean `(Command + Shift + K)`
-4. Navigate to the project Signing & Capabilities tab and modify the Team and Bundle Identifier 
-settings to your Apple developer account credentials to provision building to your device
-5. Build the project `(Command + B)` (This will generate the `Env.swift`)
+`.env` is gitignored and is shared by both platforms.
+
+### iOS
+
+1. Open the app project in Xcode and clean `(Command + Shift + K)`.
+2. In the project's Signing & Capabilities tab, set the Team and Bundle Identifier to your Apple
+developer account to provision building to your device.
+3. Build the project `(Command + B)` — the build reads the root `.env` and generates `Env.swift`.
 
 ### Android
 
-In the root directory of the Android app, create a new file `env.properties` and add the following environment variables, substituting your own values from the portal:
-```bash
-DITTO_APP_ID = replace_with_your_app_id
-DITTO_PLAYGROUND_TOKEN = replace_with_your_playground_token
-DITTO_WEBSOCKET_URL = replace_with_your_websocket_url
-```
+Open the `Android` project in Android Studio and build/run — the Gradle build reads the root
+`.env` automatically. No additional setup is required beyond the root `.env` above.
 
 ## License
 

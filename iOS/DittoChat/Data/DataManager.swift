@@ -53,10 +53,10 @@ protocol ReplicatingDataInterface {
     func messagesPublisher(for room: Room) -> AnyPublisher<[Message], Never>
     func messagePublisher(for msgId: String, in collectionId: String) -> AnyPublisher<Message, Never>
     func attachmentPublisher(
-        for token: DittoAttachmentToken,
+        for token: [String: Any],
         in collectionId: String
     ) -> DittoSwift.DittoStore.FetchAttachmentPublisher
-    
+
     func addUser(_ usr: User)
     func currentUserPublisher() -> AnyPublisher<User?, Never>
     func allUsersPublisher() -> AnyPublisher<[User], Never>
@@ -147,7 +147,7 @@ extension DataManager {
     }
 
     func attachmentPublisher(
-        for token: DittoAttachmentToken,
+        for token: [String: Any],
         in collectionId: String
     ) -> DittoSwift.DittoStore.FetchAttachmentPublisher {
         p2pStore.attachmentPublisher(for: token, in: collectionId)
@@ -193,7 +193,7 @@ extension DataManager {
 
 extension DataManager {
     var sdkVersion: String {
-        DittoInstance.shared.ditto.sdkVersion
+        Ditto.version
     }
     
     var appInfo: String {

@@ -49,7 +49,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import live.ditto.DittoAttachmentFetcher
+import com.ditto.kotlin.DittoAttachmentFetchResult
 import live.dittolive.chat.DittoHandler
 import live.dittolive.chat.conversation.Message
 import live.dittolive.chat.data.DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
@@ -331,9 +331,7 @@ class MainViewModel @Inject constructor(
                     val tempFile: File?
                     try {
                         tempFile = saveBitmapToTempFile(appContext, downsampledBitmap, quality)
-                        val collectionId = currentRoom.value.collectionID ?: DEFAULT_PUBLIC_ROOM_MESSAGES_COLLECTION_ID
-                        val collection = DittoHandler.ditto.store.collection(collectionId)
-                        val attachment = collection.newAttachment(
+                        val attachment = DittoHandler.ditto.store.newAttachment(
                             tempFile.inputStream(), mapOf(
                                 metadataFilenameKey to message.userId + "_thumbnail_" + timestamp + ".jpg",
                                 metadataFileformatKey to ".jpg",
@@ -353,11 +351,22 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getAttachment(message: Message, callback: (Any) -> Unit) {
-        val fetchers: MutableMap<Map<String, Any>, DittoAttachmentFetcher> = mutableMapOf()
-        message.attachmentToken?.let { token ->
-            fetchers[token] =
-                DittoHandler.ditto.store.fetchAttachment(token, callback)
+    /**
+     * Fetches the attachment referenced by [message], reporting download progress as a 0..1 ratio
+     * and delivering the completed bytes (or null when the attachment has been deleted).
+     */
+    suspend fun getAttachment(
+        message: Message,
+        onProgress: (Double) -> Unit,
+        onComplete: (ByteArray?) -> Unit,
+    ) {
+        val token = message.attachmentToken ?: return
+        val result = DittoHandler.ditto.store.fetchAttachment(token) { downloadedBytes, totalBytes ->
+            onProgress(if (totalBytes > 0uL) downloadedBytes.toDouble() / totalBytes.toDouble() else 0.0)
+        }
+        when (result) {
+            is DittoAttachmentFetchResult.Completed -> onComplete(result.attachment.getInputStream().readBytes())
+            is DittoAttachmentFetchResult.Deleted -> onComplete(null)
         }
     }
 

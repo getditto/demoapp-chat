@@ -19,39 +19,46 @@ class DittoInstance: ObservableObject {
 
     init() {
         // https://docs.ditto.live/sdk/latest/install-guides/swift#integrating-and-initializing-sync
-        ditto = Ditto(
-            identity: .onlinePlayground(
-                appID: Env.DITTO_APP_ID,
-                token: Env.DITTO_PLAYGROUND_TOKEN,
-                enableDittoCloudSync: false // Cloud sync is disabled
-            )
+        precondition(!Env.DITTO_DATABASE_ID.isEmpty, "DITTO_DATABASE_ID is missing. Set it in .env before building.")
+        precondition(!Env.DITTO_DEVELOPMENT_TOKEN.isEmpty, "DITTO_DEVELOPMENT_TOKEN is missing. Set it in .env before building.")
+        guard let serverURL = URL(string: Env.DITTO_SERVER_URL), serverURL.scheme == "https" else {
+            fatalError("DITTO_SERVER_URL must be an https:// URL (the v5 portal \"Connect via SDK\" URL): \"\(Env.DITTO_SERVER_URL)\"")
+        }
+        let config = DittoConfig(
+            databaseID: Env.DITTO_DATABASE_ID,
+            connect: .server(url: serverURL)
         )
 
-        // 💡 WebSocket (cloud sync) has been disabled for this demo because it's shared among many users, and we don't want messages to get mixed up across public rooms.
-        //
-        /* ditto.updateTransportConfig { transportConfig in
-            // Set the Ditto Websocket URL
-            transportConfig.connect.webSocketURLs.insert(Env.DITTO_WEBSOCKET_URL)
-        } */
-
-
         do {
-            // Disable sync with V3 Ditto
-            try ditto.disableSyncWithV3()
-            // Disable avoid_redundant_bluetooth
-            Task {
-                // disable strict mode - allows for DQL with counters and objects as CRDT maps, must be called before startSync
-                // https://docs.ditto.live/dql/strict-mode 
-                try await ditto.store.execute(query: "ALTER SYSTEM SET DQL_STRICT_MODE = false")
-            }
+            ditto = try Ditto.openSync(config: config)
         } catch let error {
-            print("ERROR: disableSyncWithV3() failed with error \"\(error)\"")
+            fatalError("ERROR: Ditto.openSync(config:) failed with error \"\(error)\"")
+        }
+
+        // The development token authenticates this device against the online playground. The
+        // expiration handler runs once at launch (timeUntilExpiration == 0) for the initial login
+        // and again before the token expires, and must be set before sync starts.
+        ditto.auth?.expirationHandler = { ditto, _ in
+            ditto.auth?.login(token: Env.DITTO_DEVELOPMENT_TOKEN, provider: .development) { _, error in
+                if let error {
+                    print("ERROR: Ditto login failed with error \"\(error)\"")
+                }
+            }
+        }
+
+        // 💡 WebSocket (cloud sync) is disabled for this demo because it's shared among many users,
+        // and we don't want messages to get mixed up across public rooms. An empty webSocketURLs set
+        // keeps the app peer-to-peer only (LAN/Bluetooth/AWDL) while still authenticating online.
+        // The SDK logs a repeating "Transport configuration incomplete: webSocketURLs is empty" WARN
+        // as a result — that's expected with this setup and safe to ignore.
+        ditto.updateTransportConfig { transportConfig in
+            transportConfig.connect.webSocketURLs.removeAll()
         }
 
         // Prevent Xcode previews from syncing: non preview simulators and real devices can sync
         let isPreview: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
         if !isPreview {
-            try! ditto.startSync()
+            try! ditto.sync.start()
         }
         
         do {
@@ -68,8 +75,6 @@ class DittoService: ReplicatingDataInterface {
     @Published fileprivate private(set) var allPublicRooms: [Room] = []
     private var allPublicRoomsCancellable: AnyCancellable = AnyCancellable({})
     private var cancellables = Set<AnyCancellable>()
-    private var usersSubscription: DittoSubscription
-    
     // private in-memory stores of subscriptions for rooms and messages
     private var privateRoomSubscriptions = [String: DittoSyncSubscription]()
     private var privateRoomMessagesSubscriptions = [String: DittoSyncSubscription]()
@@ -82,17 +87,15 @@ class DittoService: ReplicatingDataInterface {
 
     init(privateStore: LocalDataInterface) {
         self.privateStore = privateStore
-        self.usersSubscription = ditto.store[usersKey].findAll().subscribe()
 
         createDefaultPublicRoom()
-        
+
         do {
             try ditto.sync.registerSubscription(query: "SELECT * FROM `\(publicRoomsCollectionId)`")
         } catch {
             print("Error subscribing to public rooms collection: \(error)")
         }
         
-        // kick off the public rooms findAll() liveQueryPublisher
         updateAllPublicRooms()
         
         // filter out archived public rooms, add subscriptions, set @Published publicRooms property
@@ -105,8 +108,6 @@ class DittoService: ReplicatingDataInterface {
                 rooms.sort { $0.createdOn > $1.createdOn }
                 
                 // add subscriptions in case a new one has come in
-                /* Note: maybe this could be more efficient, as all subscriptions are all
-                 re-initialized each time the collection[rooms] findAll query fires */
                 rooms.forEach {[weak self] room in
                     self?.addSubscriptions(for: room)
                 }
@@ -130,38 +131,38 @@ class DittoService: ReplicatingDataInterface {
 }
 
 ///  General Overview
-///  Public rooms are "public" by reason of the `findAll()` liveQueryPublisher on the `ditto.store["rooms"]` collection being
+///  Public rooms are "public" by reason of the DQL sync subscription on the "rooms" collection being
 ///  persisted in memory for the lifecycle of the app. All newly created public rooms on the mesh automatically replicate because of the
-///  `findAll()` query.
+///  `SELECT *` subscription.
 ///
-///  All rooms have thier own messages collection, named with a UUID string, stored in the `room.messagesId` property. This avoids
+///  All rooms have their own messages collection, named with a UUID string, stored in the `room.messagesId` property. This avoids
 ///  the Ditto db performance bottleneck of having a single "messages" collection, where queries for messages for a given room would
-///  require an all-table scan of all messages for every query. Each room can simply `findAll()` on its own messages collection.
+///  require an all-table scan of all messages for every query. Each room can simply subscribe to its own messages collection.
 ///
 ///  Private rooms each have their own room collection, named with a UUID string, stored in the `room.collectionId` property. This
 ///  makes the room "private" in that subscriptions to the room require knowing the UUID string collection name, whereas public rooms all
-///  reside, and are replicated from, the known "rooms" collection, i.e., `ditto.store["rooms"]`. Both private and public rooms each
-///  have their own messages collection, named with a UUID string, stored in the `room.messagesId` property.
+///  reside, and are replicated from, the known "rooms" collection. Both private and public rooms each have their own messages collection,
+///  named with a UUID string, stored in the `room.messagesId` property.
 ///
 /// Subscriptions Overview
-///  `DittoSubscription` objects subscribing to room and messages collections must be kept in memory througout the lifecycle
+///  `DittoSyncSubscription` objects subscribing to room and messages collections must be kept in memory throughout the lifecycle
 ///  of the app. This enables messages to replicate into the local Ditto db from the mesh, regardless of whether the user is currently
-///  viewing a given room. (For each navigation into a room, a liveQueryPublisher publishes messages for that room in real time for the
+///  viewing a given room. (For each navigation into a room, a registerObserver publishes messages for that room in real time for the
 ///  lifecycle of the view model that subscribes to the publisher. Even though the publisher is released after navigating out of the room, the
 ///  subscription object continues to replicate messages from the mesh. This ensures messages are always kept up to date.)
 ///
 ///  Subscriptions are added to subscription dictionary variables for every update of the `allPublicRooms` publisher after filtering out
-///  archived rooms, and for every update of the `privateStore.privateRoomPublisher`for private rooms.
+///  archived rooms, and for every update of the `privateStore.privateRoomPublisher` for private rooms.
 ///
-///  Public room `findAll()` subscriptions for their messages collection are created for every update of the `allPublicRooms`
-///  publisher (after filtering out archived public rooms), and stored  in the private `publicRoomMessageSubscriptions` variable
-///  of type `[String: DittoSubscription]`, where the key is the `room.id` and value is the subscription.
+///  Public room subscriptions for their messages collection are created for every update of the `allPublicRooms`
+///  publisher (after filtering out archived public rooms), and stored in the private `publicRoomMessagesSubscriptions` variable
+///  of type `[String: DittoSyncSubscription]`, where the key is the `room.id` and value is the subscription.
 ///
 ///  Private Rooms require subscriptions for both the room collection (`room.collectionId`) and its messages collection
 ///  (`room.messagesId`). These are stored in the private `privateRoomSubscriptions` and
-///  `privateRoomMessagesSubscriptions` variables, both of type `[String: DittoSubscription]`, where for the
+///  `privateRoomMessagesSubscriptions` variables, both of type `[String: DittoSyncSubscription]`, where for the
 ///  former the key is the `room.collectionId`, and the latter, the `room.messagesId`, and for both, the value is the
-///  `findAll()` subscription on the collection.
+///  subscription on the collection.
 ///
 ///  Subscriptions are added at launch for all non-archived public and private rooms via the publishers described above. The
 ///  `addSubscriptions` and `removeSubscriptions`functions are addtionally used by archiving and unarchiving functions,
@@ -516,7 +517,7 @@ extension DittoService {
     
     /* DISUSED BECAUSE PROGRESS PUBLISHER BUG (refactored in BubbleViewVM */
     func attachmentPublisher(
-        for token: DittoAttachmentToken,
+        for token: [String: Any],
         in collectionId: String
     ) -> DittoSwift.DittoStore.FetchAttachmentPublisher {
         ditto.store.fetchAttachmentPublisher(attachmentToken: token)
@@ -760,12 +761,6 @@ extension DittoService {
         
         removeSubscriptions(for: room)
         evictPrivateRoom(room)
-        
-        //Deleting data (remove) is not supported in DQL
-        // additionally remove roomDoc, message collection, and collection itself from DB
-//        ditto.store[collectionId].findByID(room.id).remove()
-//        ditto.store[collectionsKey].findByID(room.messagesId).remove()
-//        ditto.store[collectionsKey].findByID(collectionId).remove()
 
         privateStore.deleteArchivedPrivateRoom(roomId: room.id)
     }

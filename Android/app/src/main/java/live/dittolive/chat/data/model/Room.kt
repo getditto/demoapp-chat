@@ -28,7 +28,6 @@ package live.dittolive.chat.data.model
 import androidx.compose.runtime.Immutable
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import live.ditto.DittoDocument
 import live.dittolive.chat.data.collectionIdKey
 import live.dittolive.chat.data.createdByKey
 import live.dittolive.chat.data.createdOnKey

@@ -48,7 +48,6 @@
 		14CADB49293FEBD600BED068 /* DittoChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB48293FEBD600BED068 /* DittoChatUITests.swift */; };
 		14CADB4B293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CADB4A293FEBD600BED068 /* DittoChatUITestsLaunchTests.swift */; };
 		14CADB58293FEC1400BED068 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14CADB57293FEC1400BED068 /* Assets.xcassets */; };
-		14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5A293FEFD700BED068 /* DittoObjC */; };
 		14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5C293FEFD700BED068 /* DittoSwift */; };
 		14CADB60293FF00700BED068 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 14CADB5F293FF00700BED068 /* Fakery */; };
 		14D902E92954DFC8006B54E3 /* StringKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D902E82954DFC8006B54E3 /* StringKeys.swift */; };
@@ -149,7 +148,6 @@
 				14A2B746298987D300E0FF86 /* DittoDiskUsage in Frameworks */,
 				14A2B748298987D300E0FF86 /* DittoExportLogs in Frameworks */,
 				14BF945D29786731001F672D /* CodeScanner in Frameworks */,
-				14CADB5B293FEFD700BED068 /* DittoObjC in Frameworks */,
 				143FFCC42B20F4840085A2EF /* DittoExportData in Frameworks */,
 				14CADB5D293FEFD700BED068 /* DittoSwift in Frameworks */,
 				117F6ADC2DC3ABC9006F0F4C /* DittoAllToolsMenu in Frameworks */,
@@ -422,7 +420,6 @@
 			);
 			name = DittoChat;
 			packageProductDependencies = (
-				14CADB5A293FEFD700BED068 /* DittoObjC */,
 				14CADB5C293FEFD700BED068 /* DittoSwift */,
 				14CADB5F293FF00700BED068 /* Fakery */,
 				14BF945C29786731001F672D /* CodeScanner */,
@@ -560,7 +557,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/buildEnv.sh",
-				"${SRCROOT}/.env",
+				"${SRCROOT}/../.env",
 			);
 			name = "Generate Env.swift";
 			outputFileListPaths = (
@@ -570,7 +567,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/buildEnv.sh\" \"${SRCROOT}/.env\" \"${SRCROOT}/${PROJECT}\"\n";
+			shellScript = "\"${SRCROOT}/buildEnv.sh\" \"${SRCROOT}/../.env\" \"${SRCROOT}/${PROJECT}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -969,7 +966,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
+				minimumVersion = 10.0.0;
 			};
 		};
 		14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
@@ -984,8 +981,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.13.1;
+				kind = upToNextMinorVersion;
+				minimumVersion = 5.0.3;
 			};
 		};
 		14CADB5E293FF00700BED068 /* XCRemoteSwiftPackageReference "Fakery" */ = {
@@ -1038,11 +1035,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 14BF945B29786731001F672D /* XCRemoteSwiftPackageReference "CodeScanner" */;
 			productName = CodeScanner;
-		};
-		14CADB5A293FEFD700BED068 /* DittoObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 14CADB59293FEFD700BED068 /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */;
-			productName = DittoObjC;
 		};
 		14CADB5C293FEFD700BED068 /* DittoSwift */ = {
 			isa = XCSwiftPackageProductDependency;

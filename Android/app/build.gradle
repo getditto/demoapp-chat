@@ -7,14 +7,38 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
 }
 
+// Reads a value from the shared repo-root .env — the single source of truth for
+// Ditto credentials across the iOS and Android apps. Values are unquoted. Fails
+// the build with a clear message when the file or key is missing or blank, so a
+// stale .env (the v4->v5 upgrade case, where the old keys are absent) or a
+// half-filled .env.template breaks at configuration time instead of writing a
+// bad value ("null" or "") into BuildConfig that then fails opaquely inside the SDK.
+def dittoEnv(String key) {
+    def envFile = rootProject.file("../.env")
+    if (!envFile.isFile()) {
+        throw new GradleException(
+            "Shared .env not found at ${envFile.absolutePath}. Copy .env.template to .env at the repo root before building."
+        )
+    }
+    def props = new Properties()
+    envFile.withInputStream { props.load(it) }
+    def value = props.getProperty(key)?.trim()
+    if (!value) {
+        throw new GradleException(
+            "Missing or blank \"$key\" in ${envFile.absolutePath}. Fill in every value from .env.template before building."
+        )
+    }
+    return value
+}
+
 android {
     namespace "live.dittolive.chat"
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "live.dittolive.chat"
         minSdk 29
-        targetSdk 35
+        targetSdk 36
         versionCode 37
         versionName "1"
 
@@ -22,20 +46,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
-        def envFile = rootProject.file("env.properties")
-        if (!envFile.exists()) {
-            throw new Exception("Missing env.properties file. Please copy the env.properties.example template and fill in with your app details.")
-        }
-        def env = new Properties()
-        env.load(new FileInputStream(envFile))
-
-        // Explicit double-quotes are needed in the string value in order to be a valid string in
-        // the generated BuildConfig.java file.
-        buildConfigField('String', 'DITTO_APP_ID', '"' + env['DITTO_APP_ID'] + '"')
-        buildConfigField('String', 'DITTO_PLAYGROUND_TOKEN', '"' + env['DITTO_PLAYGROUND_TOKEN'] + '"')
-        buildConfigField('String', 'DITTO_WEBSOCKET_URL', '"' + env['DITTO_WEBSOCKET_URL'] + '"')
-
     }
 
     buildTypes {
@@ -63,6 +73,28 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+// Bake the Ditto credentials into BuildConfig from the shared repo-root .env
+// (see dittoEnv), wired through androidComponents with a lazy provider so the
+// file is read only when BuildConfig is actually generated — a fresh clone can
+// still run non-build tasks (./gradlew tasks, IDE sync) with no .env present.
+// The provider also makes the value a task input, so editing .env regenerates
+// BuildConfig without a clean build. Values in .env are unquoted, so wrap each
+// in quotes for the generated Java string literal.
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        ['DITTO_DATABASE_ID', 'DITTO_DEVELOPMENT_TOKEN', 'DITTO_SERVER_URL'].each { key ->
+            variant.buildConfigFields.put(
+                key,
+                providers.provider {
+                    new com.android.build.api.variant.BuildConfigField(
+                        'String', "\"${dittoEnv(key)}\"".toString(), null
+                    )
+                }
+            )
         }
     }
 }
@@ -141,10 +173,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
     // Ditto
-    implementation("live.ditto:ditto:4.13.1")
+    implementation("com.ditto:ditto-kotlin:5.0.3")
 
     // Ditto Tools
-    implementation("live.ditto:ditto-tools-android:5.0.1")
+    implementation("com.ditto:ditto-tools-android:6.0.0")
 
     // Date Time Library - the latest way to handle dates in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
