@@ -981,7 +981,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
-				kind = upToNextMinorVersion;
+				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.3;
 			};
 		};

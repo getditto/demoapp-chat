@@ -15,9 +15,10 @@ updates:
     patterns:
       - "com.ditto:*"
 
-  # iOS — Swift Package Manager via the Xcode project
+  # iOS — Swift Package Manager via the Xcode project. Dependabot names Swift
+  # packages by normalized repository URL, so the pattern is URL-shaped.
   - package-ecosystem: "swift"
     directory: "/iOS"
     multi-ecosystem-group: "ditto"
     patterns:
-      - "ditto*"
+      - "github.com/getditto/*"
