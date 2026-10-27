@@ -1,3 +1,7 @@
+[⚠️ This repository is no longer actively maintained and exists as a read-only archive. The code may be outdated.]
+
+For more current demos and examples, see the [Ditto documentation](https://docs.ditto.live/).
+
 # Ditto Chat
 
 Internet-less cross platform chat application
